@@ -19,9 +19,12 @@
   h1{margin:0;font-size:30px;letter-spacing:1px}
   h1 .ball{filter:grayscale(.1)}
   .sub{color:var(--dim);font-size:13px;margin-top:2px}
-  .controls{display:flex;gap:8px;align-items:center;justify-content:center;margin:12px 0}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;margin:12px 0}
   select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);
-    border-radius:8px;padding:7px 10px;font-size:14px}
+    border-radius:8px;padding:9px 10px;font-size:16px;flex:0 1 auto;max-width:100%;
+    -webkit-appearance:none;appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%238b949e' stroke-width='1.5' fill='none'/></svg>");
+    background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
   .cells{display:flex;flex-direction:column;gap:8px;margin:14px 0}
   .cell{background:var(--panel);border:1px solid var(--line);border-radius:10px;
     padding:10px 12px;display:flex;align-items:center;gap:12px;transition:.25s}
@@ -66,6 +69,26 @@
     opacity:0;transition:.3s;pointer-events:none}
   .toast.show{opacity:1}
   .foot{text-align:center;color:var(--dim);font-size:11px;margin-top:24px;line-height:1.6}
+
+  /* ---- mobile ---- */
+  @media (max-width:480px){
+    body{padding:14px 11px 48px}
+    h1{font-size:25px}
+    .sub{font-size:12px;padding:0 4px}
+    .controls{gap:7px;margin:12px 0}
+    select{flex:1 1 100%;}                 /* full-width stacked dropdowns — clean & tappable */
+    .cells{gap:7px;margin:12px 0}
+    .cell{padding:9px 11px;gap:10px}
+    .cell .num{width:20px;height:20px;font-size:11px}
+    .cell .club{font-size:14px}
+    .cell .ans{font-size:12px;max-width:42%;overflow:hidden;text-overflow:ellipsis}
+    #guess{padding:12px 13px}
+    .status{font-size:12px;margin-top:10px}
+    .foot{font-size:10px;margin-top:18px}
+  }
+  @media (min-width:381px) and (max-width:480px){
+    select{flex:1 1 46%;}                  /* roomier phones: two dropdowns per row */
+  }
 </style>
 </head>
 <body>
