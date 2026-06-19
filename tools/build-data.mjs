@@ -23,6 +23,20 @@ const LEAGUE_BY_ID = { 13: 'Premier League', 53: 'La Liga', 19: 'Bundesliga', 31
 const OVR_MIN = 60;
 const MIN_SQUAD = 11;
 
+// Club league = its CURRENT (EA FC 26) top flight, applied to all seasons. For clubs that
+// were actually in the 2nd tier some seasons (promoted/relegated/yo-yo), those club-seasons
+// are mislabelled, so we drop them. Keyed by canonical club name -> seasons NOT in the top flight.
+// NOTE: only the Bundesliga has been audited so far — the other four leagues still need the same pass.
+const LOWER_DIVISION = {
+  '1. FC Union Berlin': ['2016/17', '2017/18', '2018/19'],          // promoted to BL 2019/20
+  '1. FC Heidenheim 1846': ['2016/17', '2017/18', '2018/19', '2019/20', '2020/21', '2021/22', '2022/23'], // BL from 2023/24
+  'FC St. Pauli': ['2016/17', '2017/18', '2018/19', '2019/20', '2020/21', '2021/22', '2022/23'],          // BL from 2024/25
+  'Hamburger SV': ['2018/19', '2019/20', '2020/21', '2021/22', '2022/23'],  // relegated after 2017/18, back 2024/25
+  'VfB Stuttgart': ['2016/17', '2019/20'],                          // 2.BL those seasons
+  'SV Werder Bremen': ['2021/22'],                                  // relegated after 2020/21, back 2022/23
+  '1. FC Köln': ['2018/19'],                                        // relegated after 2017/18, back 2019/20
+};
+
 function parseCSV(text) {
   const rows = []; let row = [], field = '', inQ = false;
   for (let i = 0; i < text.length; i++) {
@@ -128,6 +142,7 @@ for (const season of seasonList) {
   rosters[season] = {};
   for (const [name, players] of Object.entries(seasons[season])) {
     if (players.length < MIN_SQUAD) continue;
+    if (LOWER_DIVISION[name]?.includes(season)) continue;   // club was in the 2nd tier that season
     rosters[season][idOf[name]] = { w: weightOf(players), p: players.map(p => ({ d: p.d, k: p.k })) };
   }
 }
