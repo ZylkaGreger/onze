@@ -35,6 +35,7 @@ const LOWER_DIVISION = {
   'VfB Stuttgart': ['2016/17', '2019/20'],                          // 2.BL those seasons
   'SV Werder Bremen': ['2021/22'],                                  // relegated after 2020/21, back 2022/23
   '1. FC Köln': ['2018/19'],                                        // relegated after 2017/18, back 2019/20
+  'Stade Brestois 29': ['2016/17', '2017/18', '2018/19'],           // promoted to Ligue 1 in 2019/20 (name won't match Wikipedia "Brest")
 };
 
 function parseCSV(text) {
@@ -76,6 +77,22 @@ function keysFor(display, full) {
 const CLUB_AFFIX = /\b(fc|cf|afc|sc|ssc|ss|as|ac|us|rc|cd|ud|sv|sd|vfl|vfb|tsg|fsv|bsc|rcd|club|calcio|1)\b/g;
 function clubKey(name) {
   return normalize(name).replace(CLUB_AFFIX, ' ').replace(/\s+/g, ' ').trim();
+}
+// match key for league lookups: drop club-type tokens + standalone numbers so EA names line up
+// with Wikipedia names (AJ Auxerre→auxerre, CA Osasuna→osasuna, Deportivo Alavés→alaves, Schalke 04→schalke).
+const MATCH_DROP = new Set('fc cf afc sc ssc ss as ac us rc cd ud sv sd vfl vfb tsg fsv bsc rcd aj sco osc ca stade deportivo olympique alsace balompie de club calcio'.split(' '));
+const matchClub = (name) => stripAccents(name).toLowerCase().replace(/[.'’]/g, '')
+  .replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(t => t && !/^\d+$/.test(t) && !MATCH_DROP.has(t)).join(' ');
+
+// authoritative per-(league, season) participant lists scraped from Wikipedia
+const LEAGUE_SEASONS = JSON.parse(fs.readFileSync(path.join(__dirname, 'league-seasons.json'), 'utf8'));
+const allow = {}, universe = {};
+for (const [lg, ss] of Object.entries(LEAGUE_SEASONS)) {
+  allow[lg] = {}; universe[lg] = new Set();
+  for (const [s, clubs] of Object.entries(ss)) {
+    allow[lg][s] = new Set(clubs.map(matchClub));
+    for (const c of clubs) universe[lg].add(matchClub(c));
+  }
 }
 
 // 1) EA FC 26 -> canonical big-5 club map + 2025/26 rosters
@@ -142,7 +159,11 @@ for (const season of seasonList) {
   rosters[season] = {};
   for (const [name, players] of Object.entries(seasons[season])) {
     if (players.length < MIN_SQUAD) continue;
-    if (LOWER_DIVISION[name]?.includes(season)) continue;   // club was in the 2nd tier that season
+    const lg = canon[clubKey(name)]?.league, mk = matchClub(name);
+    // drop seasons the club wasn't in its top flight. Fail-safe: only act when the club name
+    // matches that league's known set, so a name mismatch never wrongly removes a real club.
+    if (lg && universe[lg]?.has(mk) && allow[lg][season] && !allow[lg][season].has(mk)) continue;
+    if (LOWER_DIVISION[name]?.includes(season)) continue;   // manual backstop
     rosters[season][idOf[name]] = { w: weightOf(players), p: players.map(p => ({ d: p.d, k: p.k })) };
   }
 }
@@ -196,3 +217,5 @@ console.log(`seasons: ${seasonList.join(', ')}`);
 console.log(`clubs: ${clubs.length} | cells: ${cells} | size: ${(fs.statSync(OUT).size / 1e6).toFixed(1)} MB`);
 console.log('clubs per league:', byLeague);
 console.log(`link puzzles: ${links2.length} pairs, ${links3.length} triples`);
+const unmatched = clubs.filter(c => c.league !== 'Other' && !universe[c.league]?.has(matchClub(c.name)));
+console.log(`name-mismatch clubs (kept as-is, not season-filtered): ${unmatched.length ? unmatched.map(c => c.name).join(', ') : 'none'}`);
