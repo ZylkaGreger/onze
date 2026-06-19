@@ -4,6 +4,18 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Onze — name the squad</title>
+<meta name="description" content="A daily football guessing game. Name one player from each of 5 mystery squads — or find the player who links them. New puzzle every day." />
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
+<link rel="apple-touch-icon" href="assets/onze-avatar.png" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://onzedaily.com" />
+<meta property="og:title" content="Onze — name the squad" />
+<meta property="og:description" content="A daily football guessing game. Name a player from 5 mystery squads — or find the player who links them." />
+<meta property="og:image" content="https://onzedaily.com/assets/onze-banner.png" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Onze — name the squad" />
+<meta name="twitter:description" content="A daily football guessing game. Name a player from 5 mystery squads — or find the player who links them." />
+<meta name="twitter:image" content="https://onzedaily.com/assets/onze-banner.png" />
 <style>
   :root{
     --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --line:#2a3140;
@@ -17,7 +29,7 @@
   .app{width:100%;max-width:520px}
   header{text-align:center;margin-bottom:14px}
   h1{margin:0;font-size:30px;letter-spacing:1px}
-  h1 .ball{filter:grayscale(.1)}
+  h1 .logo{height:32px;width:32px;vertical-align:-6px;margin-right:4px}
   .sub{color:var(--dim);font-size:13px;margin-top:2px}
   .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:center;margin:12px 0}
   select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);
@@ -94,7 +106,7 @@
 <body>
 <div class="app">
   <header>
-    <h1><span class="ball">⚽</span> Onze</h1>
+    <h1><img src="assets/favicon.svg" alt="" class="logo" /> Onze</h1>
     <div class="sub">Name one player from each squad — that exact club, that exact season.</div>
   </header>
 
