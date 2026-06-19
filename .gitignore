@@ -1,0 +1,5 @@
+.DS_Store
+node_modules/
+.claude/
+tools/.fifa_cache/
+tools/.wikipedia_cache/

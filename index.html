@@ -1,0 +1,454 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Onze — name the squad</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --line:#2a3140;
+    --txt:#e6edf3; --dim:#8b949e; --green:#2ea043; --green-d:#196c2e;
+    --red:#6e3030; --accent:#3fb950; --gold:#d8a23a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    display:flex;justify-content:center;padding:18px 14px 60px}
+  .app{width:100%;max-width:520px}
+  header{text-align:center;margin-bottom:14px}
+  h1{margin:0;font-size:30px;letter-spacing:1px}
+  h1 .ball{filter:grayscale(.1)}
+  .sub{color:var(--dim);font-size:13px;margin-top:2px}
+  .controls{display:flex;gap:8px;align-items:center;justify-content:center;margin:12px 0}
+  select{background:var(--panel2);color:var(--txt);border:1px solid var(--line);
+    border-radius:8px;padding:7px 10px;font-size:14px}
+  .cells{display:flex;flex-direction:column;gap:8px;margin:14px 0}
+  .cell{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:10px 12px;display:flex;align-items:center;gap:12px;transition:.25s}
+  .cell .num{width:22px;height:22px;border-radius:50%;background:var(--panel2);
+    display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--dim);flex:0 0 auto}
+  .cell .info{flex:1;min-width:0}
+  .cell .club{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cell .meta{font-size:12px;color:var(--dim);margin-top:1px}
+  .cell .badge{font-size:10px;text-transform:uppercase;letter-spacing:.5px;
+    background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--dim)}
+  .cell .ans{font-size:13px;color:var(--accent);font-weight:600;white-space:nowrap}
+  .cell .mark{font-size:20px;width:24px;text-align:center;flex:0 0 auto}
+  .cell.solved{border-color:var(--green-d);background:linear-gradient(90deg,rgba(46,160,67,.10),transparent)}
+  .inputrow{position:relative;margin-top:6px}
+  #guess{width:100%;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:13px 14px;font-size:16px;color:var(--txt)}
+  #guess:focus{outline:none;border-color:var(--accent)}
+  #guess:disabled{opacity:.5}
+  .sugg{position:absolute;left:0;right:0;top:52px;background:var(--panel2);
+    border:1px solid var(--line);border-radius:10px;overflow:hidden;z-index:5}
+  .sugg div{padding:9px 14px;font-size:14px;cursor:pointer}
+  .sugg div:hover,.sugg div.active{background:#283042}
+  .status{display:flex;justify-content:space-between;align-items:center;margin-top:12px;
+    font-size:13px;color:var(--dim)}
+  .pips{display:flex;gap:5px}
+  .pip{width:13px;height:13px;border-radius:3px;background:var(--panel2);border:1px solid var(--line)}
+  .pip.hit{background:var(--green);border-color:var(--green)}
+  .pip.miss{background:var(--red);border-color:var(--red)}
+  .end{margin-top:16px;text-align:center;display:none}
+  .end.show{display:block}
+  .hint{background:rgba(216,162,58,.10);border:1px solid rgba(216,162,58,.35);color:var(--gold);
+    border-radius:9px;padding:9px 13px;font-size:13px;margin:2px 0 6px;text-align:center}
+  .end .reveal{font-size:14px;color:var(--dim);margin-top:4px}
+  .end .reveal b{color:var(--accent)}
+  .end h2{margin:0 0 6px;font-size:20px}
+  .end pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:12px;font-size:15px;line-height:1.5;display:inline-block;margin:8px 0}
+  button.share{background:var(--accent);color:#06210e;border:none;border-radius:9px;
+    padding:11px 20px;font-size:15px;font-weight:700;cursor:pointer}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:#fff;color:#111;padding:10px 18px;border-radius:8px;font-size:14px;
+    opacity:0;transition:.3s;pointer-events:none}
+  .toast.show{opacity:1}
+  .foot{text-align:center;color:var(--dim);font-size:11px;margin-top:24px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1><span class="ball">⚽</span> Onze</h1>
+    <div class="sub">Name one player from each squad — that exact club, that exact season.</div>
+  </header>
+
+  <div class="controls">
+    <select id="mode"></select>
+    <select id="league"></select>
+    <select id="diff"></select>
+  </div>
+
+  <div class="cells" id="cells"></div>
+
+  <div class="hint" id="hint" style="display:none"></div>
+
+  <div class="inputrow">
+    <input id="guess" autocomplete="off" spellcheck="false"
+           placeholder="Type a player name and press Enter…" />
+    <div class="sugg" id="sugg" style="display:none"></div>
+  </div>
+
+  <div class="status">
+    <div class="pips" id="pips"></div>
+    <div id="left"></div>
+  </div>
+
+  <div class="end" id="end">
+    <h2 id="endmsg"></h2>
+    <div class="reveal" id="reveal"></div>
+    <div><pre id="sharetext"></pre></div>
+    <div><button class="share" id="shareBtn">Copy result</button></div>
+  </div>
+
+  <div class="foot">
+    Prototype · data: EA FC 26 + FIFA 17–23 (seasons 2016/17–2025/26)<br>
+    one daily puzzle per league track · free-text guessing · 6 guesses
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const MAX_GUESSES = 6;
+const LEAGUE_TRACKS = [
+  ['WORLD','⭐ Top 5 leagues (mixed)'],
+  ['Premier League','🏴 Premier League'],
+  ['La Liga','🇪🇸 La Liga'],
+  ['Bundesliga','🇩🇪 Bundesliga'],
+  ['Serie A','🇮🇹 Serie A'],
+  ['Ligue 1','🇫🇷 Ligue 1'],
+];
+const DIFFICULTIES = [
+  ['medium','🟡 Medium'],
+  ['easy','🟢 Easy — big clubs'],
+  ['hard','🔴 Hard — anyone'],
+];
+const MODES = [
+  ['squad','📋 Squads'],
+  ['link','🔗 Find the link'],
+];
+
+let DATA, STATE, ALL_NAMES = [], PLAYERS = {};
+
+function norm(s){return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'')
+  .toLowerCase().replace(/[.'’]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();}
+// match key: tokens sorted, so word order doesn't matter ("Williams Nico" == "Nico Williams")
+function matchKey(s){return norm(s).split(' ').filter(Boolean).sort().join(' ');}
+
+// deterministic PRNG
+function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+
+// weighted pick without replacement; difficulty reshapes the pool/weights:
+//   easy  = only star-studded club-seasons (top 30% by weight), still weighted to giants
+//   medium= full pool, weighted toward bigger clubs (default)
+//   hard  = full pool, uniform weight (any top-5 club equally likely -> more deep cuts)
+function buildPuzzle(league, diff){
+  const date = todayStr();
+  const rnd = mulberry32(hashStr(date+'|'+league+'|'+diff));
+  let pool = [];
+  for(const season of DATA.seasons){
+    const r = DATA.rosters[season];
+    for(const cid in r){
+      const club = DATA.clubs[cid];
+      if(league!=='WORLD' && club.league!==league) continue;
+      pool.push({season, cid:+cid, club, players:r[cid].p, w:r[cid].w});
+    }
+  }
+  if(diff==='easy'){
+    const ws = pool.map(p=>p.w).sort((a,b)=>a-b);
+    const cut = ws[Math.floor(ws.length*0.70)] || 0;
+    pool = pool.filter(p=>p.w>=cut);
+  } else if(diff==='hard'){
+    pool.forEach(p=>p.w=1);
+  }
+  // weighted sample of 5 distinct clubs
+  const chosen=[]; const usedClub=new Set(); let guard=0;
+  while(chosen.length<5 && pool.length && guard++<5000){
+    let tot=0; for(const p of pool) tot+= usedClub.has(p.cid)?0:p.w;
+    if(tot<=0) break;
+    let x=rnd()*tot, pick=null;
+    for(const p of pool){ if(usedClub.has(p.cid)) continue; x-=p.w; if(x<=0){pick=p;break;} }
+    if(!pick) break;
+    usedClub.add(pick.cid); chosen.push(pick);
+  }
+  // build matchable key-set per cell
+  for(const c of chosen){
+    c.keys = new Set();
+    for(const pl of c.players) for(const k of pl.k) c.keys.add(k);
+  }
+  return {date, league, cells: chosen};
+}
+
+// "find the link" — pick one club-combo whose squads share a player.
+//   easy = pairs with a famous connector (top weights), medium = any pair, hard = triples
+function buildLinkPuzzle(diff){
+  const date=todayStr();
+  const rnd=mulberry32(hashStr(date+'|link|'+diff));
+  const wi = (diff==='hard') ? 3 : 2;                 // weight is the element after the club ids
+  let pool = (diff==='hard') ? DATA.links3.slice() : DATA.links2.slice();
+  if(diff==='easy'){
+    const ws=pool.map(l=>l[wi]).sort((a,b)=>a-b);
+    const cut=ws[Math.floor(ws.length*0.55)]||0;
+    pool=pool.filter(l=>l[wi]>=cut);
+  }
+  let tot=0; for(const l of pool) tot+=l[wi];
+  let x=rnd()*tot, pick=pool[0];
+  for(const l of pool){ x-=l[wi]; if(x<=0){pick=l;break;} }
+  const reqIds=pick.slice(0,wi);
+  return {date, clubs:reqIds.map(id=>DATA.clubs[id]), reqIds, sig:reqIds.join('|')};
+}
+
+function loadState(mode, league, diff){
+  const key='onze:'+todayStr()+':'+mode+':'+league+':'+diff;
+  const saved=localStorage.getItem(key);
+  let st;
+  if(mode==='link'){
+    const puzzle=buildLinkPuzzle(diff);
+    st={key, mode, league, diff, puzzle, answer:null, guesses:[], done:false};
+    if(saved){try{const s=JSON.parse(saved); if(s.sig===puzzle.sig){st.answer=s.answer;st.guesses=s.guesses;st.done=s.done;}}catch(e){}}
+  } else {
+    const puzzle=buildPuzzle(league, diff);
+    st={key, mode, league, diff, puzzle, solved:Array(puzzle.cells.length).fill(null), guesses:[], done:false};
+    if(saved){try{const s=JSON.parse(saved); if(s.sig===cellsSig(puzzle)){st.solved=s.solved;st.guesses=s.guesses;st.done=s.done;}}catch(e){}}
+  }
+  return st;
+}
+function cellsSig(p){return p.cells.map(c=>c.cid+'@'+c.season).join('|');}
+function save(){
+  const sig = STATE.mode==='link' ? STATE.puzzle.sig : cellsSig(STATE.puzzle);
+  const body = STATE.mode==='link'
+    ? {sig, answer:STATE.answer, guesses:STATE.guesses, done:STATE.done}
+    : {sig, solved:STATE.solved, guesses:STATE.guesses, done:STATE.done};
+  localStorage.setItem(STATE.key, JSON.stringify(body));
+}
+
+function renderPips(){
+  const pips=document.getElementById('pips'); pips.innerHTML='';
+  STATE.guesses.forEach(g=>{const p=document.createElement('div');p.className='pip '+(g.hit?'hit':'miss');pips.appendChild(p);});
+  for(let i=STATE.guesses.length;i<MAX_GUESSES;i++){const p=document.createElement('div');p.className='pip';pips.appendChild(p);}
+  const input=document.getElementById('guess'); input.disabled=STATE.done;
+  if(STATE.done) showEnd(); else document.getElementById('end').classList.remove('show');
+}
+
+function render(){ if(STATE.mode==='link') renderLink(); else renderSquad(); }
+
+function renderSquad(){
+  const cellsEl=document.getElementById('cells'); cellsEl.innerHTML='';
+  STATE.puzzle.cells.forEach((c,i)=>{
+    const solved=STATE.solved[i];
+    const el=document.createElement('div'); el.className='cell'+(solved?' solved':'');
+    el.innerHTML=`<div class="num">${i+1}</div>
+      <div class="info">
+        <div class="club">${c.club.name}</div>
+        <div class="meta"><span class="badge">${c.season}</span> &nbsp;${c.club.league==='Other'?'':c.club.league}</div>
+      </div>
+      ${solved?`<div class="ans">${solved}</div>`:''}
+      <div class="mark">${solved?'✅':'⬜'}</div>`;
+    cellsEl.appendChild(el);
+  });
+  const solvedN=STATE.solved.filter(Boolean).length;
+  document.getElementById('left').textContent=`${solvedN}/5 clubs · ${MAX_GUESSES-STATE.guesses.length} guesses left`;
+  renderPips();
+}
+
+// all players who played for every club in the current link puzzle, most famous first (cached)
+function validAnswers(){
+  const p=STATE.puzzle;
+  if(p._answers) return p._answers;
+  const req=p.reqIds, out=[];
+  for(const d in PLAYERS){ if(req.every(c=>PLAYERS[d].clubs.has(c))) out.push(d); }
+  out.sort((a,b)=>((DATA.playerInfo[b]?.o||0)-(DATA.playerInfo[a]?.o||0)));
+  return p._answers=out;
+}
+
+function renderLink(){
+  const cellsEl=document.getElementById('cells'); cellsEl.innerHTML='';
+  STATE.puzzle.clubs.forEach(club=>{
+    const el=document.createElement('div'); el.className='cell';
+    el.innerHTML=`<div class="num">🔗</div>
+      <div class="info">
+        <div class="club">${club.name}</div>
+        <div class="meta">${club.league==='Other'?'':club.league}</div>
+      </div>`;
+    cellsEl.appendChild(el);
+  });
+  const a=STATE.answer;
+  const ans=document.createElement('div'); ans.className='cell'+(a?' solved':'');
+  ans.style.marginTop='4px';
+  ans.innerHTML=`<div class="num">?</div>
+    <div class="info"><div class="club" style="${a?'':'color:var(--dim);font-weight:500'}">${a?'Linked by':'Who played for all of these?'}</div></div>
+    ${a?`<div class="ans">${a}</div>`:''}
+    <div class="mark">${a?'✅':'⬜'}</div>`;
+  cellsEl.appendChild(ans);
+  document.getElementById('left').textContent=`${a?'solved':STATE.puzzle.clubs.length+' clubs'} · ${MAX_GUESSES-STATE.guesses.length} guesses left`;
+  // hint after 3 misses: position and/or nationality of a famous valid connector
+  const hintEl=document.getElementById('hint');
+  if(!STATE.done && STATE.guesses.length>=3){
+    const info=DATA.playerInfo[validAnswers()[0]]||{};
+    const bits=[]; if(info.pos)bits.push(info.pos); if(info.nat)bits.push('from '+info.nat);
+    hintEl.textContent='💡 Hint — one answer is a '+(bits.join(' ')||'top-5 player');
+    hintEl.style.display='block';
+  } else { hintEl.style.display='none'; }
+  renderPips();
+}
+
+function submitGuess(raw){ if(STATE.mode==='link') return submitLink(raw); return submitSquad(raw); }
+
+function submitSquad(raw){
+  if(STATE.done) return;
+  const g=matchKey(raw); if(!g) return;
+  let hit=false; const newly=[];
+  STATE.puzzle.cells.forEach((c,i)=>{
+    if(STATE.solved[i]) return;
+    if(c.keys.has(g)){
+      const pl=c.players.find(p=>p.k.includes(g));
+      STATE.solved[i]=pl?pl.d:raw; hit=true; newly.push(i);
+    }
+  });
+  STATE.guesses.push({hit});
+  document.getElementById('guess').value='';
+  hideSugg();
+  const solvedN=STATE.solved.filter(Boolean).length;
+  if(solvedN===5){STATE.done=true; toast('🏆 All five! '+STATE.guesses.length+'/'+MAX_GUESSES);}
+  else if(STATE.guesses.length>=MAX_GUESSES){STATE.done=true;}
+  else if(hit){toast(newly.length>1?`Nice — covered ${newly.length} clubs!`:'✅ Got one!');}
+  else {toast('❌ Not in any of these squads');}
+  save(); render();
+}
+
+function submitLink(raw){
+  if(STATE.done) return;
+  const g=matchKey(raw); if(!g) return;
+  const req=STATE.puzzle.reqIds;
+  let found=null;
+  for(const d in PLAYERS){ const pl=PLAYERS[d];
+    if(pl.keys.has(g) && req.every(c=>pl.clubs.has(c))){ found=d; break; } }
+  STATE.guesses.push({hit:!!found});
+  document.getElementById('guess').value='';
+  hideSugg();
+  if(found){STATE.answer=found; STATE.done=true; toast('🏆 '+found+' — '+STATE.guesses.length+'/'+MAX_GUESSES);}
+  else if(STATE.guesses.length>=MAX_GUESSES){STATE.done=true;}
+  else {toast('❌ Not a player who links all of them');}
+  save(); render();
+}
+
+function shareText(){
+  const dmap={easy:'🟢',medium:'🟡',hard:'🔴'};
+  const row=STATE.guesses.map(g=>g.hit?'🟩':'🟥').join('');
+  const d=new Date(); const dd=d.getDate()+' '+d.toLocaleString('en',{month:'short'});
+  if(STATE.mode==='link'){
+    const won=!!STATE.answer; const score=won?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;
+    return `🔗 Onze Link ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · linked ${STATE.puzzle.clubs.length} clubs\nonze.game`;
+  }
+  const t=LEAGUE_TRACKS.find(l=>l[0]===STATE.league);
+  const label=t?t[1].replace(/^[^ ]+ /,''):STATE.league;
+  const solvedN=STATE.solved.filter(Boolean).length;
+  const score=solvedN===5?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;
+  return `⚽ Onze ${label} ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · ${solvedN}/5 clubs\nonze.game`;
+}
+function showEnd(){
+  const e=document.getElementById('end'); e.classList.add('show');
+  const won = STATE.mode==='link' ? !!STATE.answer : STATE.solved.filter(Boolean).length===5;
+  document.getElementById('endmsg').textContent=won?'Solved! 🏆':'Out of guesses 😬';
+  const rev=document.getElementById('reveal');
+  if(STATE.mode==='link' && !won){
+    const ans=validAnswers();
+    const more=ans.length>1?' &nbsp;·&nbsp; also '+ans.slice(1,4).join(', '):'';
+    rev.innerHTML=ans.length?`Linked by <b>${ans[0]}</b>${more}`:'';
+    rev.style.display='block';
+  } else { rev.style.display='none'; }
+  document.getElementById('sharetext').textContent=shareText();
+}
+
+// ---- suggestions (lightweight) ----
+let suggIdx=-1, suggItems=[];
+function updateSugg(v){
+  const q=norm(v); const box=document.getElementById('sugg');
+  if(q.length<2){hideSugg();return;}
+  suggItems=[];
+  for(const n of ALL_NAMES){ if(n.nk.startsWith(q)||n.lk.startsWith(q)){suggItems.push(n.d); if(suggItems.length>=8)break;} }
+  if(!suggItems.length){hideSugg();return;}
+  box.innerHTML=suggItems.map((s,i)=>`<div data-i="${i}">${s}</div>`).join('');
+  box.style.display='block'; suggIdx=-1;
+  box.querySelectorAll('div').forEach(d=>d.onclick=()=>submitGuess(suggItems[+d.dataset.i]));
+}
+function hideSugg(){document.getElementById('sugg').style.display='none';suggItems=[];suggIdx=-1;}
+
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1600);}
+
+function initSelects(){
+  const msel=document.getElementById('mode');
+  msel.innerHTML=MODES.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+  msel.value=localStorage.getItem('onze:lastMode')||'squad';
+  const lsel=document.getElementById('league');
+  lsel.innerHTML=LEAGUE_TRACKS.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+  lsel.value=localStorage.getItem('onze:lastLeague')||'WORLD';
+  const dsel=document.getElementById('diff');
+  dsel.innerHTML=DIFFICULTIES.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+  dsel.value=localStorage.getItem('onze:lastDiff')||'medium';
+  const go=()=>{localStorage.setItem('onze:lastMode',msel.value);
+    localStorage.setItem('onze:lastLeague',lsel.value);
+    localStorage.setItem('onze:lastDiff',dsel.value);
+    applyModeUI(); start(msel.value,lsel.value,dsel.value);};
+  msel.onchange=go; lsel.onchange=go; dsel.onchange=go;
+  applyModeUI();
+}
+// link mode spans leagues, so the league picker is irrelevant there
+function applyModeUI(){
+  const link=document.getElementById('mode').value==='link';
+  document.getElementById('league').style.display=link?'none':'';
+  document.querySelector('.sub').textContent=link
+    ? 'Find one player who turned out for ALL of these clubs (2016–26).'
+    : 'Name one player from each squad — that exact club, that exact season.';
+  document.getElementById('guess').placeholder=link
+    ? 'Name the player who links them…' : 'Type a player name and press Enter…';
+}
+
+function buildNameIndex(){
+  const seen=new Set(); ALL_NAMES=[]; PLAYERS={};
+  for(const season of DATA.seasons){const r=DATA.rosters[season];
+    for(const cid in r){for(const pl of r[cid].p){
+      const e=PLAYERS[pl.d]||(PLAYERS[pl.d]={clubs:new Set(),keys:new Set()});
+      e.clubs.add(+cid); for(const k of pl.k) e.keys.add(k);
+      if(seen.has(pl.d))continue; seen.add(pl.d);
+      const nk=norm(pl.d); const parts=nk.split(' '); ALL_NAMES.push({d:pl.d,nk,lk:parts[parts.length-1]||nk});}}}
+  ALL_NAMES.sort((a,b)=>a.d.localeCompare(b.d));
+}
+
+function start(mode, league, diff){
+  STATE=loadState(mode, league, diff);
+  render();
+  document.getElementById('guess').focus();
+}
+
+document.addEventListener('DOMContentLoaded',async()=>{
+  DATA=await fetch('data/squads.json').then(r=>r.json());
+  buildNameIndex();
+  initSelects();
+  const input=document.getElementById('guess');
+  input.addEventListener('input',e=>updateSugg(e.target.value));
+  input.addEventListener('keydown',e=>{
+    const box=document.getElementById('sugg');
+    if(box.style.display==='block'&&suggItems.length){
+      if(e.key==='ArrowDown'){e.preventDefault();suggIdx=(suggIdx+1)%suggItems.length;}
+      else if(e.key==='ArrowUp'){e.preventDefault();suggIdx=(suggIdx-1+suggItems.length)%suggItems.length;}
+      else if(e.key==='Enter'&&suggIdx>=0){e.preventDefault();submitGuess(suggItems[suggIdx]);return;}
+      box.querySelectorAll('div').forEach((d,i)=>d.classList.toggle('active',i===suggIdx));
+    }
+    if(e.key==='Enter'&&suggIdx<0){submitGuess(input.value);}
+    if(e.key==='Escape')hideSugg();
+  });
+  document.addEventListener('click',e=>{if(!e.target.closest('.inputrow'))hideSugg();});
+  document.getElementById('shareBtn').onclick=()=>{
+    navigator.clipboard.writeText(shareText()).then(()=>toast('Copied to clipboard!'),()=>toast('Copy failed'));
+  };
+  start(document.getElementById('mode').value, document.getElementById('league').value, document.getElementById('diff').value);
+});
+</script>
+</body>
+</html>
