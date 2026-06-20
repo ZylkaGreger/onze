@@ -170,8 +170,11 @@ let DATA, STATE, ALL_NAMES = [], PLAYERS = {};
 
 function norm(s){return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'')
   .toLowerCase().replace(/[.'’]/g,'').replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();}
-// match key: tokens sorted, so word order doesn't matter ("Williams Nico" == "Nico Williams")
-function matchKey(s){return norm(s).split(' ').filter(Boolean).sort().join(' ');}
+// match key: tokens sorted (word order doesn't matter) + strip name suffixes (Neymar Jr == Neymar)
+const NAME_SUFFIX=new Set(['jr','junior','sr','snr','ii','iii','iv']);
+function matchKey(s){let p=norm(s).split(' ').filter(Boolean);
+  while(p.length>1&&NAME_SUFFIX.has(p[p.length-1]))p.pop();
+  return p.sort().join(' ');}
 
 // deterministic PRNG
 function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}

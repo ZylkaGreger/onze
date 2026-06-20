@@ -61,13 +61,20 @@ function normalize(s) {
   return stripAccents(s).toLowerCase().replace(/[.'’]/g, '')
     .replace(/[^a-z0-9 ]/g, ' ').replace(/\s+/g, ' ').trim();
 }
-// player match keys: surname token + ORDER-INDEPENDENT full name (tokens sorted),
-// so "Nico Williams" and "Williams Nico" both match. The browser sorts the guess the same way.
+// name suffixes that aren't part of the matchable name (Neymar Jr == Neymar, Vinícius Júnior == Vinícius)
+const NAME_SUFFIX = new Set(['jr', 'junior', 'sr', 'snr', 'ii', 'iii', 'iv']);
+function dropSuffix(parts) {
+  let p = parts.slice();
+  while (p.length > 1 && NAME_SUFFIX.has(p[p.length - 1])) p.pop();
+  return (p.length === 1 && p[0].length < 2) ? parts : p;   // don't strip down to a lone initial
+}
+// player match keys: surname token + ORDER-INDEPENDENT full name (tokens sorted), suffix-stripped,
+// so "Nico Williams"=="Williams Nico" and "Neymar"=="Neymar Jr". The browser normalises guesses the same way.
 function keysFor(display, full) {
   const set = new Set();
   for (const name of [display, full]) {
     const n = normalize(name); if (!n) continue;
-    const parts = n.split(' ').filter(Boolean);
+    const parts = dropSuffix(n.split(' ').filter(Boolean));
     set.add(parts.slice().sort().join(' '));            // order-independent full name
     if (parts.length > 1) set.add(parts[parts.length - 1]); // surname
   }
