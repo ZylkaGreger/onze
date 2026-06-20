@@ -377,13 +377,37 @@ function shareText(){
   const d=new Date(); const dd=d.getDate()+' '+d.toLocaleString('en',{month:'short'});
   if(STATE.mode==='link'){
     const won=!!STATE.answer; const score=won?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;
-    return `🔗 Onze Link ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · linked ${STATE.puzzle.clubs.length} clubs\nonze.game`;
+    return `🔗 Onze Link ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · linked ${STATE.puzzle.clubs.length} clubs\nonzedaily.com`;
   }
   const t=LEAGUE_TRACKS.find(l=>l[0]===STATE.league);
   const label=t?t[1].replace(/^[^ ]+ /,''):STATE.league;
   const solvedN=STATE.solved.filter(Boolean).length;
   const score=solvedN===5?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;
-  return `⚽ Onze ${label} ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · ${solvedN}/5 clubs\nonze.game`;
+  return `⚽ Onze ${label} ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · ${solvedN}/5 clubs\nonzedaily.com`;
+}
+// robust cross-platform share: native share sheet (mobile) -> async clipboard -> legacy execCommand
+function legacyCopy(text){
+  try{
+    const ta=document.createElement('textarea');
+    ta.value=text; ta.setAttribute('readonly',''); ta.contentEditable='true';
+    ta.style.position='fixed'; ta.style.top='-1000px'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try{ ta.setSelectionRange(0, text.length); }catch(e){}
+    const ok=document.execCommand('copy'); document.body.removeChild(ta); return ok;
+  }catch(e){ return false; }
+}
+async function shareResult(){
+  const text=shareText();
+  if(navigator.share){
+    try{ await navigator.share({text}); return; }
+    catch(e){ if(e && e.name==='AbortError') return; }   // user dismissed the sheet
+  }
+  try{
+    if(navigator.clipboard && window.isSecureContext){
+      await navigator.clipboard.writeText(text); toast('Copied to clipboard!'); return;
+    }
+  }catch(e){}
+  toast(legacyCopy(text) ? 'Copied to clipboard!' : 'Copy failed — long-press to copy');
 }
 function showEnd(){
   const e=document.getElementById('end'); e.classList.add('show');
@@ -478,9 +502,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
     if(e.key==='Escape')hideSugg();
   });
   document.addEventListener('click',e=>{if(!e.target.closest('.inputrow'))hideSugg();});
-  document.getElementById('shareBtn').onclick=()=>{
-    navigator.clipboard.writeText(shareText()).then(()=>toast('Copied to clipboard!'),()=>toast('Copy failed'));
-  };
+  document.getElementById('shareBtn').onclick=()=>shareResult();
   start(document.getElementById('mode').value, document.getElementById('league').value, document.getElementById('diff').value);
 });
 </script>
