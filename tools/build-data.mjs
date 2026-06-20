@@ -218,23 +218,35 @@ for (const d in pClubs) { if (pClubs[d].size >= 2 && pInfo[d]) playerInfo[d] = p
 // --- grid puzzles (Immaculate-Grid style): 3 row clubs x 3 col clubs, every cell guaranteed solvable ---
 const adj = {};
 for (const [a, b] of links2) { (adj[a] ??= new Set()).add(b); (adj[b] ??= new Set()).add(a); }
-// candidates = best-connected clubs (≈ big, recognisable -> guessable cells)
-const cand = clubs.map(c => c.id).filter(id => adj[id]).sort((a, b) => adj[b].size - adj[a].size).slice(0, 46);
-const candSet = new Set(cand);
 const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-const gridSet = new Map();
-for (let t = 0; t < 80000 && gridSet.size < 300; t++) {
-  const rows = shuffle(cand.slice()).slice(0, 3);
-  // cols must connect to ALL three rows (so every cell has a shared player), and be recognisable
-  let common = [...adj[rows[0]]].filter(x => candSet.has(x) && adj[rows[1]].has(x) && adj[rows[2]].has(x) && !rows.includes(x));
-  if (common.length < 3) continue;
-  const cols = shuffle(common).slice(0, 3);
-  const key = rows.slice().sort((a, b) => a - b).join(',') + '|' + cols.slice().sort((a, b) => a - b).join(',');
-  if (!gridSet.has(key)) gridSet.set(key, [...rows, ...cols]);
+function genGrids(pool, maxN) {
+  const ps = new Set(pool), set = new Map();
+  for (let t = 0; t < 200000 && set.size < maxN; t++) {
+    const rows = shuffle(pool.slice()).slice(0, 3);
+    if (!rows.every(x => adj[x])) continue;
+    const common = [...adj[rows[0]]].filter(x => ps.has(x) && adj[rows[1]].has(x) && adj[rows[2]].has(x) && !rows.includes(x));
+    if (common.length < 3) continue;
+    const cols = shuffle(common).slice(0, 3);
+    const key = rows.slice().sort((a, b) => a - b).join(',') + '|' + cols.slice().sort((a, b) => a - b).join(',');
+    if (!set.has(key)) set.set(key, [...rows, ...cols]);
+  }
+  return [...set.values()];
 }
-const grids = [...gridSet.values()];
+// general pool = best-connected clubs (medium/hard grids)
+const cand = clubs.map(c => c.id).filter(id => adj[id]).sort((a, b) => adj[b].size - adj[a].size).slice(0, 46);
+const grids = genGrids(cand, 300);
+// "big clubs" = genuinely recognisable sides (Easy difficulty). Excludes mid-table clubs.
+const BIG_NAMES = [
+  'Real Madrid', 'FC Barcelona', 'Atlético Madrid', 'Sevilla FC', 'Valencia CF',
+  'Manchester United', 'Manchester City', 'Liverpool', 'Chelsea', 'Arsenal', 'Tottenham Hotspur', 'Newcastle United',
+  'Juventus', 'Inter', 'AC Milan', 'Napoli', 'Roma', 'Lazio',
+  'FC Bayern München', 'Borussia Dortmund', 'RB Leipzig', 'Bayer 04 Leverkusen',
+  'Paris Saint-Germain', 'Olympique de Marseille', 'Olympique Lyonnais', 'AS Monaco',
+];
+const bigClubs = BIG_NAMES.map(n => idOf[n]).filter(x => x != null);
+const gridsEasy = genGrids(bigClubs, 250);
 
-fs.writeFileSync(OUT, JSON.stringify({ seasons: seasonList, clubs, rosters, links2, links3, grids, playerInfo, meta: { ovrMin: OVR_MIN, minSquad: MIN_SQUAD, leagues: Object.values(LEAGUE_BY_ID) } }));
+fs.writeFileSync(OUT, JSON.stringify({ seasons: seasonList, clubs, rosters, links2, links3, grids, gridsEasy, bigClubs, playerInfo, meta: { ovrMin: OVR_MIN, minSquad: MIN_SQUAD, leagues: Object.values(LEAGUE_BY_ID) } }));
 
 // report
 const byLeague = {}; for (const c of clubs) byLeague[c.league] = (byLeague[c.league] || 0) + 1;
@@ -242,6 +254,6 @@ const cells = seasonList.reduce((n, s) => n + Object.keys(rosters[s]).length, 0)
 console.log(`seasons: ${seasonList.join(', ')}`);
 console.log(`clubs: ${clubs.length} | cells: ${cells} | size: ${(fs.statSync(OUT).size / 1e6).toFixed(1)} MB`);
 console.log('clubs per league:', byLeague);
-console.log(`link puzzles: ${links2.length} pairs, ${links3.length} triples | grids: ${grids.length}`);
+console.log(`link puzzles: ${links2.length} pairs, ${links3.length} triples | grids: ${grids.length} (easy: ${gridsEasy.length}, big clubs: ${bigClubs.length})`);
 const unmatched = clubs.filter(c => c.league !== 'Other' && !universe[c.league]?.has(matchClub(c.name)));
 console.log(`name-mismatch clubs (kept as-is, not season-filtered): ${unmatched.length ? unmatched.map(c => c.name).join(', ') : 'none'}`);

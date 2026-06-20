@@ -213,9 +213,11 @@ function buildPuzzle(league, diff){
     }
   }
   if(diff==='easy'){
-    const ws = pool.map(p=>p.w).sort((a,b)=>a-b);
-    const cut = ws[Math.floor(ws.length*0.70)] || 0;
-    pool = pool.filter(p=>p.w>=cut);
+    // restrict to genuinely big clubs; fall back to top-weight if a single league lacks 5 of them
+    const big=new Set(DATA.bigClubs||[]);
+    const bigPool=pool.filter(p=>big.has(p.cid));
+    if(new Set(bigPool.map(p=>p.cid)).size>=5){ pool=bigPool; }
+    else { const ws=pool.map(p=>p.w).sort((a,b)=>a-b); const cut=ws[Math.floor(ws.length*0.70)]||0; pool=pool.filter(p=>p.w>=cut); }
   } else if(diff==='hard'){
     pool.forEach(p=>p.w=1);
   }
@@ -259,7 +261,8 @@ function buildLinkPuzzle(diff){
 // grid: 3 row clubs x 3 col clubs; each cell needs a player who played for both
 function buildGridPuzzle(diff){
   const rnd=mulberry32(hashStr(todayStr()+'|grid|'+diff));
-  const g=DATA.grids[Math.floor(rnd()*DATA.grids.length)];
+  const pool=(diff==='easy' && DATA.gridsEasy && DATA.gridsEasy.length) ? DATA.gridsEasy : DATA.grids;
+  const g=pool[Math.floor(rnd()*pool.length)];
   const rowIds=g.slice(0,3), colIds=g.slice(3,6);
   return {date:todayStr(), rowIds, colIds, rows:rowIds.map(id=>DATA.clubs[id]), cols:colIds.map(id=>DATA.clubs[id]), sig:g.join('|')};
 }
@@ -450,24 +453,31 @@ function submitLink(raw){
   save(); render();
 }
 
+// deep link back into the exact mode (and difficulty/league) the player just played
+function shareUrl(){
+  const p=new URLSearchParams(); p.set('m',STATE.mode); p.set('d',STATE.diff);
+  if(STATE.mode==='squad') p.set('l',STATE.league);
+  return 'onzedaily.com/?'+p.toString();
+}
 function shareText(){
   const dmap={easy:'🟢',medium:'🟡',hard:'🔴'};
   const row=STATE.guesses.map(g=>g.hit?'🟩':'🟥').join('');
   const d=new Date(); const dd=d.getDate()+' '+d.toLocaleString('en',{month:'short'});
+  const url=shareUrl();
   if(STATE.mode==='link'){
     const won=!!STATE.answer; const score=won?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;
-    return `🔗 Onze Link ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · linked ${STATE.puzzle.clubs.length} clubs\nonzedaily.com`;
+    return `🔗 Onze Link ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · linked ${STATE.puzzle.clubs.length} clubs\n${url}`;
   }
   if(STATE.mode==='grid'){
     const filled=STATE.cells.filter(Boolean).length;
     let g=''; for(let r=0;r<3;r++){ for(let c=0;c<3;c++) g+=STATE.cells[r*3+c]?'🟩':'⬜'; g+='\n'; }
-    return `▦ Onze Grid — ${dd}\n${g}${filled}/9 in ${STATE.guesses.length} guesses\nonzedaily.com`;
+    return `▦ Onze Grid ${dmap[STATE.diff]||''} — ${dd}\n${g}${filled}/9 in ${STATE.guesses.length} guesses\n${url}`;
   }
   const t=LEAGUE_TRACKS.find(l=>l[0]===STATE.league);
   const label=t?t[1].replace(/^[^ ]+ /,''):STATE.league;
   const solvedN=STATE.solved.filter(Boolean).length;
   const score=solvedN===5?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;
-  return `⚽ Onze ${label} ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · ${solvedN}/5 clubs\nonzedaily.com`;
+  return `⚽ Onze ${label} ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · ${solvedN}/5 clubs\n${url}`;
 }
 // robust cross-platform share: native share sheet (mobile) -> async clipboard -> legacy execCommand
 function legacyCopy(text){
@@ -512,8 +522,12 @@ let suggIdx=-1, suggItems=[];
 function updateSugg(v){
   const q=norm(v); const box=document.getElementById('sugg');
   if(q.length<2){hideSugg();return;}
-  suggItems=[];
-  for(const n of ALL_NAMES){ if(n.nk.startsWith(q)||n.lk.startsWith(q)){suggItems.push(n.d); if(suggItems.length>=8)break;} }
+  const starts=[], contains=[];
+  for(const n of ALL_NAMES){
+    if(starts.length<8 && (n.nk.startsWith(q)||n.lk.startsWith(q))) starts.push(n.d);
+    else if(contains.length<8 && n.nk.includes(q)) contains.push(n.d);
+  }
+  suggItems=starts.concat(contains.filter(x=>!starts.includes(x))).slice(0,8);
   if(!suggItems.length){hideSugg();return;}
   box.innerHTML=suggItems.map((s,i)=>`<div data-i="${i}">${s}</div>`).join('');
   box.style.display='block'; suggIdx=-1;
@@ -524,15 +538,19 @@ function hideSugg(){document.getElementById('sugg').style.display='none';suggIte
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1600);}
 
 function initSelects(){
+  // a shared link (?m=grid&d=easy&l=WORLD) opens that exact mode
+  const q=new URLSearchParams(location.search);
+  const qMode=q.get('m'), qDiff=q.get('d'), qLeague=q.get('l');
+  const valid=(v,list)=>list.some(x=>x[0]===v);
   const msel=document.getElementById('mode');
   msel.innerHTML=MODES.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
-  msel.value=localStorage.getItem('onze:lastMode')||'squad';
+  msel.value=(valid(qMode,MODES)?qMode:null)||localStorage.getItem('onze:lastMode')||'squad';
   const lsel=document.getElementById('league');
   lsel.innerHTML=LEAGUE_TRACKS.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
-  lsel.value=localStorage.getItem('onze:lastLeague')||'WORLD';
+  lsel.value=(valid(qLeague,LEAGUE_TRACKS)?qLeague:null)||localStorage.getItem('onze:lastLeague')||'WORLD';
   const dsel=document.getElementById('diff');
   dsel.innerHTML=DIFFICULTIES.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
-  dsel.value=localStorage.getItem('onze:lastDiff')||'medium';
+  dsel.value=(valid(qDiff,DIFFICULTIES)?qDiff:null)||localStorage.getItem('onze:lastDiff')||'medium';
   const go=()=>{localStorage.setItem('onze:lastMode',msel.value);
     localStorage.setItem('onze:lastLeague',lsel.value);
     localStorage.setItem('onze:lastDiff',dsel.value);
