@@ -23,6 +23,22 @@ const LEAGUE_BY_ID = { 13: 'Premier League', 53: 'La Liga', 19: 'Bundesliga', 31
 const OVR_MIN = 60;
 const MIN_SQUAD = 11;
 
+// "big clubs" = genuinely recognisable sides (used for Easy difficulty AND to weight the
+// pre-2016 Wikipedia seasons, which carry no player ratings — see ratingless weighting below).
+const BIG_NAMES = [
+  'Real Madrid', 'FC Barcelona', 'Atlético Madrid', 'Sevilla FC', 'Valencia CF',
+  'Manchester United', 'Manchester City', 'Liverpool', 'Chelsea', 'Arsenal', 'Tottenham Hotspur', 'Newcastle United',
+  'Juventus', 'Inter', 'AC Milan', 'Napoli', 'Roma', 'Lazio',
+  'FC Bayern München', 'Borussia Dortmund', 'RB Leipzig', 'Bayer 04 Leverkusen',
+  'Paris Saint-Germain', 'Olympique de Marseille', 'Olympique Lyonnais', 'AS Monaco',
+];
+const FAMOUS = new Set(BIG_NAMES);
+// Ratingless (pre-2016 Wikipedia) club-season draw weights — no overalls, so weightOf can't
+// score them. Put them on the same scale as rated clubs so they actually surface in the
+// easy/medium daily draw: a famous club's old season ~ a strong modern side, others ~ a solid mid one.
+const RATELESS_FAME_W = 100;
+const RATELESS_BASE_W = 38;
+
 // Club league = its CURRENT (EA FC 26) top flight, applied to all seasons. For clubs that
 // were actually in the 2nd tier some seasons (promoted/relegated/yo-yo), those club-seasons
 // are mislabelled, so we drop them. Keyed by canonical club name -> seasons NOT in the top flight.
@@ -87,7 +103,7 @@ function clubKey(name) {
 }
 // match key for league lookups: drop club-type tokens + standalone numbers so EA names line up
 // with Wikipedia names (AJ Auxerre→auxerre, CA Osasuna→osasuna, Deportivo Alavés→alaves, Schalke 04→schalke).
-const MATCH_DROP = new Set('fc cf afc sc ssc ss as ac us rc cd ud sv sd vfl vfb tsg fsv bsc rcd aj sco osc ca stade deportivo olympique alsace balompie de club calcio'.split(' '));
+const MATCH_DROP = new Set('fc cf afc sc ssc ss as ac us uc rc cd ud sv sd vfl vfb tsg fsv bsc rcd acf cfc bc spvgg ogc fco hsc aj sco osc ca stade deportivo olympique alsace balompie de club calcio'.split(' '));
 const matchClub = (name) => stripAccents(name).toLowerCase().replace(/[.'’]/g, '')
   .replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(t => t && !/^\d+$/.test(t) && !MATCH_DROP.has(t)).join(' ');
 
@@ -146,6 +162,119 @@ for (const [ed, season] of Object.entries(fifaMap)) {
   }
 }
 
+// 3) Wikipedia pre-2016 squads (tools/wiki-seasons/*.json) — seasons 2006/07..2015/16
+// that the EA/FIFA editions don't cover. Players carry no overall/position (ovr=0), so
+// they don't inflate the star-weight; they just add older club-seasons + connections.
+// Club names come from Wikipedia and must fold into the EA canonical club (so Juventus
+// keeps both eras and links across them) — match by matchClub key, with manual aliases
+// for the few whose keys don't line up (EN/DE spelling, dropped tokens).
+const WIKI_DIR = path.join(__dirname, 'wiki-seasons');
+const WIKI_ALIAS = {
+  'FC Bayern Munich': 'FC Bayern München',
+  'Inter Milan': 'Inter',
+  'Internazionale': 'Inter',
+  // place-name variants matchClub can't reconcile (EA dropped the city / uses a different one)
+  'Athletic Bilbao': 'Athletic Club',
+  'Celta de Vigo': 'RC Celta',
+  'RC Celta de Vigo': 'RC Celta',
+};
+if (fs.existsSync(WIKI_DIR)) {
+  // index canonical clubs by their matchClub key for auto-resolution
+  const canonByMatch = {};
+  for (const k in canon) canonByMatch[matchClub(canon[k].name)] = canon[k].name;
+  let wFiles = 0, wClubs = 0, wPlayers = 0, wNew = new Set();
+  for (const f of fs.readdirSync(WIKI_DIR).filter(n => n.endsWith('.json'))) {
+    const d = JSON.parse(fs.readFileSync(path.join(WIKI_DIR, f), 'utf8'));
+    const league = LEAGUE_BY_ID[d.league_id] || d.league;
+    const season = d.season;                                   // "2014/15"
+    if (!league || !season) continue;
+    wFiles++;
+    for (const [wikiClub, players] of Object.entries(d.clubs || {})) {
+      // resolve to the canonical club name: explicit alias → matchClub key → register new
+      let name = WIKI_ALIAS[wikiClub] || canonByMatch[matchClub(wikiClub)] || wikiClub;
+      const ck = clubKey(name);
+      if (canon[ck]) name = canon[ck].name;                    // canonical casing
+      else { canon[ck] = { name, league }; canonByMatch[matchClub(name)] = name; wNew.add(name); }
+      wClubs++;
+      for (const p of players) { add(season, name, league, p, '', 0, '', ''); wPlayers++; }
+    }
+  }
+  console.log(`wiki: ${wFiles} files, ${wClubs} club-seasons, ${wPlayers} players, ${wNew.size} clubs new to the dataset`);
+}
+
+// --- canonical player identity ---
+// The same player appears under different display strings across sources: a full Wikipedia name
+// ("Zlatan Ibrahimović"), a FIFA short form ("Z. Ibrahimović"), or a bare surname ("Ibrahimovic").
+// Left split, no single record holds the whole career, so connections (links/grid) break. Merge
+// them onto one canonical (fullest) name. CONSERVATIVE: a short form "X. Surname" only auto-folds
+// into a full name when that (surname,initial) is unique among full names; bare surnames are never
+// auto-merged (a lone "Ronaldo" must not become "Cristiano Ronaldo"). PLAYER_ALIAS force-merges the
+// famous cases the auto rule can't resolve (ambiguous initial, bare surname of a clear player).
+// Curated force-merges, each vetted so the variant's club set belongs to ONE player (no collision):
+//   - FIFA short forms whose (surname,initial) is shared by several full names, but whose clubs
+//     clearly identify one famous player;
+//   - bare surnames that are abbreviations of a full name (NOT a distinct mononym — "Pedro",
+//     "Felipe", "Gabriel", "Sandro", "Pelé" are different one-name players and are left alone).
+const PLAYER_ALIAS = {
+  'K. Mbappé': 'Kylian Mbappé',
+  'A. Sánchez': 'Alexis Sánchez',
+  'L. Hernández': 'Lucas Hernández',
+  'R. Rodríguez': 'Ricardo Rodríguez',
+  'J. Rodríguez': 'James Rodríguez',
+  'Morata': 'Álvaro Morata',
+  'Coutinho': 'Philippe Coutinho',
+};
+{
+  const allKeys = {}, dClubs = {};                     // display -> Set(match keys) / Set(club names)
+  for (const s of Object.values(seasons)) for (const cname in s) for (const p of s[cname])
+    { (allKeys[p.d] ??= new Set()); for (const k of p.k) allKeys[p.d].add(k); (dClubs[p.d] ??= new Set()).add(cname); }
+  const meta = {}, fullBySI = {}, fullBySur = {};      // (surname,initial) & surname -> Set(full displays)
+  for (const d in allKeys) {
+    const parts = normalize(d).split(' ').filter(Boolean);
+    const surname = parts[parts.length - 1] || '', first = parts.length > 1 ? parts[0] : '';
+    const isShort = parts.length > 1 && first.length === 1;
+    meta[d] = { surname, initial: first[0] || '', isShort, isBare: parts.length === 1 };
+    if (parts.length > 1 && !isShort) { (fullBySI[surname + '|' + first[0]] ??= new Set()).add(d); (fullBySur[surname] ??= new Set()).add(d); }
+  }
+  const subset = (a, b) => { for (const x of a) if (!b.has(x)) return false; return true; };
+  const canonName = {};
+  for (const d in allKeys) {
+    if (PLAYER_ALIAS[d]) { canonName[d] = PLAYER_ALIAS[d]; continue; }
+    const m = meta[d]; let c = d;
+    if (m.isShort) { const set = fullBySI[m.surname + '|' + m.initial]; if (set && set.size === 1) c = [...set][0]; }
+    else if (m.isBare) {
+      // a bare surname folds into a full name ONLY when that surname has exactly one full name AND
+      // the bare's clubs are a subset of it — i.e. it's an abbreviation, not a distinct mononym
+      // ("Ibrahimovic"⊆Zlatan merges; "Pedro"/"Pelé" have their own clubs, so they stay separate).
+      const set = fullBySur[m.surname];
+      if (set && set.size === 1 && subset(dClubs[d], dClubs[[...set][0]])) c = [...set][0];
+    }
+    canonName[d] = c;
+  }
+  // rewrite every appearance: swap to the canonical name, add that name's match keys, dedup per squad
+  let merged = 0;
+  for (const s of Object.values(seasons)) for (const cname in s) {
+    const out = [], byD = {};
+    for (const p of s[cname]) {
+      const c = canonName[p.d];
+      if (c !== p.d) { merged++; for (const k of keysFor(c, '')) if (!p.k.includes(k)) p.k.push(k); p.d = c; }
+      if (byD[p.d]) { const ex = byD[p.d]; for (const k of p.k) if (!ex.k.includes(k)) ex.k.push(k); ex.o = Math.max(ex.o, p.o); }
+      else { byD[p.d] = p; out.push(p); }
+    }
+    s[cname] = out;
+  }
+  // canonicalise the hint info (position/nationality) onto the same names, keeping the richest record
+  const pi2 = {};
+  for (const d in pInfo) {
+    const c = canonName[d] || d, v = pInfo[d], cur = pi2[c];
+    if (!cur) pi2[c] = { ...v };
+    else { if (v.o > cur.o) cur.o = v.o; if (!cur.pos && v.pos) cur.pos = v.pos; if (!cur.nat && v.nat) cur.nat = v.nat; }
+  }
+  for (const k in pInfo) delete pInfo[k];
+  Object.assign(pInfo, pi2);
+  console.log(`identity: merged ${merged} appearances onto canonical names`);
+}
+
 // assemble
 const clubNames = new Set();
 for (const s of Object.values(seasons)) for (const n of Object.keys(s)) clubNames.add(n);
@@ -171,7 +300,11 @@ for (const season of seasonList) {
     // matches that league's known set, so a name mismatch never wrongly removes a real club.
     if (lg && universe[lg]?.has(mk) && allow[lg][season] && !allow[lg][season].has(mk)) continue;
     if (LOWER_DIVISION[name]?.includes(season)) continue;   // manual backstop
-    rosters[season][idOf[name]] = { w: weightOf(players), p: players.map(p => ({ d: p.d, k: p.k })) };
+    // pre-2016 Wikipedia seasons have no ratings (all o===0) -> weightOf would floor them to 1
+    // and they'd never surface in the weighted draw. Give them a fame-based baseline instead.
+    const rated = players.some(p => p.o > 0);
+    const w = rated ? weightOf(players) : (FAMOUS.has(name) ? RATELESS_FAME_W : RATELESS_BASE_W);
+    rosters[season][idOf[name]] = { w, p: players.map(p => ({ d: p.d, k: p.k })) };
   }
 }
 
@@ -235,14 +368,7 @@ function genGrids(pool, maxN) {
 // general pool = best-connected clubs (medium/hard grids)
 const cand = clubs.map(c => c.id).filter(id => adj[id]).sort((a, b) => adj[b].size - adj[a].size).slice(0, 46);
 const grids = genGrids(cand, 300);
-// "big clubs" = genuinely recognisable sides (Easy difficulty). Excludes mid-table clubs.
-const BIG_NAMES = [
-  'Real Madrid', 'FC Barcelona', 'Atlético Madrid', 'Sevilla FC', 'Valencia CF',
-  'Manchester United', 'Manchester City', 'Liverpool', 'Chelsea', 'Arsenal', 'Tottenham Hotspur', 'Newcastle United',
-  'Juventus', 'Inter', 'AC Milan', 'Napoli', 'Roma', 'Lazio',
-  'FC Bayern München', 'Borussia Dortmund', 'RB Leipzig', 'Bayer 04 Leverkusen',
-  'Paris Saint-Germain', 'Olympique de Marseille', 'Olympique Lyonnais', 'AS Monaco',
-];
+// "big clubs" = genuinely recognisable sides (Easy difficulty). BIG_NAMES defined up top.
 const bigClubs = BIG_NAMES.map(n => idOf[n]).filter(x => x != null);
 const gridsEasy = genGrids(bigClubs, 250);
 

@@ -3,3 +3,4 @@ node_modules/
 .claude/
 tools/.fifa_cache/
 tools/.wikipedia_cache/
+__pycache__/

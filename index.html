@@ -390,7 +390,7 @@ function renderGrid(){
   document.getElementById('pips').innerHTML='';
   document.getElementById('left').textContent=`${filled}/9 cells · ${GRID_GUESSES-STATE.guesses.length} guesses left`;
   const input=document.getElementById('guess'); input.disabled=STATE.done;
-  input.placeholder = STATE.active==null ? 'Tap a cell, then name a player…'
+  input.placeholder = STATE.active==null ? 'Type a player — it lands in the right cell…'
     : `${p.rows[Math.floor(STATE.active/3)].name} × ${p.cols[STATE.active%3].name}…`;
   if(STATE.done) showEnd(); else document.getElementById('end').classList.remove('show');
 }
@@ -399,16 +399,33 @@ function submitGuess(raw){ if(STATE.mode==='link') return submitLink(raw); if(ST
 
 function submitGrid(raw){
   if(STATE.done) return;
-  if(STATE.active==null){ toast('Tap a cell first'); return; }
   const g=matchKey(raw); if(!g) return;
-  const idx=STATE.active; if(STATE.cells[idx]) return;
-  const r=Math.floor(idx/3), c=idx%3, need=[STATE.puzzle.rowIds[r], STATE.puzzle.colIds[c]];
-  let found=null;
-  for(const d in PLAYERS){ const pl=PLAYERS[d]; if(pl.keys.has(g) && need.every(x=>pl.clubs.has(x))){ found=d; break; } }
-  STATE.guesses.push({hit:!!found});
+  // Auto-place: just type a name. Find every open cell that any player matching the typed
+  // name satisfies, then drop them into the right one — no need to tap a cell first.
+  // (A tapped cell is still honoured as a tie-breaker when the player fits more than one.)
+  const fitByCell={};                         // cell idx -> display name of a player who fits it
+  let known=false;
+  for(const d in PLAYERS){
+    const pl=PLAYERS[d]; if(!pl.keys.has(g)) continue;
+    known=true;
+    for(let idx=0;idx<9;idx++){
+      if(STATE.cells[idx]||fitByCell[idx]!=null) continue;
+      const r=Math.floor(idx/3), c=idx%3;
+      if(pl.clubs.has(STATE.puzzle.rowIds[r]) && pl.clubs.has(STATE.puzzle.colIds[c])) fitByCell[idx]=d;
+    }
+  }
+  const fits=Object.keys(fitByCell).map(Number);
+  let target=-1;
+  if(fits.length) target = (STATE.active!=null && fitByCell[STATE.active]!=null) ? STATE.active : fits[0];
+  STATE.guesses.push({hit:target>=0});
   document.getElementById('guess').value=''; hideSugg();
-  if(found){ STATE.cells[idx]=found; STATE.active=null; toast('✅ '+found); }
-  else toast(`❌ Not a ${STATE.puzzle.rows[r].name} × ${STATE.puzzle.cols[c].name} player`);
+  if(target>=0){
+    const name=fitByCell[target]; STATE.cells[target]=name; STATE.active=null;
+    const r=Math.floor(target/3), c=target%3;
+    toast(`✅ ${name} → ${STATE.puzzle.rows[r].name} × ${STATE.puzzle.cols[c].name}`);
+  }
+  else if(known) toast(`❌ Doesn't fit an open cell`);
+  else toast('❌ Unknown player');
   const filled=STATE.cells.filter(Boolean).length;
   if(filled===9){ STATE.done=true; toast('🏆 Full grid! '+STATE.guesses.length+'/'+GRID_GUESSES); }
   else if(STATE.guesses.length>=GRID_GUESSES) STATE.done=true;
@@ -568,17 +585,20 @@ function applyModeUI(){
   document.querySelector('.sub').textContent=sub;
   document.getElementById('guess').placeholder=
     mode==='link'?'Name the player who links them…':
-    mode==='grid'?'Tap a cell, then name a player…':'Type a player name and press Enter…';
+    mode==='grid'?'Type a player — it lands in the right cell…':'Type a player name and press Enter…';
 }
 
 function buildNameIndex(){
+  // Player identities are canonicalised in the build (tools/build-data.mjs): the same player's
+  // FIFA short form, Wikipedia full name and bare-surname variants are already merged onto one
+  // canonical name in the rosters, so here we just group appearances by display name.
   const seen=new Set(); ALL_NAMES=[]; PLAYERS={};
   for(const season of DATA.seasons){const r=DATA.rosters[season];
     for(const cid in r){for(const pl of r[cid].p){
       const e=PLAYERS[pl.d]||(PLAYERS[pl.d]={clubs:new Set(),keys:new Set()});
       e.clubs.add(+cid); for(const k of pl.k) e.keys.add(k);
       if(seen.has(pl.d))continue; seen.add(pl.d);
-      const nk=norm(pl.d); const parts=nk.split(' '); ALL_NAMES.push({d:pl.d,nk,lk:parts[parts.length-1]||nk});}}}
+      const nk=norm(pl.d), parts=nk.split(' '); ALL_NAMES.push({d:pl.d,nk,lk:parts[parts.length-1]||nk});}}}
   ALL_NAMES.sort((a,b)=>a.d.localeCompare(b.d));
 }
 
