@@ -403,7 +403,9 @@ function legacyCopy(text){
 }
 async function shareResult(){
   const text=shareText();
-  if(navigator.share){
+  // share sheet only on touch/mobile; desktop copies straight to clipboard
+  const isMobile = (window.matchMedia && matchMedia('(pointer:coarse)').matches) || /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+  if(isMobile && navigator.share){
     try{ await navigator.share({text}); return; }
     catch(e){ if(e && e.name==='AbortError') return; }   // user dismissed the sheet
   }
