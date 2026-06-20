@@ -84,6 +84,18 @@
   .toast.show{opacity:1}
   .foot{text-align:center;color:var(--dim);font-size:11px;margin-top:24px;line-height:1.6}
 
+  /* ---- grid mode ---- */
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0}
+  .ghead{display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;font-weight:500;
+    color:var(--txt);background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 4px;min-height:58px;line-height:1.15}
+  .ghead.corner{background:transparent;border:none}
+  .gcell{display:flex;align-items:center;justify-content:center;text-align:center;min-height:58px;padding:4px;
+    background:var(--panel);border:1px solid var(--line);border-radius:8px;cursor:pointer}
+  .gcell.active{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+  .gcell.solved{border-color:var(--green-d);background:linear-gradient(180deg,rgba(46,160,67,.14),transparent);cursor:default}
+  .gcell .gname{color:var(--accent);font-weight:500;font-size:11px;line-height:1.2}
+  .gcell .gx{color:var(--red);font-size:16px}
+
   /* ---- mobile ---- */
   @media (max-width:480px){
     body{padding:14px 11px 48px}
@@ -141,7 +153,7 @@
   </div>
 
   <div class="foot">
-    one daily puzzle per league track · free-text guessing · 6 guesses
+    a new puzzle every day · free-text guessing · spoiler-free share
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -164,7 +176,9 @@ const DIFFICULTIES = [
 const MODES = [
   ['squad','📋 Squads'],
   ['link','🔗 Find the link'],
+  ['grid','▦ Grid'],
 ];
+const GRID_GUESSES = 9;
 
 let DATA, STATE, ALL_NAMES = [], PLAYERS = {};
 
@@ -242,6 +256,14 @@ function buildLinkPuzzle(diff){
   return {date, clubs:reqIds.map(id=>DATA.clubs[id]), reqIds, sig:reqIds.join('|')};
 }
 
+// grid: 3 row clubs x 3 col clubs; each cell needs a player who played for both
+function buildGridPuzzle(diff){
+  const rnd=mulberry32(hashStr(todayStr()+'|grid|'+diff));
+  const g=DATA.grids[Math.floor(rnd()*DATA.grids.length)];
+  const rowIds=g.slice(0,3), colIds=g.slice(3,6);
+  return {date:todayStr(), rowIds, colIds, rows:rowIds.map(id=>DATA.clubs[id]), cols:colIds.map(id=>DATA.clubs[id]), sig:g.join('|')};
+}
+
 function loadState(mode, league, diff){
   const key='onze:'+todayStr()+':'+mode+':'+league+':'+diff;
   const saved=localStorage.getItem(key);
@@ -250,6 +272,10 @@ function loadState(mode, league, diff){
     const puzzle=buildLinkPuzzle(diff);
     st={key, mode, league, diff, puzzle, answer:null, guesses:[], done:false};
     if(saved){try{const s=JSON.parse(saved); if(s.sig===puzzle.sig){st.answer=s.answer;st.guesses=s.guesses;st.done=s.done;}}catch(e){}}
+  } else if(mode==='grid'){
+    const puzzle=buildGridPuzzle(diff);
+    st={key, mode, league, diff, puzzle, cells:Array(9).fill(null), active:null, guesses:[], done:false};
+    if(saved){try{const s=JSON.parse(saved); if(s.sig===puzzle.sig){st.cells=s.cells;st.guesses=s.guesses;st.done=s.done;}}catch(e){}}
   } else {
     const puzzle=buildPuzzle(league, diff);
     st={key, mode, league, diff, puzzle, solved:Array(puzzle.cells.length).fill(null), guesses:[], done:false};
@@ -259,10 +285,11 @@ function loadState(mode, league, diff){
 }
 function cellsSig(p){return p.cells.map(c=>c.cid+'@'+c.season).join('|');}
 function save(){
-  const sig = STATE.mode==='link' ? STATE.puzzle.sig : cellsSig(STATE.puzzle);
-  const body = STATE.mode==='link'
-    ? {sig, answer:STATE.answer, guesses:STATE.guesses, done:STATE.done}
-    : {sig, solved:STATE.solved, guesses:STATE.guesses, done:STATE.done};
+  const sig = (STATE.mode==='link'||STATE.mode==='grid') ? STATE.puzzle.sig : cellsSig(STATE.puzzle);
+  let body;
+  if(STATE.mode==='link') body={sig, answer:STATE.answer, guesses:STATE.guesses, done:STATE.done};
+  else if(STATE.mode==='grid') body={sig, cells:STATE.cells, guesses:STATE.guesses, done:STATE.done};
+  else body={sig, solved:STATE.solved, guesses:STATE.guesses, done:STATE.done};
   localStorage.setItem(STATE.key, JSON.stringify(body));
 }
 
@@ -274,7 +301,7 @@ function renderPips(){
   if(STATE.done) showEnd(); else document.getElementById('end').classList.remove('show');
 }
 
-function render(){ if(STATE.mode==='link') renderLink(); else renderSquad(); }
+function render(){ if(STATE.mode==='link') renderLink(); else if(STATE.mode==='grid') renderGrid(); else renderSquad(); }
 
 function renderSquad(){
   const cellsEl=document.getElementById('cells'); cellsEl.innerHTML='';
@@ -336,7 +363,54 @@ function renderLink(){
   renderPips();
 }
 
-function submitGuess(raw){ if(STATE.mode==='link') return submitLink(raw); return submitSquad(raw); }
+function ghead(text, on){const d=document.createElement('div');d.className='ghead'+(on?'':' corner');d.textContent=text;return d;}
+function renderGrid(){
+  const cellsEl=document.getElementById('cells'); cellsEl.innerHTML='';
+  const p=STATE.puzzle;
+  const wrap=document.createElement('div'); wrap.className='grid';
+  wrap.appendChild(ghead('', false));                       // corner
+  p.cols.forEach(c=>wrap.appendChild(ghead(c.name, true))); // column clubs
+  p.rows.forEach((rc,r)=>{
+    wrap.appendChild(ghead(rc.name, true));                 // row club
+    for(let c=0;c<3;c++){
+      const idx=r*3+c, val=STATE.cells[idx];
+      const cell=document.createElement('div');
+      cell.className='gcell'+(val?' solved':'')+(STATE.active===idx&&!val&&!STATE.done?' active':'');
+      cell.innerHTML=val?`<span class="gname">${val}</span>`:(STATE.done?'<span class="gx">✕</span>':'');
+      if(!val&&!STATE.done) cell.onclick=()=>{STATE.active=idx;render();document.getElementById('guess').focus();};
+      wrap.appendChild(cell);
+    }
+  });
+  cellsEl.appendChild(wrap);
+  const filled=STATE.cells.filter(Boolean).length;
+  document.getElementById('hint').style.display='none';
+  document.getElementById('pips').innerHTML='';
+  document.getElementById('left').textContent=`${filled}/9 cells · ${GRID_GUESSES-STATE.guesses.length} guesses left`;
+  const input=document.getElementById('guess'); input.disabled=STATE.done;
+  input.placeholder = STATE.active==null ? 'Tap a cell, then name a player…'
+    : `${p.rows[Math.floor(STATE.active/3)].name} × ${p.cols[STATE.active%3].name}…`;
+  if(STATE.done) showEnd(); else document.getElementById('end').classList.remove('show');
+}
+
+function submitGuess(raw){ if(STATE.mode==='link') return submitLink(raw); if(STATE.mode==='grid') return submitGrid(raw); return submitSquad(raw); }
+
+function submitGrid(raw){
+  if(STATE.done) return;
+  if(STATE.active==null){ toast('Tap a cell first'); return; }
+  const g=matchKey(raw); if(!g) return;
+  const idx=STATE.active; if(STATE.cells[idx]) return;
+  const r=Math.floor(idx/3), c=idx%3, need=[STATE.puzzle.rowIds[r], STATE.puzzle.colIds[c]];
+  let found=null;
+  for(const d in PLAYERS){ const pl=PLAYERS[d]; if(pl.keys.has(g) && need.every(x=>pl.clubs.has(x))){ found=d; break; } }
+  STATE.guesses.push({hit:!!found});
+  document.getElementById('guess').value=''; hideSugg();
+  if(found){ STATE.cells[idx]=found; STATE.active=null; toast('✅ '+found); }
+  else toast(`❌ Not a ${STATE.puzzle.rows[r].name} × ${STATE.puzzle.cols[c].name} player`);
+  const filled=STATE.cells.filter(Boolean).length;
+  if(filled===9){ STATE.done=true; toast('🏆 Full grid! '+STATE.guesses.length+'/'+GRID_GUESSES); }
+  else if(STATE.guesses.length>=GRID_GUESSES) STATE.done=true;
+  save(); render();
+}
 
 function submitSquad(raw){
   if(STATE.done) return;
@@ -384,6 +458,11 @@ function shareText(){
     const won=!!STATE.answer; const score=won?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;
     return `🔗 Onze Link ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · linked ${STATE.puzzle.clubs.length} clubs\nonzedaily.com`;
   }
+  if(STATE.mode==='grid'){
+    const filled=STATE.cells.filter(Boolean).length;
+    let g=''; for(let r=0;r<3;r++){ for(let c=0;c<3;c++) g+=STATE.cells[r*3+c]?'🟩':'⬜'; g+='\n'; }
+    return `▦ Onze Grid — ${dd}\n${g}${filled}/9 in ${STATE.guesses.length} guesses\nonzedaily.com`;
+  }
   const t=LEAGUE_TRACKS.find(l=>l[0]===STATE.league);
   const label=t?t[1].replace(/^[^ ]+ /,''):STATE.league;
   const solvedN=STATE.solved.filter(Boolean).length;
@@ -413,8 +492,11 @@ async function shareResult(){
 }
 function showEnd(){
   const e=document.getElementById('end'); e.classList.add('show');
-  const won = STATE.mode==='link' ? !!STATE.answer : STATE.solved.filter(Boolean).length===5;
-  document.getElementById('endmsg').textContent=won?'Solved! 🏆':'Out of guesses 😬';
+  const won = STATE.mode==='link' ? !!STATE.answer
+    : STATE.mode==='grid' ? STATE.cells.filter(Boolean).length===9
+    : STATE.solved.filter(Boolean).length===5;
+  const gridN = STATE.mode==='grid' ? STATE.cells.filter(Boolean).length : 0;
+  document.getElementById('endmsg').textContent = won?'Solved! 🏆' : (STATE.mode==='grid'?`Grid done — ${gridN}/9`:'Out of guesses 😬');
   const rev=document.getElementById('reveal');
   if(STATE.mode==='link' && !won){
     const ans=validAnswers();
@@ -458,15 +540,17 @@ function initSelects(){
   msel.onchange=go; lsel.onchange=go; dsel.onchange=go;
   applyModeUI();
 }
-// link mode spans leagues, so the league picker is irrelevant there
+// link & grid modes span leagues, so the league picker is irrelevant there
 function applyModeUI(){
-  const link=document.getElementById('mode').value==='link';
-  document.getElementById('league').style.display=link?'none':'';
-  document.querySelector('.sub').textContent=link
-    ? 'Find one player who turned out for ALL of these clubs (2016–26).'
-    : 'Name one player from each squad — that exact club, that exact season.';
-  document.getElementById('guess').placeholder=link
-    ? 'Name the player who links them…' : 'Type a player name and press Enter…';
+  const mode=document.getElementById('mode').value;
+  document.getElementById('league').style.display=(mode==='squad')?'':'none';
+  const sub={squad:'Name one player from each squad — that exact club, that exact season.',
+    link:'Find one player who turned out for ALL of these clubs (2016–26).',
+    grid:'Name a player who played for both clubs of each cell. 9 cells, 9 guesses.'}[mode];
+  document.querySelector('.sub').textContent=sub;
+  document.getElementById('guess').placeholder=
+    mode==='link'?'Name the player who links them…':
+    mode==='grid'?'Tap a cell, then name a player…':'Type a player name and press Enter…';
 }
 
 function buildNameIndex(){
