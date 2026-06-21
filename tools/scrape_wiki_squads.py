@@ -95,8 +95,17 @@ def api_get(params):
     params.setdefault("formatversion", "2")
     url = API + "?" + urllib.parse.urlencode(params)
     req = urllib.request.Request(url, headers={"User-Agent": UA})
-    with urllib.request.urlopen(req, timeout=30, context=SSL_CTX) as r:
-        return json.loads(r.read().decode("utf-8"))
+    # Wikipedia occasionally resets a connection mid-run; retry with backoff so a
+    # transient blip doesn't abort a long scrape.
+    last = None
+    for attempt in range(5):
+        try:
+            with urllib.request.urlopen(req, timeout=30, context=SSL_CTX) as r:
+                return json.loads(r.read().decode("utf-8"))
+        except (urllib.error.URLError, ConnectionError, TimeoutError) as e:
+            last = e
+            time.sleep(1.5 * (attempt + 1))
+    raise last
 
 
 def get_wikitext(page):
@@ -134,16 +143,17 @@ def extract_clubs(league_wikitext):
     """Club article titles from a season league page's standings table.
 
     MediaWiki standings use {{#invoke:sports table}} with one
-    'name_XXX = [[Club article]]' line per team. That gives canonical titles.
+    'name_XXX = [[Club article]]' line per team. The link may be wrapped in a
+    template (e.g. 'name_ATM = {{nobr|[[Atlético Madrid]]}}'), so we pull the
+    first [[link]] from anywhere in the value rather than requiring it at the start.
     """
     titles = []
     seen = set()
-    for m in re.finditer(r"\bname_[A-Za-z0-9]+\s*=\s*(\[\[[^\]]+\]\])", league_wikitext):
-        title = clean_link(m.group(1))
-        # link target (article title), not the display alias, so the season-page
-        # title resolves; prefer the part before any '|'
-        inner = re.search(r"\[\[([^\]]+)\]\]", m.group(1)).group(1)
-        article = inner.split("|", 1)[0].strip()
+    for m in re.finditer(r"\bname_[A-Za-z0-9]+\s*=\s*([^\n]+)", league_wikitext):
+        lm = re.search(r"\[\[([^\]]+?)\]\]", m.group(1))
+        if not lm:
+            continue
+        article = lm.group(1).split("|", 1)[0].strip()   # link target, not display alias
         if article and article not in seen:
             seen.add(article)
             titles.append(article)
@@ -207,122 +217,104 @@ def is_player_name(n):
     return True
 
 
-def pick_squad_section(wikitext):
-    """Return (slice, score) for the section most likely to be the first-team squad.
+# a section's header must look like a squad/roster for it to be mined as one — this keeps
+# standings ("League table") and stat logs ("Goalscorers") from leaking club/scorer names.
+SQUAD_HDR = re.compile(r"first[\s-]*team|squad|\bplayers?\b|appearance|goals scored|statistic", re.I)
 
-    Pages are wildly inconsistent: the canonical roster may sit under 'Squad',
-    'First team squad', or 'Squad, appearances, and goals scored', while a bare
-    'Squad' header sometimes holds a youth list (e.g. Bayern). We score sections
-    by header and prefer the appearances/statistics table; loan/reserve/youth/II
-    blocks are skipped entirely. The returned score lets the caller decide how
-    much to trust table-based extraction — a low score means 'no real squad
-    header found', so we must NOT mine arbitrary tables (they may be standings,
-    which would emit club names as fake players).
+
+def extract_from(sec, tables=True):
+    """Pull player names from one section. Methods, in order of trust:
+      1. fs-family templates — {{fs player}}/{{nat fs player}}/{{Efs player}}/{{Efs player2}}
+         carrying name=[[Player]];
+      2. {{fb si player |p={{sortname|First|Last}} }};
+      3. (only if tables=True) wikitable rows — per row the player is the first surviving
+         token (a passing wikilink or a sortname), since the Name cell precedes the
+         previous-club/nationality cells. Header cells ('!') are dropped first.
+    Every candidate funnels through add(), which applies is_player_name as the one gate.
     """
-    headers = [(m.start(), m.end(), m.group(2).strip())
-               for m in HEADER_RE.finditer(wikitext)]
-    if not headers:
-        return wikitext, 0
-    candidates = []
-    for i, (start, end, title) in enumerate(headers):
-        body_end = headers[i + 1][0] if i + 1 < len(headers) else len(wikitext)
-        body = wikitext[end:body_end]
-        if EXCLUDE_HDR.search(title):
-            continue
-        has_players = (PLAYER_TMPL.search(body) or TABLE_ROW.search(body)
-                       or FLAG_LINK.search(body)
-                       or (WIKITABLE.search(body) and body.count("[[") >= 8))
-        if not has_players:
-            continue
-        t = title.lower()
-        score = 1
-        if re.search(r"appearance|goals scored|squad statistic", t):
-            score = 10
-        elif "squad" in t or "first team" in t or "first-team" in t:
-            score = 5
-        elif "player" in t:
-            score = 4
-        candidates.append((score, len(body), body))
-    if not candidates:
-        return wikitext, 0
-    candidates.sort(key=lambda c: (c[0], c[1]), reverse=True)
-    return candidates[0][2], candidates[0][0]
-
-
-def extract_squad(club_wikitext):
-    """Player names from a club-season page's first-team squad section.
-
-    Handles every markup seen across the 5 leagues:
-      * {{fs player}} / {{nat fs player}} / {{Efs player}} with name=[[Player]]
-      * {{fb si player |p={{sortname|First|Last}} }}
-      * numbered wikitables  |'''N'''||[[Player]]||...
-      * 'Squad statistics' tables  {{flagicon|XXX}} [[Player]]
-      * bare wikitables (Liverpool-style) where each row's first link is the player
-    Table/flag mining only runs in a section with a real squad header (score>=4),
-    so standings tables can never leak club names in as players.
-    """
-    sec, score = pick_squad_section(club_wikitext)
     names, seen = [], set()
 
     def add(name):
-        # single validation gate: every extraction path funnels through here, so
-        # template residue / countries / positions can't leak from any of them.
         if name and is_player_name(name) and name.lower() not in seen:
             seen.add(name.lower())
             names.append(name)
 
-    # 1. fs-family templates. Capture the FULL wikilink (incl. internal pipe) so
-    #    'name=[[Article (footballer)|Display]]' resolves to 'Display'.
     for m in re.finditer(r"\|\s*name\s*=\s*(\[\[.*?\]\]|[^|}\n]+)", sec):
-        ctx = sec[max(0, m.start() - 220):m.start()]
-        if re.search(r"\{\{\s*(?:nat\s+)?e?fs player\b", ctx, re.I):
+        ctx = sec[max(0, m.start() - 260):m.start()]
+        if re.search(r"\{\{\s*(?:nat\s+)?e?fs player\d*\b", ctx, re.I):
             add(clean_link(m.group(1)))
+    if names:
+        return names
 
-    # 2. {{fb si player |p={{sortname|First|Last}} }}
-    if not names:
-        for line in re.findall(r"\{\{\s*fb si player\b[^\n]*", sec, flags=re.I):
-            sn = re.search(r"\{\{\s*sortname\s*\|\s*([^|}]+?)\s*\|\s*([^|}]+?)\s*[|}]",
-                           line, flags=re.I)
-            if sn:
-                add(re.sub(r"\s+", " ", f"{sn.group(1)} {sn.group(2)}").strip())
-                continue
-            pm = re.search(r"\|\s*p\s*=\s*([^|]+)", line)
-            if pm:
-                add(clean_link(pm.group(1)))
+    for line in re.findall(r"\{\{\s*fb si player\b[^\n]*", sec, flags=re.I):
+        sn = re.search(r"\{\{\s*sortname\s*\|\s*([^|}]+?)\s*\|\s*([^|}]+?)\s*[|}]", line, flags=re.I)
+        if sn:
+            add(re.sub(r"\s+", " ", f"{sn.group(1)} {sn.group(2)}").strip())
+            continue
+        pm = re.search(r"\|\s*p\s*=\s*([^|]+)", line)
+        if pm:
+            add(clean_link(pm.group(1)))
+    if names or not tables:
+        return names
 
-    # 3. table-based extraction — ONLY inside a trusted squad section, so
-    # standings/group tables can never leak club names in as players.
-    #
-    # Column order is wildly inconsistent across pages (Name may precede or
-    # follow the position/flag/squad-no columns; some add a previous-club
-    # column) and the Name cell is sometimes a [[wikilink]] and sometimes a
-    # {{sortname|First|Last}} template. The invariant that holds: per row, the
-    # player is the FIRST player-token — a passing wikilink OR a sortname —
-    # since the Name cell precedes the previous-club/nationality cells, and
-    # positions/files/numbers are filtered out. Split into rows, take the first
-    # surviving token in each. The leading block is the table header — skip it.
-    if not names and score >= 4:
-        blocks = re.split(r"\n\s*\|-", sec)
-        for block in (blocks[1:] if len(blocks) > 2 else blocks):
-            # drop header cells (lines starting with '!') so colspan headers like
-            # '!colspan=3|[[2010–11 Serie A]]' don't leak the competition name.
-            block = "\n".join(ln for ln in block.splitlines()
-                              if not ln.lstrip().startswith("!"))
-            best, best_pos = None, len(block) + 1
-            sn = re.search(r"\{\{\s*sortname\s*\|\s*([^|}]+?)\s*\|\s*([^|}]+?)\s*[|}]",
-                           block, flags=re.I)
-            if sn:
-                best, best_pos = f"{sn.group(1)} {sn.group(2)}".strip(), sn.start()
-            for lm in re.finditer(r"\[\[([^\]]+?)\]\]", block):
-                name = clean_link("[[" + lm.group(1) + "]]")
-                if is_player_name(name):
-                    if lm.start() < best_pos:
-                        best = name
-                    break
-            if best:
-                add(best)
-
+    blocks = re.split(r"\n\s*\|-", sec)
+    for block in (blocks[1:] if len(blocks) > 2 else blocks):
+        block = "\n".join(ln for ln in block.splitlines() if not ln.lstrip().startswith("!"))
+        best, best_pos = None, len(block) + 1
+        sn = re.search(r"\{\{\s*sortname\s*\|\s*([^|}]+?)\s*\|\s*([^|}]+?)\s*[|}]", block, flags=re.I)
+        if sn:
+            best, best_pos = f"{sn.group(1)} {sn.group(2)}".strip(), sn.start()
+        for lm in re.finditer(r"\[\[([^\]]+?)\]\]", block):
+            name = clean_link("[[" + lm.group(1) + "]]")
+            if is_player_name(name):
+                if lm.start() < best_pos:
+                    best = name
+                break
+        if best:
+            add(best)
     return names
+
+
+def pick_squad_section(wikitext):
+    """Return the squad-section slice that yields the MOST players, or None.
+
+    Among sections whose header looks like a squad/roster (and aren't loan/reserve/youth),
+    we don't trust the header wording to rank them — a thin 'Appearances' table can outrank
+    the real 'First team' roster. So we actually run extract_from on each and pick the one
+    with the most players (tie-break: header preference, then length). Restricting to
+    squad-ish headers keeps standings/goal-log tables from ever being mined.
+    """
+    headers = [(m.start(), m.end(), m.group(2).strip())
+               for m in HEADER_RE.finditer(wikitext)]
+    best, best_key = None, (0, -1, -1)
+    for i, (start, end, title) in enumerate(headers):
+        body_end = headers[i + 1][0] if i + 1 < len(headers) else len(wikitext)
+        body = wikitext[end:body_end]
+        if EXCLUDE_HDR.search(title) or not SQUAD_HDR.search(title):
+            continue
+        if not (PLAYER_TMPL.search(body) or TABLE_ROW.search(body) or FLAG_LINK.search(body)
+                or (WIKITABLE.search(body) and body.count("[[") >= 8)):
+            continue
+        n = len(extract_from(body))
+        if n == 0:
+            continue
+        pref = 2 if re.search(r"first[\s-]*team|squad", title, re.I) else \
+            (1 if re.search(r"appearance|statistic|goals scored", title, re.I) else 0)
+        key = (n, pref, len(body))
+        if key > best_key:
+            best_key, best = key, body
+    return best
+
+
+def extract_squad(club_wikitext):
+    """Player names from a club-season page's first-team squad.
+
+    Picks the richest squad-titled section and mines it (templates + tables). If no
+    squad-titled section exists, falls back to template-only extraction over the whole
+    page — never table mining, so standings can't leak club names in as players.
+    """
+    sec = pick_squad_section(club_wikitext)
+    return extract_from(sec, tables=True) if sec is not None else extract_from(club_wikitext, tables=False)
 
 
 def scrape(league_key, season, sleep=0.4, min_squad=12):

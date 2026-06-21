@@ -228,13 +228,27 @@ const PLAYER_ALIAS = {
   const allKeys = {}, dClubs = {};                     // display -> Set(match keys) / Set(club names)
   for (const s of Object.values(seasons)) for (const cname in s) for (const p of s[cname])
     { (allKeys[p.d] ??= new Set()); for (const k of p.k) allKeys[p.d].add(k); (dClubs[p.d] ??= new Set()).add(cname); }
-  const meta = {}, fullBySI = {}, fullBySur = {};      // (surname,initial) & surname -> Set(full displays)
+  // surname PHRASE = last token + any preceding particle run, so "David de Gea" -> "de gea",
+  // "Edwin van der Sar" -> "van der sar". This is what lets the FIFA short form "De Gea" /
+  // "Van der Sar" (which look like 2-token names, not "X. Surname") fold into the full name.
+  const PARTICLES = new Set('de del della di du da dos das van von der den ter le la'.split(' '));
+  const splitName = (parts) => {
+    let j = parts.length - 1;
+    while (j - 1 >= 0 && PARTICLES.has(parts[j - 1])) j--;
+    return [parts.slice(0, j), parts.slice(j).join(' ')];          // [given tokens, surname phrase]
+  };
+  const meta = {}, fullBySI = {}, fullBySur = {}, fullByTok = {};  // (surname,initial) / surname / any-token -> Set(full displays)
   for (const d in allKeys) {
-    const parts = normalize(d).split(' ').filter(Boolean);
-    const surname = parts[parts.length - 1] || '', first = parts.length > 1 ? parts[0] : '';
-    const isShort = parts.length > 1 && first.length === 1;
-    meta[d] = { surname, initial: first[0] || '', isShort, isBare: parts.length === 1 };
-    if (parts.length > 1 && !isShort) { (fullBySI[surname + '|' + first[0]] ??= new Set()).add(d); (fullBySur[surname] ??= new Set()).add(d); }
+    const toks = normalize(d).split(' ').filter(Boolean);
+    const [given, surname] = splitName(toks);
+    const isShort = given.length === 1 && given[0].length === 1;   // "Z. Ibrahimović", "D. de Gea"
+    const isBare = given.length === 0;                              // "De Gea", "Van Dijk", "Ronaldo", "Abde"
+    meta[d] = { surname, initial: given[0] ? given[0][0] : '', isShort, isBare };
+    if (given.length >= 1 && !isShort) {                            // it's a full name
+      (fullBySI[surname + '|' + given[0][0]] ??= new Set()).add(d);
+      (fullBySur[surname] ??= new Set()).add(d);
+      for (const t of toks) (fullByTok[t] ??= new Set()).add(d);    // index every token (incl. forename)
+    }
   }
   const subset = (a, b) => { for (const x of a) if (!b.has(x)) return false; return true; };
   const canonName = {};
@@ -243,11 +257,17 @@ const PLAYER_ALIAS = {
     const m = meta[d]; let c = d;
     if (m.isShort) { const set = fullBySI[m.surname + '|' + m.initial]; if (set && set.size === 1) c = [...set][0]; }
     else if (m.isBare) {
-      // a bare surname folds into a full name ONLY when that surname has exactly one full name AND
-      // the bare's clubs are a subset of it — i.e. it's an abbreviation, not a distinct mononym
-      // ("Ibrahimovic"⊆Zlatan merges; "Pedro"/"Pelé" have their own clubs, so they stay separate).
-      const set = fullBySur[m.surname];
-      if (set && set.size === 1 && subset(dClubs[d], dClubs[[...set][0]])) c = [...set][0];
+      // a bare name folds into a full name ONLY when exactly one full name contains it (as surname
+      // phrase, or — for a single word — as ANY token, so a forename nickname like "Abde" folds into
+      // "Abde Ezzalzouli") AND the bare's clubs are a subset of it. Unique + subset keeps distinct
+      // mononyms apart ("Pedro"/"Pelé"/"Ronaldo" have their own clubs, "David"/"Sergio" aren't unique).
+      const cand = new Set(fullBySur[m.surname] || []);
+      if (!m.surname.includes(' ')) for (const f of (fullByTok[m.surname] || [])) cand.add(f);
+      // among the full names that contain this bare token, merge into the one whose clubs
+      // actually contain the bare's clubs — disambiguates namesakes (bare "Abde" @ Betis ->
+      // "Abde Ezzalzouli", not "Abde Raihani" @ Atlético) and still blocks mononyms (Ronaldo).
+      const fit = [...cand].filter((f) => subset(dClubs[d], dClubs[f]));
+      if (fit.length === 1) c = fit[0];
     }
     canonName[d] = c;
   }
@@ -263,6 +283,20 @@ const PLAYER_ALIAS = {
     }
     s[cname] = out;
   }
+  // Let a player be found by an UNCOMMON forename / one-word nickname (e.g. "Abde" ->
+  // "Abde Ezzalzouli", "Ansu" -> "Ansu Fati"). Only when that forename is borne by <=2 players,
+  // so common forenames ("David", "Sergio") never become keys that match everyone.
+  const canonDisplays = new Set();
+  for (const s of Object.values(seasons)) for (const cname in s) for (const p of s[cname]) canonDisplays.add(p.d);
+  const firstOf = (d) => { const [g] = splitName(normalize(d).split(' ').filter(Boolean)); return (g.length && g[0].length >= 3) ? g[0] : ''; };
+  const firstFreq = {};
+  for (const d of canonDisplays) { const f = firstOf(d); if (f) (firstFreq[f] ??= new Set()).add(d); }
+  let nick = 0;
+  for (const s of Object.values(seasons)) for (const cname in s) for (const p of s[cname]) {
+    const f = firstOf(p.d);
+    if (f && firstFreq[f].size <= 2 && !p.k.includes(f)) { p.k.push(f); nick++; }
+  }
+
   // canonicalise the hint info (position/nationality) onto the same names, keeping the richest record
   const pi2 = {};
   for (const d in pInfo) {

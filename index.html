@@ -579,9 +579,12 @@ function initSelects(){
 function applyModeUI(){
   const mode=document.getElementById('mode').value;
   document.getElementById('league').style.display=(mode==='squad')?'':'none';
+  // squads only count within the dataset's season window — state it so a pre-window
+  // connection (e.g. Owen's 2004/05 Real Madrid) doesn't read as a broken answer.
+  const win = (DATA&&DATA.seasons&&DATA.seasons.length) ? ` Squads ${DATA.seasons[0]}–${DATA.seasons[DATA.seasons.length-1]} only.` : '';
   const sub={squad:'Name one player from each squad — that exact club, that exact season.',
-    link:'Find one player who turned out for ALL of these clubs (2016–26).',
-    grid:'Name a player who played for both clubs of each cell. 9 cells, 9 guesses.'}[mode];
+    link:'Find one player who turned out for ALL of these clubs.'+win,
+    grid:'Name a player who played for both clubs of each cell. 9 cells, 9 guesses.'+win}[mode];
   document.querySelector('.sub').textContent=sub;
   document.getElementById('guess').placeholder=
     mode==='link'?'Name the player who links them…':

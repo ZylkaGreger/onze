@@ -1,0 +1,8 @@
+{
+  "_source": "en.wikipedia.org via MediaWiki API (action=parse, full wikitext); clubs from league standings, players from {{fs player}} templates",
+  "league": "Serie A",
+  "league_id": 31,
+  "season": "2018/19",
+  "clubs": {},
+  "_failures": []
+}
