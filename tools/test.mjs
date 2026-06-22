@@ -115,6 +115,14 @@ test('matching: accents, suffixes, surnames', () => {
   assert.equal(matchKey('Nico Williams'), matchKey('Williams Nico'), 'word-order independent');
 });
 
+test('matching: particle surnames are typable (ter Stegen, van Dijk…)', () => {
+  const typable = (typed, disp) => PLAYERS[disp] && PLAYERS[disp].keys.has(matchKey(typed));
+  for (const [typed, disp] of [['ter Stegen', 'Marc-André ter Stegen'], ['van Dijk', 'Virgil van Dijk'],
+    ['de Bruyne', 'Kevin De Bruyne'], ['van der Sar', 'Edwin van der Sar']]) {
+    if (PLAYERS[disp]) assert.ok(typable(typed, disp), `typing "${typed}" should match ${disp}`);
+  }
+});
+
 test('identity: Zlatan unified (PSG + Man Utd)', () => {
   assert.ok(PLAYERS['Zlatan Ibrahimović'], 'Zlatan missing');
   assert.ok(hasClubs('Zlatan Ibrahimović', 'Paris Saint-Germain', 'Manchester United'),

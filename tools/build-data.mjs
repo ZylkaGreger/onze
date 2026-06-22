@@ -79,20 +79,29 @@ function normalize(s) {
 }
 // name suffixes that aren't part of the matchable name (Neymar Jr == Neymar, Vinícius Júnior == Vinícius)
 const NAME_SUFFIX = new Set(['jr', 'junior', 'sr', 'snr', 'ii', 'iii', 'iv']);
+// surname particles — many players are known by "particle + surname" (ter Stegen, de Gea, van Dijk,
+// van der Sar). The trailing particle-run + last token forms the real surname people type.
+const PARTICLES = new Set('de del della di du da dos das van von der den ter le la'.split(' '));
 function dropSuffix(parts) {
   let p = parts.slice();
   while (p.length > 1 && NAME_SUFFIX.has(p[p.length - 1])) p.pop();
   return (p.length === 1 && p[0].length < 2) ? parts : p;   // don't strip down to a lone initial
 }
 // player match keys: surname token + ORDER-INDEPENDENT full name (tokens sorted), suffix-stripped,
-// so "Nico Williams"=="Williams Nico" and "Neymar"=="Neymar Jr". The browser normalises guesses the same way.
+// so "Nico Williams"=="Williams Nico" and "Neymar"=="Neymar Jr". Also the particle-surname phrase
+// ("ter Stegen", "de Gea") so typing that common form matches. The browser normalises guesses the same way.
 function keysFor(display, full) {
   const set = new Set();
   for (const name of [display, full]) {
     const n = normalize(name); if (!n) continue;
     const parts = dropSuffix(n.split(' ').filter(Boolean));
     set.add(parts.slice().sort().join(' '));            // order-independent full name
-    if (parts.length > 1) set.add(parts[parts.length - 1]); // surname
+    if (parts.length > 1) {
+      set.add(parts[parts.length - 1]);                 // surname
+      let j = parts.length - 1;                          // particle-surname phrase (sorted)
+      while (j - 1 >= 0 && PARTICLES.has(parts[j - 1])) j--;
+      if (j < parts.length - 1) set.add(parts.slice(j).sort().join(' '));
+    }
   }
   return [...set].filter(k => k.length >= 2);
 }
@@ -231,7 +240,6 @@ const PLAYER_ALIAS = {
   // surname PHRASE = last token + any preceding particle run, so "David de Gea" -> "de gea",
   // "Edwin van der Sar" -> "van der sar". This is what lets the FIFA short form "De Gea" /
   // "Van der Sar" (which look like 2-token names, not "X. Surname") fold into the full name.
-  const PARTICLES = new Set('de del della di du da dos das van von der den ter le la'.split(' '));
   const splitName = (parts) => {
     let j = parts.length - 1;
     while (j - 1 >= 0 && PARTICLES.has(parts[j - 1])) j--;

@@ -244,17 +244,17 @@ function buildPuzzle(league, diff){
 function buildLinkPuzzle(diff){
   const date=todayStr();
   const rnd=mulberry32(hashStr(date+'|link|'+diff));
-  const wi = (diff==='hard') ? 3 : 2;                 // weight is the element after the club ids
-  let pool = (diff==='hard') ? DATA.links3.slice() : DATA.links2.slice();
-  if(diff==='easy'){
-    const ws=pool.map(l=>l[wi]).sort((a,b)=>a-b);
+  let pool = DATA.links3.slice();                     // always 3 clubs
+  if(diff==='easy'){                                  // bias toward famous connectors
+    const ws=pool.map(l=>l[3]).sort((a,b)=>a-b);
     const cut=ws[Math.floor(ws.length*0.55)]||0;
-    pool=pool.filter(l=>l[wi]>=cut);
+    pool=pool.filter(l=>l[3]>=cut);
   }
-  let tot=0; for(const l of pool) tot+=l[wi];
+  const wOf = l => (diff==='hard') ? 1 : l[3];        // hard = uniform weight -> deeper cuts
+  let tot=0; for(const l of pool) tot+=wOf(l);
   let x=rnd()*tot, pick=pool[0];
-  for(const l of pool){ x-=l[wi]; if(x<=0){pick=l;break;} }
-  const reqIds=pick.slice(0,wi);
+  for(const l of pool){ x-=wOf(l); if(x<=0){pick=l;break;} }
+  const reqIds=pick.slice(0,3);
   return {date, clubs:reqIds.map(id=>DATA.clubs[id]), reqIds, sig:reqIds.join('|')};
 }
 
