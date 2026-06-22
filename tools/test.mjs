@@ -11,17 +11,12 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+// The shipped game logic — the SAME module the browser imports (index.html). No more
+// regex-slicing functions out of the HTML; tests track behaviour by importing it directly.
+import { norm, matchKey, todayStr, buildPuzzle, buildLinkPuzzle, buildGridPuzzle } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
-
-// --- pull the REAL norm() + matchKey() out of index.html so tests track shipped behaviour ---
-const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
-const START = 'function norm(s)', END = "return p.sort().join(' ');}";
-const src = html.slice(html.indexOf(START), html.indexOf(END) + END.length);
-const { norm, matchKey } = new Function(src + '\nreturn { norm, matchKey };')();
-const tsSrc = html.slice(html.indexOf('function todayStr()'), html.indexOf('}', html.indexOf('function todayStr()')) + 1);
-const todayStr = new Function(tsSrc + '\nreturn todayStr;')();
 
 // --- reconstruct the in-browser PLAYERS index (group appearances by display name) ---
 const PLAYERS = {};
@@ -170,4 +165,26 @@ test('identity: no false mononym merges (Ronaldo / Pedro stay distinct)', () => 
   assert.ok(!hasClubs('Cristiano Ronaldo', 'AC Milan'), 'Cristiano wrongly has AC Milan');
   assert.ok(PLAYERS['Ronaldo'] && [...PLAYERS['Ronaldo'].clubs].length >= 1, 'Brazilian Ronaldo missing');
   assert.ok(PLAYERS['Pedro'], 'mononym Pedro should stay its own player');
+});
+
+test("shipped builders produce valid puzzles for today (real game.js code)", () => {
+  // squad: every league × difficulty draws 5 distinct clubs
+  for (const lg of ['Premier League', 'La Liga', 'Bundesliga', 'Serie A', 'Ligue 1', 'WORLD'])
+    for (const diff of ['easy', 'medium', 'hard']) {
+      const p = buildPuzzle(D, lg, diff);
+      assert.equal(p.cells.length, 5, `squad ${lg}/${diff}: drew ${p.cells.length}/5 clubs`);
+      assert.equal(new Set(p.cells.map(c => c.cid)).size, 5, `squad ${lg}/${diff}: clubs not distinct`);
+    }
+  // grid: each difficulty yields a fully-connected 3×3
+  for (const diff of ['easy', 'medium', 'hard']) {
+    const g = buildGridPuzzle(D, diff);
+    for (const r of g.rowIds) for (const c of g.colIds)
+      assert.ok(conn.has(pk(r, c)), `grid ${diff}: ${nameOf(r)} × ${nameOf(c)} unconnected`);
+  }
+  // link: each difficulty yields a triple with a real connector
+  for (const diff of ['easy', 'medium', 'hard']) {
+    const l = buildLinkPuzzle(D, diff);
+    assert.equal(l.reqIds.length, 3, `link ${diff}: expected 3 clubs`);
+    assert.ok(oneConnects(...l.reqIds), `link ${diff}: ${l.reqIds.map(nameOf).join('–')} has no common player`);
+  }
 });
