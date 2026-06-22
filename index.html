@@ -94,6 +94,7 @@
   .gcell.active{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
   .gcell.solved{border-color:var(--green-d);background:linear-gradient(180deg,rgba(46,160,67,.14),transparent);cursor:default}
   .gcell .gname{color:var(--accent);font-weight:500;font-size:11px;line-height:1.2}
+  .gcell .grar{display:block;margin-top:3px;color:var(--dim);font-size:9px;font-weight:600;letter-spacing:.3px}
   .gcell .gx{color:var(--red);font-size:16px}
 
   /* ---- mobile ---- */
@@ -194,7 +195,9 @@ function matchKey(s){let p=norm(s).split(' ').filter(Boolean);
 function hashStr(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 
-function todayStr(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+// Daily puzzle is keyed to UTC so every player worldwide gets the SAME puzzle each day
+// (otherwise friends in different time zones see different boards and shares don't match).
+function todayStr(){const d=new Date();return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');}
 
 // weighted pick without replacement; difficulty reshapes the pool/weights:
 //   easy  = only star-studded club-seasons (top 30% by weight), still weighted to giants
@@ -245,10 +248,11 @@ function buildLinkPuzzle(diff){
   const date=todayStr();
   const rnd=mulberry32(hashStr(date+'|link|'+diff));
   let pool = DATA.links3.slice();                     // always 3 clubs
-  if(diff==='easy'){                                  // bias toward famous connectors
-    const ws=pool.map(l=>l[3]).sort((a,b)=>a-b);
-    const cut=ws[Math.floor(ws.length*0.55)]||0;
-    pool=pool.filter(l=>l[3]>=cut);
+  if(diff==='easy'){                                  // easy = links where EVERY club is a big club
+    const big=new Set(DATA.bigClubs||[]);
+    const allBig=pool.filter(l=>l.slice(0,3).every(id=>big.has(id)));
+    if(allBig.length>=20) pool=allBig;
+    else { const ws=pool.map(l=>l[3]).sort((a,b)=>a-b); const cut=ws[Math.floor(ws.length*0.55)]||0; pool=pool.filter(l=>l[3]>=cut); }
   }
   const wOf = l => (diff==='hard') ? 1 : l[3];        // hard = uniform weight -> deeper cuts
   let tot=0; for(const l of pool) tot+=wOf(l);
@@ -277,8 +281,8 @@ function loadState(mode, league, diff){
     if(saved){try{const s=JSON.parse(saved); if(s.sig===puzzle.sig){st.answer=s.answer;st.guesses=s.guesses;st.done=s.done;}}catch(e){}}
   } else if(mode==='grid'){
     const puzzle=buildGridPuzzle(diff);
-    st={key, mode, league, diff, puzzle, cells:Array(9).fill(null), active:null, guesses:[], done:false};
-    if(saved){try{const s=JSON.parse(saved); if(s.sig===puzzle.sig){st.cells=s.cells;st.guesses=s.guesses;st.done=s.done;}}catch(e){}}
+    st={key, mode, league, diff, puzzle, cells:Array(9).fill(null), rarity:Array(9).fill(null), active:null, guesses:[], done:false};
+    if(saved){try{const s=JSON.parse(saved); if(s.sig===puzzle.sig){st.cells=s.cells;st.rarity=s.rarity||Array(9).fill(null);st.guesses=s.guesses;st.done=s.done;}}catch(e){}}
   } else {
     const puzzle=buildPuzzle(league, diff);
     st={key, mode, league, diff, puzzle, solved:Array(puzzle.cells.length).fill(null), guesses:[], done:false};
@@ -291,7 +295,7 @@ function save(){
   const sig = (STATE.mode==='link'||STATE.mode==='grid') ? STATE.puzzle.sig : cellsSig(STATE.puzzle);
   let body;
   if(STATE.mode==='link') body={sig, answer:STATE.answer, guesses:STATE.guesses, done:STATE.done};
-  else if(STATE.mode==='grid') body={sig, cells:STATE.cells, guesses:STATE.guesses, done:STATE.done};
+  else if(STATE.mode==='grid') body={sig, cells:STATE.cells, rarity:STATE.rarity, guesses:STATE.guesses, done:STATE.done};
   else body={sig, solved:STATE.solved, guesses:STATE.guesses, done:STATE.done};
   localStorage.setItem(STATE.key, JSON.stringify(body));
 }
@@ -379,7 +383,8 @@ function renderGrid(){
       const idx=r*3+c, val=STATE.cells[idx];
       const cell=document.createElement('div');
       cell.className='gcell'+(val?' solved':'')+(STATE.active===idx&&!val&&!STATE.done?' active':'');
-      cell.innerHTML=val?`<span class="gname">${val}</span>`:(STATE.done?'<span class="gx">✕</span>':'');
+      const rr=STATE.rarity&&STATE.rarity[idx];
+      cell.innerHTML=val?`<span class="gname">${val}</span>${rr!=null?`<span class="grar">rarity ${rr}</span>`:''}`:(STATE.done?'<span class="gx">✕</span>':'');
       if(!val&&!STATE.done) cell.onclick=()=>{STATE.active=idx;render();document.getElementById('guess').focus();};
       wrap.appendChild(cell);
     }
@@ -393,6 +398,21 @@ function renderGrid(){
   input.placeholder = STATE.active==null ? 'Type a player — it lands in the right cell…'
     : `${p.rows[Math.floor(STATE.active/3)].name} × ${p.cols[STATE.active%3].name}…`;
   if(STATE.done) showEnd(); else document.getElementById('end').classList.remove('show');
+}
+
+// proxy "rarity" (0–99): how non-obvious a grid pick is. Among players who fit the cell, famous
+// ones get picked by most people, so a low-fame pick — or a pick in a thin/old cell — scores higher.
+// Fame = sofifa overall where known (DATA.playerInfo), else 0 (treated as a deep cut). No backend.
+function cellRarity(rowId, colId, pick){
+  const fameOf=d=>(DATA.playerInfo[d]&&DATA.playerInfo[d].o)||0, E=6;
+  let sum=0,n=0;
+  for(const d in PLAYERS){const c=PLAYERS[d].clubs; if(c.has(rowId)&&c.has(colId)){sum+=Math.pow(fameOf(d),E);n++;}}
+  const share = sum>0 ? Math.pow(fameOf(pick),E)/sum : 1/Math.max(n,1);
+  return Math.max(1, Math.min(99, Math.round((1-share)*100)));
+}
+function gridRarity(){
+  const rs=(STATE.rarity||[]).filter((v,i)=>STATE.cells[i]&&v!=null);
+  return rs.length?Math.round(rs.reduce((a,b)=>a+b,0)/rs.length):0;
 }
 
 function submitGuess(raw){ if(STATE.mode==='link') return submitLink(raw); if(STATE.mode==='grid') return submitGrid(raw); return submitSquad(raw); }
@@ -422,7 +442,9 @@ function submitGrid(raw){
   if(target>=0){
     const name=fitByCell[target]; STATE.cells[target]=name; STATE.active=null;
     const r=Math.floor(target/3), c=target%3;
-    toast(`✅ ${name} → ${STATE.puzzle.rows[r].name} × ${STATE.puzzle.cols[c].name}`);
+    const rr=cellRarity(STATE.puzzle.rowIds[r], STATE.puzzle.colIds[c], name);
+    (STATE.rarity||(STATE.rarity=Array(9).fill(null)))[target]=rr;
+    toast(`✅ ${name} · rarity ${rr}${rr>=70?' 🔥':''}`);
   }
   else if(known) toast(`❌ Doesn't fit an open cell`);
   else toast('❌ Unknown player');
@@ -479,7 +501,7 @@ function shareUrl(){
 function shareText(){
   const dmap={easy:'🟢',medium:'🟡',hard:'🔴'};
   const row=STATE.guesses.map(g=>g.hit?'🟩':'🟥').join('');
-  const d=new Date(); const dd=d.getDate()+' '+d.toLocaleString('en',{month:'short'});
+  const d=new Date(); const dd=d.getUTCDate()+' '+d.toLocaleString('en',{month:'short',timeZone:'UTC'});
   const url=shareUrl();
   if(STATE.mode==='link'){
     const won=!!STATE.answer; const score=won?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;
@@ -488,7 +510,8 @@ function shareText(){
   if(STATE.mode==='grid'){
     const filled=STATE.cells.filter(Boolean).length;
     let g=''; for(let r=0;r<3;r++){ for(let c=0;c<3;c++) g+=STATE.cells[r*3+c]?'🟩':'⬜'; g+='\n'; }
-    return `▦ Onze Grid ${dmap[STATE.diff]||''} — ${dd}\n${g}${filled}/9 in ${STATE.guesses.length} guesses\n${url}`;
+    const rar=gridRarity();
+    return `▦ Onze Grid ${dmap[STATE.diff]||''} — ${dd}\n${g}${filled}/9 in ${STATE.guesses.length} guesses · rarity ${rar} 🧠\n${url}`;
   }
   const t=LEAGUE_TRACKS.find(l=>l[0]===STATE.league);
   const label=t?t[1].replace(/^[^ ]+ /,''):STATE.league;
@@ -523,7 +546,8 @@ function showEnd(){
     : STATE.mode==='grid' ? STATE.cells.filter(Boolean).length===9
     : STATE.solved.filter(Boolean).length===5;
   const gridN = STATE.mode==='grid' ? STATE.cells.filter(Boolean).length : 0;
-  document.getElementById('endmsg').textContent = won?'Solved! 🏆' : (STATE.mode==='grid'?`Grid done — ${gridN}/9`:'Out of guesses 😬');
+  const grar = STATE.mode==='grid' ? ` · rarity ${gridRarity()} 🧠` : '';
+  document.getElementById('endmsg').textContent = (won?'Solved! 🏆' : (STATE.mode==='grid'?`Grid done — ${gridN}/9`:'Out of guesses 😬')) + grar;
   const rev=document.getElementById('reveal');
   if(STATE.mode==='link' && !won){
     const ans=validAnswers();

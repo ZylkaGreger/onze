@@ -20,6 +20,8 @@ const html = fs.readFileSync(path.join(ROOT, 'index.html'), 'utf8');
 const START = 'function norm(s)', END = "return p.sort().join(' ');}";
 const src = html.slice(html.indexOf(START), html.indexOf(END) + END.length);
 const { norm, matchKey } = new Function(src + '\nreturn { norm, matchKey };')();
+const tsSrc = html.slice(html.indexOf('function todayStr()'), html.indexOf('}', html.indexOf('function todayStr()')) + 1);
+const todayStr = new Function(tsSrc + '\nreturn todayStr;')();
 
 // --- reconstruct the in-browser PLAYERS index (group appearances by display name) ---
 const PLAYERS = {};
@@ -77,6 +79,20 @@ test('no thin squads (≥ meta.minSquad players each)', () => {
 
 test('bigClubs all resolve to real clubs', () => {
   for (const id of D.bigClubs) assert.ok(D.clubs[id], `bigClub id ${id} has no club`);
+});
+
+test('playerInfo present (powers grid rarity score)', () => {
+  assert.ok(D.playerInfo && Object.keys(D.playerInfo).length > 500, 'playerInfo missing/sparse');
+});
+
+test('daily seed is UTC-based (same puzzle worldwide)', () => {
+  assert.equal(todayStr(), new Date().toISOString().slice(0, 10), 'todayStr() must be the UTC date');
+});
+
+test('Find-the-Link easy has enough all-big-club triples', () => {
+  const big = new Set(D.bigClubs);
+  const allBig = D.links3.filter(l => l.slice(0, 3).every(id => big.has(id)));
+  assert.ok(allBig.length >= 20, `only ${allBig.length} all-big link3s (need ≥20 for easy)`);
 });
 
 test('every pre-generated grid is fully solvable', () => {
