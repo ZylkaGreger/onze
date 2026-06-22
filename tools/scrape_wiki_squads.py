@@ -166,7 +166,7 @@ HEADER_RE = re.compile(r"^(={2,})\s*(.*?)\s*\1\s*$", re.M)
 EXCLUDE_HDR = re.compile(r"loan|reserve|youth|amateur|\bii\b|\bb team\b|transfer|\bout\b",
                          re.I)
 # template / table markers that indicate a player list lives in a section
-PLAYER_TMPL = re.compile(r"\{\{\s*(?:nat\s+)?e?fs player|\{\{\s*fb si player", re.I)
+PLAYER_TMPL = re.compile(r"\{\{\s*(?:nat\s+)?(?:e?fs|football squad) player|\{\{\s*fb si player", re.I)
 TABLE_ROW = re.compile(r"\|\s*'{0,3}\s*\d+\s*'{0,3}\s*\|\|\s*\[\[")
 # "Squad statistics" sortable tables (Man Utd, Liverpool, Chelsea, many SP/IT pages)
 # list each player as  {{flagicon|XXX}} [[Player]]  in the Name cell.
@@ -241,7 +241,7 @@ def extract_from(sec, tables=True):
 
     for m in re.finditer(r"\|\s*name\s*=\s*(\[\[.*?\]\]|[^|}\n]+)", sec):
         ctx = sec[max(0, m.start() - 260):m.start()]
-        if re.search(r"\{\{\s*(?:nat\s+)?e?fs player\d*\b", ctx, re.I):
+        if re.search(r"\{\{\s*(?:nat\s+)?(?:e?fs|football squad) player\d*\b", ctx, re.I):
             add(clean_link(m.group(1)))
     if names:
         return names
@@ -259,7 +259,11 @@ def extract_from(sec, tables=True):
 
     blocks = re.split(r"\n\s*\|-", sec)
     for block in (blocks[1:] if len(blocks) > 2 else blocks):
-        block = "\n".join(ln for ln in block.splitlines() if not ln.lstrip().startswith("!"))
+        # drop column-header cells ('!…') but KEEP row-header cells ('!scope="row"|[[Player]]'),
+        # which is where sortable "Squad statistics" tables (Arsenal, Liverpool, …) put the name.
+        block = "\n".join(ln for ln in block.splitlines()
+                          if not (ln.lstrip().startswith("!")
+                                  and not re.match(r'!\s*scope\s*=\s*"?row', ln.lstrip(), re.I)))
         best, best_pos = None, len(block) + 1
         sn = re.search(r"\{\{\s*sortname\s*\|\s*([^|}]+?)\s*\|\s*([^|}]+?)\s*[|}]", block, flags=re.I)
         if sn:

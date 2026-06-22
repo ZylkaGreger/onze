@@ -54,6 +54,65 @@
       "Danny Drinkwater",
       "Matty James"
     ],
+    "Liverpool F.C.": [
+      "Diego Cavalieri",
+      "Andrea Dossena",
+      "Sami Hyypiä",
+      "Daniel Agger",
+      "Robbie Keane",
+      "Steven Gerrard",
+      "Fernando Torres",
+      "Albert Riera",
+      "Fábio Aurélio",
+      "Xabi Alonso",
+      "Yossi Benayoun",
+      "Jermaine Pennant",
+      "Álvaro Arbeloa",
+      "Dirk Kuyt",
+      "Ryan Babel",
+      "Javier Mascherano",
+      "Lucas Leiva",
+      "Emiliano Insúa",
+      "Jamie Carragher",
+      "David Ngog",
+      "Pepe Reina",
+      "Jay Spearing",
+      "Philipp Degen",
+      "Damien Plessis",
+      "Nabil El Zhar",
+      "Stephen Darby",
+      "Martin Kelly",
+      "Martin Škrtel"
+    ],
+    "Chelsea F.C.": [
+      "Petr Čech",
+      "Branislav Ivanović",
+      "Ashley Cole",
+      "Michael Essien",
+      "Ricardo Carvalho",
+      "Frank Lampard",
+      "Franco Di Santo",
+      "Joe Cole",
+      "Didier Drogba",
+      "Mikel John Obi",
+      "Michael Ballack",
+      "Florent Malouda",
+      "José Bosingwa",
+      "Ricardo Quaresma",
+      "Paulo Ferreira",
+      "Deco",
+      "Salomon Kalou",
+      "John Terry",
+      "Mineiro",
+      "Rhys Taylor",
+      "Alex",
+      "Juliano Belletti",
+      "Nicolas Anelka",
+      "Hilário",
+      "Michael Mancienne",
+      "Miroslav Stoch",
+      "Jacob Mellis"
+    ],
     "Arsenal F.C.": [
       "Manuel Almunia",
       "Abou Diaby",
@@ -279,6 +338,19 @@
       "Zavon Hines",
       "Jordan Spence",
       "Junior Stanislas"
+    ],
+    "Manchester City F.C.": [
+      "Jô",
+      "Tal Ben Haim",
+      "Vincent Kompany",
+      "Shaun Wright-Phillips",
+      "Pablo Zabaleta",
+      "Gláuber",
+      "Robinho",
+      "Wayne Bridge",
+      "Craig Bellamy",
+      "Nigel de Jong",
+      "Shay Given"
     ],
     "Wigan Athletic F.C.": [
       "Chris Kirkland",
@@ -652,9 +724,5 @@
       "Sherjill MacDonald"
     ]
   },
-  "_failures": [
-    "Liverpool F.C.",
-    "Chelsea F.C.",
-    "Manchester City F.C."
-  ]
+  "_failures": []
 }

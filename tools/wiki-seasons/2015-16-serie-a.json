@@ -115,6 +115,43 @@
       "Gabriel Silva",
       "Luca Marrone"
     ],
+    "A.C. ChievoVerona": [
+      "Albano Bizzarri",
+      "Raffaele Pucino",
+      "Nicolás Spolli",
+      "Dario Dainelli",
+      "Nicola Rigoni",
+      "Alessandro Gamberini",
+      "Giampiero Pinzi",
+      "Simone Pepe",
+      "Ivan Radovanović",
+      "Jhon Fredy Miranda",
+      "Anders Christiansen",
+      "Nikola Ninković",
+      "Federico Mattiello",
+      "Boštjan Cesar",
+      "Mariano Izco",
+      "Armando Vajushi",
+      "Ali Sowe",
+      "Massimo Gobbi",
+      "Lucas Castro",
+      "Gennaro Sardo",
+      "Nicolas Frey",
+      "Valter Birsa",
+      "Maodo Malick Mbaye",
+      "Fabrizio Cacciatore",
+      "Sergio Pellissier",
+      "Walter Bressan",
+      "Cristiano Biraghi",
+      "Filippo Costa",
+      "Paul-José MPoku",
+      "Alberto Paloschi",
+      "Roberto Inglese",
+      "Përparim Hetemaj",
+      "Riccardo Meggiorini",
+      "Antonio Floro Flores",
+      "Andrea Seculin"
+    ],
     "Empoli F.C.": [
       "Maurizio Pugliesi",
       "Alberto Pelagotti",
@@ -642,7 +679,5 @@
       "Lucas Evangelista"
     ]
   },
-  "_failures": [
-    "A.C. ChievoVerona"
-  ]
+  "_failures": []
 }

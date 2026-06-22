@@ -395,6 +395,31 @@
       "Ángel Di María",
       "Xabi Alonso"
     ],
+    "Real Sociedad": [
+      "Gerónimo Rulli",
+      "Carlos Martínez",
+      "Mikel González",
+      "Gorka Elustondo",
+      "Markel Bergara",
+      "Iñigo Martínez",
+      "Alfreð Finnbogason",
+      "Esteban Granero",
+      "Imanol Agirretxe",
+      "Xabi Prieto",
+      "Carlos Vela",
+      "Eñaut Zubikarai",
+      "Rubén Pardo",
+      "Ion Ansotegi",
+      "Sergio Canales",
+      "David Zurutuza",
+      "Chory Castro",
+      "Yuri Berchiche",
+      "Joseba Zaldúa",
+      "Liassine Cadamuro-Bentaïba",
+      "Dani Estrada",
+      "Jon Gaztañaga",
+      "Alberto de la Bella"
+    ],
     "Sevilla FC": [
       "Mariano Barbosa",
       "Beto",
@@ -546,7 +571,6 @@
   "_failures": [
     "RC Celta de Vigo",
     "Getafe CF",
-    "Málaga CF",
-    "Real Sociedad"
+    "Málaga CF"
   ]
 }
