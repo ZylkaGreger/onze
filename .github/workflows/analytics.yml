@@ -1,0 +1,37 @@
+name: Analytics
+
+# Daily Onze traffic snapshot, written to the workflow run Summary — so you can read
+# visits/pageviews/top pages without opening the Cloudflare dashboard. Also runnable on
+# demand from the Actions tab. Safely no-ops until the CLOUDFLARE_API_TOKEN secret is set.
+#
+# To enable: create a read-only Cloudflare token (Account · Account Analytics · Read) and add it
+# under repo Settings → Secrets and variables → Actions → New repository secret:
+#   name = CLOUDFLARE_API_TOKEN
+
+on:
+  schedule:
+    - cron: '5 6 * * *'    # every morning ~06:05 UTC (just after the health-check)
+  workflow_dispatch:
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Pull analytics → run summary
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "ℹ️ CLOUDFLARE_API_TOKEN secret not set — skipping." >> "$GITHUB_STEP_SUMMARY"
+            echo "Add a read-only token (Account · Account Analytics · Read) under Settings → Secrets to enable." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          {
+            echo '```'
+            node tools/analytics.mjs
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
