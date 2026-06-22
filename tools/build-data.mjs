@@ -84,9 +84,6 @@ const NAME_SUFFIX = new Set(['jr', 'junior', 'sr', 'snr', 'ii', 'iii', 'iv']);
 const PARTICLES = new Set('de del della di du da dos das van von der den ter le la'.split(' '));
 // surname phrase = last token + any preceding particle run; given = forename tokens before it.
 const splitName = (parts) => { let j = parts.length - 1; while (j - 1 >= 0 && PARTICLES.has(parts[j - 1])) j--; return [parts.slice(0, j), parts.slice(j).join(' ')]; };
-// stable rating key "surnamephrase|firstInitial" — bridges FIFA short ("J. Bellingham") and
-// Wikipedia full ("Jude Bellingham") so committed ratings transfer to the wiki-only build.
-const ratingKey = (display) => { const [g, sur] = splitName(normalize(display).split(' ').filter(Boolean)); return sur + '|' + (g[0] ? g[0][0] : ''); };
 function dropSuffix(parts) {
   let p = parts.slice();
   while (p.length > 1 && NAME_SUFFIX.has(p[p.length - 1])) p.pop();
@@ -394,20 +391,6 @@ const links3 = [...link3.values()].map(o => [...o.c, o.w]);
 // player info (position/nationality) — only for connectors (>=2 clubs), used for link hints
 const playerInfo = {};
 for (const d in pClubs) { if (pClubs[d].size >= 2 && pInfo[d]) playerInfo[d] = pInfo[d]; }
-
-// One-time export of player ratings (overall/pos/nat) keyed by canonical display, so the
-// wiki-only build can keep weighting + rarity + hints without the out-of-repo FIFA/EA CSVs.
-// Only meaningful while sections 1–2 (FIFA/EA) are still wired in; harmless otherwise.
-{
-  const ratings = {};
-  for (const d in pInfo) {
-    if (!(pInfo[d].o > 0)) continue;
-    const k = ratingKey(d), cur = ratings[k];
-    if (!cur || pInfo[d].o > cur.o) ratings[k] = pInfo[d];   // keep the highest overall per key
-  }
-  if (Object.keys(ratings).length > 100)
-    fs.writeFileSync(path.join(__dirname, 'ratings.json'), JSON.stringify(ratings));
-}
 
 // --- grid puzzles (Immaculate-Grid style): 3 row clubs x 3 col clubs, every cell guaranteed solvable ---
 const adj = {};
