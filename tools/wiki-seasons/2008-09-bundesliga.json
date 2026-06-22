@@ -32,7 +32,14 @@
       "Daniel Reiche",
       "Marwin Hitz",
       "Sergei Karimov",
-      "Andrea Barzagli"
+      "Andrea Barzagli",
+      "Daniel Baier",
+      "Jonathan Santana",
+      "Mahir Sağlık",
+      "Jacek Krzynówek",
+      "Vlad Munteanu",
+      "Alexander Laas",
+      "Bernd Korzynietz"
     ],
     "FC Bayern Munich": [
       "Michael Rensing",
@@ -96,7 +103,10 @@
       "Julian Schieber",
       "Marijan Kovačević",
       "Marco Pischorn",
-      "Sebastian Enderle"
+      "Sebastian Enderle",
+      "Pável Pardo",
+      "Manuel Fischer",
+      "Matthias Morys"
     ],
     "Hertha BSC": [
       "Jaroslav Drobný",
@@ -164,7 +174,17 @@
       "Kai-Fabian Schulz",
       "Tunay Torun",
       "Hanno Behrens",
-      "Dennis Aogo"
+      "Dennis Aogo",
+      "Vadis Odjidja-Ofoe",
+      "Mohamed Zidan",
+      "Nigel de Jong",
+      "Vincent Kompany",
+      "Anton Putsila",
+      "Miroslav Štěpánek",
+      "Thiago Neves",
+      "Änis Ben-Hatira",
+      "Preston Zimmerman",
+      "Sidney Sam"
     ],
     "Borussia Dortmund": [
       "Roman Weidenfeller",
@@ -191,7 +211,15 @@
       "Bajram Sadrijaj",
       "Yasin Öztekin",
       "Christopher Kullmann",
-      "Damir Vrančić"
+      "Damir Vrančić",
+      "Giovanni Federico",
+      "Mladen Petrić",
+      "Delron Buckley",
+      "Antonio Rukavina",
+      "Diego Klimowicz",
+      "Robert Kovač",
+      "Marc-André Kruska",
+      "Lukas Kruse"
     ],
     "TSG 1899 Hoffenheim": [
       "Daniel Haas",
@@ -222,7 +250,13 @@
       "Marco Terrazzino",
       "Jonas Strifler",
       "Pascal Groß",
-      "Kevin Conrad"
+      "Kevin Conrad",
+      "Dragan Paljić",
+      "Jochen Seitz",
+      "Zsolt Lőw",
+      "Kai Hesse",
+      "Francisco Copado",
+      "Thorsten Kirschbaum"
     ],
     "FC Schalke 04": [
       "Manuel Neuer",
@@ -280,36 +314,43 @@
       "Angelos Charisteas",
       "Erik Domaschke",
       "Toni Kroos",
-      "Richard Sukuta-Pasu"
+      "Richard Sukuta-Pasu",
+      "Theofanis Gekas",
+      "Dmitri Bulykin",
+      "Marcel Risse",
+      "Stefan Reinartz",
+      "Jens Hegeler"
     ],
     "SV Werder Bremen": [
       "Tim Wiese",
-      "Christian Vander",
-      "Nico Pellatz",
-      "Niklas Andersen",
       "Sebastian Boenisch",
-      "Clemens Fritz",
-      "Per Mertesacker",
-      "Naldo",
       "Petri Pasanen",
-      "Timo Perthel",
-      "Sebastian Prödl",
+      "Naldo",
       "Duško Tošić",
       "Frank Baumann",
-      "Diego",
-      "Torsten Frings",
-      "Aaron Hunt",
-      "Said Husejinović",
-      "Daniel Jensen",
-      "Peter Niemeyer",
-      "Mesut Özil",
-      "Alexandros Tziolis",
       "Jurica Vranješ",
-      "Martin Harnik",
-      "Torsten Oehrl",
-      "Claudio Pizarro",
+      "Clemens Fritz",
       "Markus Rosenberg",
-      "Boubacar Sanogo"
+      "Diego",
+      "Mesut Özil",
+      "Aaron Hunt",
+      "Sebastian Prödl",
+      "Alexandros Tziolis",
+      "Daniel Jensen",
+      "Torsten Frings",
+      "Hugo Almeida",
+      "Claudio Pizarro",
+      "Peter Niemeyer",
+      "Niklas Andersen",
+      "Per Mertesacker",
+      "Christian Vander",
+      "Martin Harnik",
+      "Nico Pellatz",
+      "Timo Perthel",
+      "Torsten Oehrl",
+      "Said Husejinović",
+      "Boubacar Sanogo",
+      "Dennis Diekmeier"
     ],
     "Eintracht Frankfurt": [
       "Oka Nikolov",
@@ -341,7 +382,9 @@
       "Chris",
       "Caio",
       "Faton Toski",
-      "Sebastian Jung"
+      "Sebastian Jung",
+      "Aarón Galindo",
+      "Marcel Heller"
     ],
     "VfL Bochum": [
       "Daniel Fernandes",
@@ -451,7 +494,10 @@
       "Mario Cvitanović",
       "Çağdaş Atan",
       "Peter Hackenberg",
-      "Christian Müller"
+      "Christian Müller",
+      "Christian Bassila",
+      "Danny Galm",
+      "Igor Mitreski"
     ]
   },
   "_failures": [

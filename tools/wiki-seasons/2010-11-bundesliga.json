@@ -213,7 +213,10 @@
       "Hanno Behrens",
       "Son Heung-min",
       "Gojko Kačar",
-      "Jaroslav Drobný"
+      "Jaroslav Drobný",
+      "David Rozehnal",
+      "Wolfgang Hesl",
+      "Gerrit Pressel"
     ],
     "SC Freiburg": [
       "Simon Pouplin",
@@ -344,7 +347,9 @@
       "Shinji Okazaki",
       "Christian Träsch",
       "Sven Schipplock",
-      "Ermin Bičakčić"
+      "Ermin Bičakčić",
+      "Sebastian Rudy",
+      "Mauro Camoranesi"
     ],
     "SV Werder Bremen": [
       "Tim Wiese",
@@ -423,6 +428,36 @@
       "Erik Jendrišek",
       "Marco Quotschalla"
     ],
+    "VfL Wolfsburg": [
+      "Andrea Barzagli",
+      "Michael Schulze",
+      "Robin Knoche",
+      "Marcel Schäfer",
+      "Arne Friedrich",
+      "Peter Pekarík",
+      "Alexander Madlung",
+      "Fabian Johnson",
+      "Simon Kjær",
+      "Sascha Riether",
+      "Christian Gentner",
+      "Akaki Gogia",
+      "Thomas Kahlenberg",
+      "Makoto Hasebe",
+      "Josué",
+      "Ashkan Dejagah",
+      "Karim Ziani",
+      "Diego",
+      "Jan Polák",
+      "Yohandry Orozco",
+      "Koo Ja-cheol",
+      "Grafite",
+      "Edin Džeko",
+      "Caiuby",
+      "Tuncay",
+      "Patrick Helmes",
+      "Mario Mandžukić",
+      "Dieumerci Mbokani"
+    ],
     "Eintracht Frankfurt": [
       "Oka Nikolov",
       "Patrick Ochs",
@@ -487,7 +522,9 @@
       "Deniz Herber",
       "Matthias Hinzmann",
       "Arvid Schenk",
-      "Petar Filipović"
+      "Petar Filipović",
+      "Nils Pichinot",
+      "Davidson Eden"
     ],
     "1. FSV Mainz 05": [
       "Martin Pieckenhagen",
@@ -521,7 +558,6 @@
   },
   "_failures": [
     "FSV Mainz 05",
-    "VfL Wolfsburg",
     "Borussia Mönchengladbach"
   ]
 }

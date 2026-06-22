@@ -66,7 +66,12 @@
       "Max Kruse",
       "Frank Löning",
       "Amaury Bischoff",
-      "Nico Pellatz"
+      "Nico Pellatz",
+      "Leon Andreasen",
+      "Carlos Alberto",
+      "Christian Schulz",
+      "John Mosquera",
+      "Norman Theuerkauf"
     ],
     "FC Schalke 04": [
       "Manuel Neuer",
@@ -97,7 +102,11 @@
       "Carlos Zambrano",
       "Ralf Fährmann",
       "Mathias Schober",
-      "Toni Tapalović"
+      "Toni Tapalović",
+      "Darío Rodríguez",
+      "Mesut Özil",
+      "Mimoun Azaouagh",
+      "Sebastian Boenisch"
     ],
     "Hamburger SV": [
       "Frank Rost",
@@ -129,7 +138,11 @@
       "Collin Benjamin",
       "Timo Kunert",
       "Änis Ben-Hatira",
-      "Sidney Sam"
+      "Sidney Sam",
+      "Raphaël Wicky",
+      "Mustafa Kučuković",
+      "Sebastian Langkamp",
+      "Kosi Saka"
     ],
     "VfL Wolfsburg": [
       "Simon Jentzsch",
@@ -166,7 +179,14 @@
       "Sergei Karimov",
       "Philipp Kreuels",
       "Danijel Ljuboja",
-      "Marvin Karow"
+      "Marvin Karow",
+      "Juan Carlos Menseguez",
+      "Isaac Boakye",
+      "Christopher Lamprecht",
+      "Uwe Möhrle",
+      "Vlad Munteanu",
+      "Patrick Platins",
+      "Sergiu Radu"
     ],
     "VfB Stuttgart": [
       "Raphael Schäfer",
@@ -227,7 +247,11 @@
       "Kim Falkenberg",
       "Sergej Barbarez",
       "Jens Hegeler",
-      "Fabian Giefer"
+      "Fabian Giefer",
+      "Ricardo Faty",
+      "Assimiou Touré",
+      "Michal Papadopulos",
+      "Dennis Schmidt"
     ],
     "Eintracht Frankfurt": [
       "Oka Nikolov",
@@ -256,7 +280,10 @@
       "Chris",
       "Caio",
       "Mounir Chaftar",
-      "Faton Toski"
+      "Faton Toski",
+      "Albert Streit",
+      "Michael Thurk",
+      "Naohiro Takahara"
     ],
     "Hertha BSC": [
       "Jaroslav Drobný",
@@ -318,7 +345,9 @@
       "Lars Stindl",
       "Thomas Unger",
       "Tamás Hajnal",
-      "Andreas Görlitz"
+      "Andreas Görlitz",
+      "Sanibal Orahovac",
+      "Benjamin Barg"
     ],
     "VfL Bochum": [
       "Philipp Heerwagen",
@@ -386,7 +415,9 @@
       "Christian Eggert",
       "Nico Hillenbrand",
       "Sahr Senesie",
-      "Alexander Bade"
+      "Alexander Bade",
+      "Ebi Smolarek",
+      "Mehmet Akgün"
     ],
     "F.C. Hansa Rostock": [
       "Stefan Wächter",
@@ -418,7 +449,9 @@
       "Kai Bülow",
       "Sebastian Albert",
       "Gledson",
-      "Kenneth Kronholm"
+      "Kenneth Kronholm",
+      "Marcel Schied",
+      "Patric Klandt"
     ]
   },
   "_failures": [

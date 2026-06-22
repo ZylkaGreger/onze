@@ -59,7 +59,11 @@
       "Kiko",
       "Rocha",
       "Feliciano Condesso",
-      "Rubén"
+      "Rubén",
+      "Juan Román Riquelme",
+      "José Mari",
+      "Rio Mavuba",
+      "Xisco Nadal"
     ],
     "FC Barcelona": [
       "Víctor Valdés",
@@ -88,30 +92,36 @@
       "Bojan Krkić"
     ],
     "Atlético Madrid": [
-      "Leo Franco",
       "Christian Abbiati",
+      "Leo Franco",
       "Ismael Falcón",
-      "Pablo Ibáñez",
-      "Luis Perea",
-      "Fabiano Eller",
-      "Zé Castro",
+      "Giourkas Seitaridis",
       "Antonio López",
       "Mariano Pernía",
-      "Georgios Seitaridis",
+      "Fabiano Eller",
+      "Zé Castro",
+      "Luis Perea",
+      "Pablo Ibáñez",
       "Juan Valera",
+      "Álvaro Domínguez",
+      "César Ortiz",
       "Thiago Motta",
-      "Maniche",
-      "Cléber Santana",
-      "Joshua Zapata",
+      "Cléber",
       "Raúl García",
-      "José Manuel Jurado",
-      "Maxi Rodríguez",
-      "Simão",
       "Luis García",
+      "Maxi Rodríguez",
+      "José Manuel Jurado",
       "José Antonio Reyes",
+      "Maniche",
       "Miguel de las Cuevas",
-      "Sergio Agüero",
+      "Simão",
+      "Roberto Batres",
+      "Álex Quillo",
+      "Didi",
+      "Joshua",
+      "Ignacio Camacho",
       "Diego Forlán",
+      "Sergio Agüero",
       "Mista"
     ],
     "Sevilla FC": [
@@ -178,7 +188,14 @@
       "Iván Marcano",
       "Ángel Díaz",
       "Mario Fernández",
-      "Iván Bolado"
+      "Iván Bolado",
+      "Samuel",
+      "Christian",
+      "David Aganzo",
+      "Cristian Portilla",
+      "Danny Szetela",
+      "Mario Ortíz",
+      "Fernando Abreu"
     ],
     "UD Almería": [
       "Diego Alves",
@@ -402,7 +419,11 @@
       "Manu Hervás",
       "Richi de Souza",
       "Víctor Mesa",
-      "Francisco Galán"
+      "Francisco Galán",
+      "Luis García",
+      "Alberto",
+      "Pablo Redondo",
+      "Nacho"
     ]
   },
   "_failures": [

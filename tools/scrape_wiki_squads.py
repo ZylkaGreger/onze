@@ -173,6 +173,9 @@ TABLE_ROW = re.compile(r"\|\s*'{0,3}\s*\d+\s*'{0,3}\s*\|\|\s*\[\[")
 FLAG_LINK = re.compile(r"\{\{\s*flag(?:icon|country)?[^}]*\}\}\s*'*\[\[([^\]]+?)\]\]", re.I)
 FLAGICON = re.compile(r"\{\{\s*flag(?:icon|country)?\b[^}]*\}\}", re.I)
 WIKITABLE = re.compile(r"\{\|\s*class=\"[^\"]*wikitable", re.I)
+# bulleted squad lists grouped by position — "* {{flagicon|ESP}} [[Player]] (7)" — common on
+# Spanish/older club pages (Atlético Madrid etc.), often wrapped in {{columns-list|...}}.
+BULLET_PLAYER = re.compile(r"(?m)^\s*\*+\s*(?:\{\{[^{}]*\}\}\s*)*'*\[\[")
 
 
 # Nationality columns leak country wikilinks ([[England]], [[United States]]);
@@ -254,6 +257,15 @@ def extract_from(sec, tables=True):
         pm = re.search(r"\|\s*p\s*=\s*([^|]+)", line)
         if pm:
             add(clean_link(pm.group(1)))
+    if names:
+        return names
+
+    # bulleted squad lists ("* {{flagicon|ESP}} [[Player]] (7)", grouped by position) — one
+    # player per bullet, taken as the first player-link on the line (after any flag template).
+    for line in re.findall(r"(?m)^\s*\*+\s*.*$", sec):
+        lm = re.search(r"\[\[([^\]]+?)\]\]", line)
+        if lm:
+            add(clean_link("[[" + lm.group(1) + "]]"))
     if names or not tables:
         return names
 
@@ -288,15 +300,25 @@ def pick_squad_section(wikitext):
     with the most players (tie-break: header preference, then length). Restricting to
     squad-ish headers keeps standings/goal-log tables from ever being mined.
     """
-    headers = [(m.start(), m.end(), m.group(2).strip())
+    headers = [(m.start(), m.end(), len(m.group(1)), m.group(2).strip())
                for m in HEADER_RE.finditer(wikitext)]
     best, best_key = None, (0, -1, -1)
-    for i, (start, end, title) in enumerate(headers):
-        body_end = headers[i + 1][0] if i + 1 < len(headers) else len(wikitext)
+    for i, (start, end, level, title) in enumerate(headers):
+        # body extends THROUGH deeper subsections (===Goalkeepers=== under ==Squad==) so
+        # position-grouped squad lists aren't split off into their own un-squad-titled
+        # sections — but it stops at the next same-or-higher header AND at the first deeper
+        # subsection that is itself excluded (===Reserve squad===, ===Youth squad===, …),
+        # so reserves/youth don't get folded into the first team.
+        body_end = len(wikitext)
+        for j in range(i + 1, len(headers)):
+            if headers[j][2] <= level or EXCLUDE_HDR.search(headers[j][3]):
+                body_end = headers[j][0]
+                break
         body = wikitext[end:body_end]
         if EXCLUDE_HDR.search(title) or not SQUAD_HDR.search(title):
             continue
         if not (PLAYER_TMPL.search(body) or TABLE_ROW.search(body) or FLAG_LINK.search(body)
+                or BULLET_PLAYER.search(body)
                 or (WIKITABLE.search(body) and body.count("[[") >= 8)):
             continue
         n = len(extract_from(body))

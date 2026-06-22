@@ -72,7 +72,12 @@
       "Besart Ibraimi",
       "Mohamed Amsif",
       "Marvin Pachan",
-      "Predrag Stevanović"
+      "Predrag Stevanović",
+      "Levan Kobiashvili",
+      "Lewis Holtby",
+      "Halil Altıntop",
+      "Carlos Grossmüller",
+      "Ľuboš Hanzel"
     ],
     "SV Werder Bremen": [
       "Tim Wiese",
@@ -106,7 +111,13 @@
       "Pascal Testroet",
       "Philipp Bargfrede",
       "Timo Perthel",
-      "Onur Ayık"
+      "Onur Ayık",
+      "Duško Tošić",
+      "Jurica Vranješ",
+      "Boubacar Sanogo",
+      "Martin Harnik",
+      "Marcelo Moreno",
+      "Torsten Oehrl"
     ],
     "Bayer 04 Leverkusen": [
       "René Adler",
@@ -176,7 +187,8 @@
       "Marcel Höttecke",
       "Johannes Focher",
       "Marc Hornschuh",
-      "Julian Koch"
+      "Julian Koch",
+      "Florian Kringe"
     ],
     "VfB Stuttgart": [
       "Jens Lehmann",
@@ -205,7 +217,12 @@
       "Christian Träsch",
       "Clemens Walch",
       "Julian Schieber",
-      "Marco Pischorn"
+      "Marco Pischorn",
+      "Jan Šimák",
+      "Yıldıray Baştürk",
+      "Thomas Hitzlsperger",
+      "Ludovic Magnin",
+      "Élson"
     ],
     "Hamburger SV": [
       "Frank Rost",
@@ -239,7 +256,41 @@
       "Miroslav Štěpánek",
       "Kai-Fabian Schulz",
       "Tunay Torun",
-      "Hanno Behrens"
+      "Hanno Behrens",
+      "Alex Silva",
+      "Eric Maxim Choupo-Moting",
+      "Mickaël Tavares",
+      "Änis Ben-Hatira"
+    ],
+    "VfL Wolfsburg": [
+      "Diego Benaglio",
+      "André Lenz",
+      "Marwin Hitz",
+      "Andrea Barzagli",
+      "Alexander Madlung",
+      "Ricardo Costa",
+      "Marcel Schäfer",
+      "Cristian Zaccardo",
+      "Peter Pekarík",
+      "Réver",
+      "Fabian Johnson",
+      "Daniel Reiche",
+      "Jan Šimůnek",
+      "Sascha Riether",
+      "Christian Gentner",
+      "Zvjezdan Misimović",
+      "Ashkan Dejagah",
+      "Makoto Hasebe",
+      "Josué",
+      "Jonathan Santana",
+      "Karim Ziani",
+      "Sebastian Schindzielorz",
+      "Alexander Laas",
+      "Daniel Baier",
+      "Grafite",
+      "Edin Džeko",
+      "Obafemi Martins",
+      "Alexander Esswein"
     ],
     "Eintracht Frankfurt": [
       "Oka Nikolov",
@@ -277,7 +328,11 @@
       "Timothy Chandler",
       "Andreas Rössl",
       "Stefan Haben",
-      "Erman Muratagic"
+      "Erman Muratagic",
+      "Markus Steinhöfer",
+      "Mehdi Mahdavikia",
+      "Habib Bellaïd",
+      "Christoph Preuß"
     ],
     "TSG 1899 Hoffenheim": [
       "Daniel Haas",
@@ -378,7 +433,11 @@
       "Miro Varvodić",
       "Alexander Vaaßen",
       "Reinhold Yabo",
-      "Andreas Dick"
+      "Andreas Dick",
+      "Marvin Matip",
+      "Wilfried Sanou",
+      "Lukas Nottbeck",
+      "Michael Gardawski"
     ],
     "Hannover 96": [
       "Robert Enke",
@@ -521,7 +580,6 @@
     ]
   },
   "_failures": [
-    "VfL Wolfsburg",
     "1. FSV Mainz 05",
     "SC Freiburg"
   ]

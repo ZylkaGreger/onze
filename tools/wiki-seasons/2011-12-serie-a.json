@@ -5,6 +5,13 @@
   "season": "2011/12",
   "clubs": {
     "Juventus FC": [
+      "Fiorentina",
+      "Napoli",
+      "Roma",
+      "Pirlo",
+      "Marchisio",
+      "Vidal",
+      "Competitive matches",
       "Gianluigi Buffon",
       "Marco Motta",
       "Giorgio Chiellini",
@@ -35,8 +42,7 @@
       "Alessandro Matri",
       "Frederik Sørensen",
       "Luca Marrone",
-      "Amauri",
-      "Competitive matches"
+      "Amauri"
     ],
     "Udinese Calcio": [
       "Samir Handanović",
@@ -66,7 +72,14 @@
       "Mattia Bedin",
       "Davide Marsura",
       "Giampiero Pinzi",
-      "Antonio Floro Flores"
+      "Antonio Floro Flores",
+      "Cristian Battocchio",
+      "Simone Deana",
+      "Gianluca Migliorini",
+      "Luca Baldassin",
+      "Luca Corrado",
+      "Marco Piscopo",
+      "Riccardo Dimitrio"
     ],
     "SS Lazio": [
       "Albano Bizzarri",
@@ -486,6 +499,36 @@
       "Rodney Strasser",
       "Cristian Pasquato"
     ],
+    "Novara Calcio": [
+      "Alberto Maria Fontana",
+      "Samir Ujkani",
+      "Matteo Centurioni",
+      "Alberto Cossentino",
+      "Jean-Christophe Coubronne",
+      "Paolo Hernán Dellafiore",
+      "Santiago García",
+      "Giuseppe Gemiti",
+      "Andrea Lisuzzo",
+      "Carlalberto Ludi",
+      "Carlos Labrín",
+      "Michel Morganella",
+      "Massimo Paci",
+      "Gabriel Silva",
+      "Daniel Jensen",
+      "Francesco Marianini",
+      "Andrea Mazzarani",
+      "Simone Pesce",
+      "Filippo Porcari",
+      "Ivan Radovanović",
+      "Marco Rigoni",
+      "Andrea Caracciolo",
+      "Jeda",
+      "Giuseppe Mascara",
+      "Takayuki Morimoto",
+      "Raffaele Rubino",
+      "Attilio Tesser",
+      "Emiliano Mondonico"
+    ],
     "AC Cesena": [
       "Francesco Antonioli",
       "Guillermo Rodríguez",
@@ -874,7 +917,6 @@
     "S.S. Robur Siena",
     "Cagliari Calcio",
     "Genoa CFC",
-    "Novara Calcio",
     "Genoa C.F.C.",
     "A.C. Milan"
   ]
