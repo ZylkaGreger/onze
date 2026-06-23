@@ -135,11 +135,16 @@ const seasons = {};               // season -> canonicalName -> [ {d,k,o} ]
 const pInfo = {};                 // display -> { o, pos, nat } for hints (best/most-famous record)
 // FIFA caches wrap Position in HTML (<span class="pos pos28">SUB); strip tags, drop bench roles.
 const cleanPos = (p) => { p = (p || '').replace(/<[^>]*>/g, '').split(',')[0].trim().toUpperCase(); return (p && p !== 'SUB' && p !== 'RES') ? p : ''; };
-function add(season, name, league, display, full, ovr, pos, nat) {
+const JUNK_NAME = /^(own goals?|n\/?a|unknown|penalty|penalties)$/i;   // stat-table non-players
+function add(season, name, league, display, full, ovr, pos, nat, id, by) {
   if (ovr && ovr < OVR_MIN) return;
   display = cleanName(display); full = cleanName(full);
+  if (JUNK_NAME.test(display)) return;
   (seasons[season] ??= {});
-  (seasons[season][name] ??= []).push({ d: display, k: keysFor(display, full), o: ovr });
+  // id = stable sofifa player id (FIFA/EA only; null for Wikipedia) — the real identity key that
+  // disambiguates same-name players. nat/pos kept per appearance so pInfo can be rebuilt by identity.
+  // by = birth year (for temporal plausibility when routing id-less Wikipedia appearances).
+  (seasons[season][name] ??= []).push({ d: display, k: keysFor(display, full), o: ovr, id: id || null, nat: (nat || '').trim(), pos: cleanPos(pos), by: by || 0 });
   const np = cleanPos(pos), nn = (nat || '').trim(), cur = pInfo[display];
   if (!cur) pInfo[display] = { o: ovr, pos: np, nat: nn };
   else if (ovr > cur.o) { cur.o = ovr; if (np) cur.pos = np; if (nn) cur.nat = nn; }
@@ -148,13 +153,13 @@ function add(season, name, league, display, full, ovr, pos, nat) {
 {
   const rows = parseCSV(fs.readFileSync(path.join(UNS, 'data-src/eafc.csv'), 'utf8'));
   const h = rows[0], ci = n => h.indexOf(n);
-  const C = { short: ci('short_name'), long: ci('long_name'), club: ci('club_name'), lid: ci('league_id'), ovr: ci('overall'), pos: ci('player_positions'), nat: ci('nationality_name') };
+  const C = { id: ci('player_id'), short: ci('short_name'), long: ci('long_name'), club: ci('club_name'), lid: ci('league_id'), ovr: ci('overall'), pos: ci('player_positions'), nat: ci('nationality_name'), dob: ci('dob') };
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i]; if (!r || r.length < h.length) continue;
     const league = LEAGUE_BY_ID[parseInt(r[C.lid])]; const club = r[C.club]?.trim();
     if (!league || !club) continue;
     canon[clubKey(club)] = { name: club, league };
-    add('2025/26', club, league, r[C.short]?.trim(), r[C.long]?.trim(), +r[C.ovr] || 0, r[C.pos], r[C.nat]);
+    add('2025/26', club, league, r[C.short]?.trim(), r[C.long]?.trim(), +r[C.ovr] || 0, r[C.pos], r[C.nat], r[C.id]?.trim(), +(r[C.dob] || '').slice(0, 4) || 0);
   }
 }
 
@@ -164,12 +169,14 @@ for (const [ed, season] of Object.entries(fifaMap)) {
   const fp = path.join(UNS, 'tools/.fifa_cache', `${ed}_official_data.csv`);
   if (!fs.existsSync(fp)) continue;
   const rows = parseCSV(fs.readFileSync(fp, 'utf8'));
-  const h = rows[0], C = { name: h.indexOf('Name'), club: h.indexOf('Club'), ovr: h.indexOf('Overall'), pos: h.indexOf('Position'), nat: h.indexOf('Nationality') };
+  const h = rows[0], C = { id: h.indexOf('ID'), name: h.indexOf('Name'), club: h.indexOf('Club'), ovr: h.indexOf('Overall'), pos: h.indexOf('Position'), nat: h.indexOf('Nationality'), age: h.indexOf('Age') };
+  const edYear = 2000 + parseInt(ed.replace('FIFA', ''));         // FIFA17 -> 2017 edition ~ 2016/17 season
   for (let i = 1; i < rows.length; i++) {
     const r = rows[i]; if (!r || r.length < h.length) continue;
     const club = r[C.club]?.trim(); if (!club) continue;
     const cc = canon[clubKey(club)]; if (!cc) continue;          // not a big-5 club -> skip
-    add(season, cc.name, cc.league, r[C.name]?.trim(), '', +r[C.ovr] || 0, r[C.pos], r[C.nat]);
+    const age = +r[C.age] || 0, by = age ? edYear - age : 0;     // birth year ≈ edition year − age
+    add(season, cc.name, cc.league, r[C.name]?.trim(), '', +r[C.ovr] || 0, r[C.pos], r[C.nat], r[C.id]?.trim(), by);
   }
 }
 
@@ -211,6 +218,100 @@ if (fs.existsSync(WIKI_DIR)) {
     }
   }
   console.log(`wiki: ${wFiles} files, ${wClubs} club-seasons, ${wPlayers} players, ${wNew.size} clubs new to the dataset`);
+}
+
+// --- split same-name players by stable sofifa id (FIFA/EA appearances carry one) ---
+// Different real people share a display string ("L. Suárez" = Uruguayan+Colombian+2 more; "Gabriel"
+// = 6 Brazilians). Keyed by name alone they fuse into a blob that "plays" impossible clubs and seeds
+// phantom links/grids. The sofifa id is the true identity. Where a display is used by >=2 ids that
+// both appear here, the most famous keeps the plain name and the rest are disambiguated (nationality
+// when unique, else most-played club, else an index). Match keys stay the BASE name so the suffix is
+// display-only and typing the plain name still works. Wikipedia appearances (no id) of a split name
+// are routed to the right person by club; unroutable ones default to the famous primary.
+{
+  const idInfo = {};   // id -> { disp, nat, o, n, clubs:Set }
+  for (const s in seasons) for (const cname in seasons[s]) for (const p of seasons[s][cname]) {
+    if (!p.id) continue;
+    const e = idInfo[p.id] ??= { disp: p.d, nat: p.nat, o: 0, n: 0, clubs: new Set(), by: 0 };
+    e.n++; e.clubs.add(cname); if (p.by && !e.by) e.by = p.by;
+    if (p.o > e.o) { e.o = p.o; e.disp = p.d; e.nat = p.nat; }   // richest record fixes the display
+  }
+  const idsByDisp = {};
+  for (const id in idInfo) (idsByDisp[idInfo[id].disp] ??= []).push(id);
+
+  const idFinal = {};                       // non-primary split id -> suffixed display
+  const groupsBySurname = {};               // surname -> [{ id, initial, primary, clubs, final, base }]
+  let splitGroups = 0, splitPeople = 0;
+  for (const disp in idsByDisp) {
+    const ids = idsByDisp[disp];
+    if (ids.length < 2) continue;           // not a collision
+    splitGroups++; splitPeople += ids.length;
+    ids.sort((a, b) => idInfo[b].o - idInfo[a].o || idInfo[b].n - idInfo[a].n);  // famous first
+    const natCount = {};
+    for (const id of ids) natCount[idInfo[id].nat] = (natCount[idInfo[id].nat] || 0) + 1;
+    const used = new Set([disp]);
+    const [given, surname] = splitName(normalize(disp).split(' ').filter(Boolean));
+    const initial = given[0] ? given[0][0] : '';
+    ids.forEach((id, i) => {
+      let final = disp;
+      if (i > 0) {                          // primary (i===0) keeps the plain name
+        const nat = idInfo[id].nat;
+        const sfx = (nat && natCount[nat] === 1) ? nat : ([...idInfo[id].clubs][0] || ('#' + (i + 1)));
+        final = `${disp} (${sfx})`; let n = 2;
+        while (used.has(final)) final = `${disp} (${sfx} ${n++})`;
+        used.add(final); idFinal[id] = final;
+      }
+      (groupsBySurname[surname] ??= []).push({ id, initial, primary: i === 0, clubs: idInfo[id].clubs, final, base: disp, o: idInfo[id].o, by: idInfo[id].by });
+    });
+  }
+
+  // rewrite appearances: split non-primary ids; route id-less (wiki) appearances of a split name.
+  for (const s in seasons) for (const cname in seasons[s]) for (const p of seasons[s][cname]) {
+    if (p.id) {
+      if (idFinal[p.id]) { p.d = idFinal[p.id]; p.k = keysFor(idInfo[p.id].disp, ''); }   // suffixed alt
+      continue;                                                                            // primary/non-split: untouched
+    }
+    // wiki appearance (no id): if its name belongs to a split group, route by club
+    const [g, sur] = splitName(normalize(p.d).split(' ').filter(Boolean));
+    const grp = groupsBySurname[sur];
+    if (!grp) continue;
+    const init = g[0] ? g[0][0] : '';
+    const gm = grp.filter(e => !init || !e.initial || e.initial === init);
+    if (!gm.length) continue;
+    const np = gm.filter(e => !e.primary && e.clubs.has(cname));         // a specific other person (by id) played here
+    if (np.length === 1) { p.d = np[0].final; p.k = keysFor(np[0].base, ''); continue; }
+    if (gm.some(e => e.primary && e.clubs.has(cname))) continue;         // the famous primary (by id) played here -> merge
+    // Resolve by age: who in this shared-name group was plausibly active this season? If exactly ONE,
+    // it's them — keeps a famous player's pre-FIFA clubs (Suárez b.1987 is the only adult at Liverpool
+    // 2011) without guessing. Route to that person (primary -> merge to base; other -> their split name).
+    const startYear = +s.slice(0, 4);
+    const plaus = gm.filter(e => e.by && e.by + 16 <= startYear && startYear <= e.by + 42);
+    if (plaus.length === 1) {
+      if (!plaus[0].primary) { p.d = plaus[0].final; p.k = keysFor(plaus[0].base, ''); }
+      continue;
+    }
+    // ambiguous (0 or several plausible) AND a famous shared name -> drop the appearance entirely:
+    // can't attribute it, so don't let it forge a phantom link (and no clunky "(Club)" entity).
+    // Obscure shared names are left merged — fragmenting deep-cut journeymen isn't worth it.
+    const prim = gm.find(e => e.primary);
+    if (prim && prim.o >= 78) p.drop = true;
+  }
+  let dropped = 0;
+  for (const s in seasons) for (const cname in seasons[s]) {
+    const kept = seasons[s][cname].filter(p => !p.drop);
+    dropped += seasons[s][cname].length - kept.length;
+    seasons[s][cname] = kept;
+  }
+  console.log(`identity-split: ${splitGroups} shared names -> ${splitPeople} distinct players (sofifa id); dropped ${dropped} unattributable appearances`);
+
+  // rebuild pInfo (fame/pos/nat for hints) from the now identity-correct appearances
+  for (const k in pInfo) delete pInfo[k];
+  for (const s in seasons) for (const cname in seasons[s]) for (const p of seasons[s][cname]) {
+    const cur = pInfo[p.d];
+    if (!cur) pInfo[p.d] = { o: p.o, pos: p.pos, nat: p.nat };
+    else if (p.o > cur.o) { cur.o = p.o; if (p.pos) cur.pos = p.pos; if (p.nat) cur.nat = p.nat; }
+    else { if (!cur.pos && p.pos) cur.pos = p.pos; if (!cur.nat && p.nat) cur.nat = p.nat; }
+  }
 }
 
 // --- canonical player identity ---

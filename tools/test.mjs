@@ -167,6 +167,16 @@ test('identity: no false mononym merges (Ronaldo / Pedro stay distinct)', () => 
   assert.ok(PLAYERS['Pedro'], 'mononym Pedro should stay its own player');
 });
 
+test('identity: same-name players split by sofifa id (no phantom links)', () => {
+  // "Gabriel" is ~6 different real players — none played AC Milan + Arsenal + Napoli
+  assert.ok(!hasClubs('Gabriel', 'AC Milan', 'Arsenal', 'Napoli'), 'phantom "Gabriel" spans Milan+Arsenal+Napoli');
+  // the two Luis Suárez are distinct: the Uruguayan never played Marseille
+  assert.ok(!hasClubs('Luis Suárez', 'Olympique de Marseille'), 'Uruguayan Suárez wrongly at Marseille');
+  assert.ok(hasClubs('Luis Suárez', 'FC Barcelona', 'Atlético Madrid'), 'Uruguayan Suárez should have Barça + Atlético');
+  // and his real rating attached (under-merge of the short/full form fixed)
+  assert.equal(D.playerInfo['Luis Suárez']?.o, 92, 'Uruguayan Suárez should carry his real overall (92)');
+});
+
 test("shipped builders produce valid puzzles for today (real game.js code)", () => {
   // squad: every league × difficulty draws 5 distinct clubs
   for (const lg of ['Premier League', 'La Liga', 'Bundesliga', 'Serie A', 'Ligue 1', 'WORLD'])
