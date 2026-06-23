@@ -74,14 +74,21 @@ export function buildPuzzle(DATA, league, diff){
 export function buildLinkPuzzle(DATA, diff){
   const date=todayStr();
   const rnd=mulberry32(hashStr(date+'|link|'+diff));
-  let pool = DATA.links3.slice();                     // always 3 clubs
-  if(diff==='easy'){                                  // easy = links where EVERY club is a big club
+  let pool = DATA.links3.slice();                     // always 3 clubs. l = [id,id,id, clubFame, connectorFame]
+  if(diff==='easy'){
+    // easy = recognisable clubs AND a recognisable ANSWER. Famous clubs alone aren't enough —
+    // three giants often share only a deep-cut connector (Monaco×Lyon×Real Madrid → M. Diarra).
+    // connectorFame (l[4]) = best FIFA overall of any player linking all three (0 if unrated).
     const big=new Set(DATA.bigClubs||[]);
     const allBig=pool.filter(l=>l.slice(0,3).every(id=>big.has(id)));
-    if(allBig.length>=20) pool=allBig;
+    const famous=allBig.filter(l=>(l[4]||0)>=80);     // a star connects them
+    if(famous.length>=20) pool=famous;
+    else if(allBig.length>=20) pool=allBig;
     else { const ws=pool.map(l=>l[3]).sort((a,b)=>a-b); const cut=ws[Math.floor(ws.length*0.55)]||0; pool=pool.filter(l=>l[3]>=cut); }
   }
-  const wOf = l => (diff==='hard') ? 1 : l[3];        // hard = uniform weight -> deeper cuts
+  // easy: uniform over the already-famous pool (more day-to-day variety, every answer still a
+  // star); medium: weight by club fame; hard: uniform over everything (deep cuts).
+  const wOf = l => (diff==='medium') ? l[3] : 1;
   let tot=0; for(const l of pool) tot+=wOf(l);
   let x=rnd()*tot, pick=pool[0];
   for(const l of pool){ x-=wOf(l); if(x<=0){pick=l;break;} }

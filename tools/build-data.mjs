@@ -367,12 +367,31 @@ const clubPresence = clubs.map(() => 0);
 for (const season of seasonList) for (const cid of Object.keys(rosters[season])) clubPresence[+cid]++;
 const clubFame = clubs.map((c, id) => clubPresence[id] + (FAMOUS.has(c.name) ? 30 : 0));
 
+// Name-collision guard: several different players share one MONONYM display ("Gabriel" =
+// ~6 people). Such a blob "plays" 3+ clubs in a single season — impossible for one person —
+// which seeds phantom links (Milan×Arsenal×Napoli→Gabriel). We don't let a colliding mononym
+// count as a famous CONNECTOR, so it can never seed an "easy" puzzle. (Full-name well-travelled
+// players whose loan squads overlap are spared — only single-token names are suspect.) The blob
+// still exists as a deep-cut link; full disambiguation is a separate, larger fix.
+const maxSameSeasonClubs = {};
+for (const season of seasonList) {
+  const seen = {};
+  for (const cid of Object.keys(rosters[season]))
+    for (const p of rosters[season][cid].p) (seen[p.d] ??= new Set()).add(cid);
+  for (const d in seen) maxSameSeasonClubs[d] = Math.max(maxSameSeasonClubs[d] || 0, seen[d].size);
+}
+const isMononym = (d) => normalize(d).split(' ').filter(Boolean).length === 1;
+const collidingMononym = (d) => isMononym(d) && (maxSameSeasonClubs[d] || 0) >= 3;
+
 const link2 = new Map(), link3 = new Map();
 const combo = (arr) => arr.slice().sort((a, b) => a - b);
 const linkW = (ids) => Math.min(...ids.map(id => clubFame[id]));  // weakest club governs difficulty
+// connector's FIFA overall (0 if unrated) — but a colliding mononym never counts as famous.
+const ovrOf = (d) => collidingMononym(d) ? 0 : ((pInfo[d] && pInfo[d].o) || 0);
 for (const d in pClubs) {
   const cids = [...pClubs[d]];
   if (cids.length < 2) continue;
+  const o = ovrOf(d);
   for (let i = 0; i < cids.length; i++) for (let j = i + 1; j < cids.length; j++) {
     const c = combo([cids[i], cids[j]]), key = c.join('|'), w = linkW(c);
     if (!link2.has(key) || w > link2.get(key).w) link2.set(key, { c, w });
@@ -381,12 +400,16 @@ for (const d in pClubs) {
     const cap = cids.slice(0, 6);                        // limit triple explosion for journeymen
     for (let i = 0; i < cap.length; i++) for (let j = i + 1; j < cap.length; j++) for (let k = j + 1; k < cap.length; k++) {
       const c = combo([cap[i], cap[j], cap[k]]), key = c.join('|'), w = linkW(c);
-      if (!link3.has(key) || w > link3.get(key).w) link3.set(key, { c, w });
+      const e = link3.get(key);
+      // track BOTH the weakest-club fame (w) and the most famous connecting player (fame):
+      // easy mode needs a recognisable ANSWER, not just recognisable clubs.
+      if (!e) link3.set(key, { c, w, fame: o });
+      else { if (w > e.w) e.w = w; if (o > e.fame) e.fame = o; }
     }
   }
 }
 const links2 = [...link2.values()].map(o => [...o.c, o.w]);
-const links3 = [...link3.values()].map(o => [...o.c, o.w]);
+const links3 = [...link3.values()].map(o => [...o.c, o.w, o.fame]);
 
 // player info (position/nationality) — only for connectors (>=2 clubs), used for link hints
 const playerInfo = {};
