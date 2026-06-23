@@ -394,7 +394,9 @@ for (const d in pClubs) {
   const o = ovrOf(d);
   for (let i = 0; i < cids.length; i++) for (let j = i + 1; j < cids.length; j++) {
     const c = combo([cids[i], cids[j]]), key = c.join('|'), w = linkW(c);
-    if (!link2.has(key) || w > link2.get(key).w) link2.set(key, { c, w });
+    const e = link2.get(key);                            // track fame too (for famous-connector easy grids)
+    if (!e) link2.set(key, { c, w, fame: o });
+    else { if (w > e.w) e.w = w; if (o > e.fame) e.fame = o; }
   }
   if (cids.length >= 3) {
     const cap = cids.slice(0, 6);                        // limit triple explosion for journeymen
@@ -408,7 +410,7 @@ for (const d in pClubs) {
     }
   }
 }
-const links2 = [...link2.values()].map(o => [...o.c, o.w]);
+const links2 = [...link2.values()].map(o => [...o.c, o.w, o.fame]);
 const links3 = [...link3.values()].map(o => [...o.c, o.w, o.fame]);
 
 // player info (position/nationality) — only for connectors (>=2 clubs), used for link hints
@@ -416,15 +418,22 @@ const playerInfo = {};
 for (const d in pClubs) { if (pClubs[d].size >= 2 && pInfo[d]) playerInfo[d] = pInfo[d]; }
 
 // --- grid puzzles (Immaculate-Grid style): 3 row clubs x 3 col clubs, every cell guaranteed solvable ---
-const adj = {};
-for (const [a, b] of links2) { (adj[a] ??= new Set()).add(b); (adj[b] ??= new Set()).add(a); }
+// Two adjacencies: `adj` = any shared player (medium/hard); `adjFame` = a FAMOUS player (overall
+// >= EASY_FAME) shares both clubs — so an easy grid's every cell has a recognisable answer, not
+// just a connectable one (the same lesson as Find-the-Link easy).
+const EASY_FAME = 80;
+const adj = {}, adjFame = {};
+for (const [a, b, , fame] of links2) {
+  (adj[a] ??= new Set()).add(b); (adj[b] ??= new Set()).add(a);
+  if ((fame || 0) >= EASY_FAME) { (adjFame[a] ??= new Set()).add(b); (adjFame[b] ??= new Set()).add(a); }
+}
 const shuffle = (a) => { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
-function genGrids(pool, maxN) {
+function genGrids(pool, maxN, adjMap = adj) {
   const ps = new Set(pool), set = new Map();
   for (let t = 0; t < 200000 && set.size < maxN; t++) {
     const rows = shuffle(pool.slice()).slice(0, 3);
-    if (!rows.every(x => adj[x])) continue;
-    const common = [...adj[rows[0]]].filter(x => ps.has(x) && adj[rows[1]].has(x) && adj[rows[2]].has(x) && !rows.includes(x));
+    if (!rows.every(x => adjMap[x])) continue;
+    const common = [...adjMap[rows[0]]].filter(x => ps.has(x) && adjMap[rows[1]].has(x) && adjMap[rows[2]].has(x) && !rows.includes(x));
     if (common.length < 3) continue;
     const cols = shuffle(common).slice(0, 3);
     const key = rows.slice().sort((a, b) => a - b).join(',') + '|' + cols.slice().sort((a, b) => a - b).join(',');
@@ -436,8 +445,9 @@ function genGrids(pool, maxN) {
 const cand = clubs.map(c => c.id).filter(id => adj[id]).sort((a, b) => adj[b].size - adj[a].size).slice(0, 46);
 const grids = genGrids(cand, 300);
 // "big clubs" = genuinely recognisable sides (Easy difficulty). BIG_NAMES defined up top.
+// Easy grids use adjFame so every cell resolves to a famous player, not a deep cut.
 const bigClubs = BIG_NAMES.map(n => idOf[n]).filter(x => x != null);
-const gridsEasy = genGrids(bigClubs, 250);
+const gridsEasy = genGrids(bigClubs, 250, adjFame);
 
 fs.writeFileSync(OUT, JSON.stringify({ seasons: seasonList, clubs, rosters, links2, links3, grids, gridsEasy, bigClubs, playerInfo, meta: { ovrMin: OVR_MIN, minSquad: MIN_SQUAD, leagues: Object.values(LEAGUE_BY_ID) } }));
 
