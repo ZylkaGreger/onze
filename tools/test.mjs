@@ -13,7 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 // The shipped game logic — the SAME module the browser imports (index.html). No more
 // regex-slicing functions out of the HTML; tests track behaviour by importing it directly.
-import { norm, matchKey, todayStr, buildPuzzle, buildLinkPuzzle, buildGridPuzzle } from '../game.js';
+import { norm, matchKey, todayStr, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -175,6 +175,25 @@ test('identity: same-name players split by sofifa id (no phantom links)', () => 
   assert.ok(hasClubs('Luis Suárez', 'FC Barcelona', 'Atlético Madrid'), 'Uruguayan Suárez should have Barça + Atlético');
   // and his real rating attached (under-merge of the short/full form fixed)
   assert.equal(D.playerInfo['Luis Suárez']?.o, 92, 'Uruguayan Suárez should carry his real overall (92)');
+});
+
+test('mystery-player mode: deterministic daily pick + lenient answer matching', () => {
+  const CLUES = [
+    { answer: 'Mohamed Salah', clues: ['An Egyptian winger.', 'Club path: Basel → Chelsea → Roma → Liverpool.'] },
+    { answer: 'Kevin De Bruyne', clues: ['A Belgian midfielder.', 'Genk → Chelsea → Manchester City.'] },
+    { answer: 'Rodri (footballer, born 1996)', clues: ['A Spanish midfielder.', 'Villarreal → Atlético → Man City.'] },
+  ];
+  const p1 = buildPlayerPuzzle(CLUES), p2 = buildPlayerPuzzle(CLUES);
+  assert.equal(p1.answer, p2.answer, 'same day must give the same player');
+  assert.ok(CLUES.some(c => c.answer.replace(/\s*\(.*\)$/, '') === p1.answer), 'answer comes from the pool');
+  assert.ok(p1.clues.length >= 1 && p1.sig, 'puzzle has clues + a sig');
+  assert.equal(buildPlayerPuzzle([]).answer, '', 'empty clue set degrades gracefully');
+  // wiki disambiguation suffix stripped, and surname / full / accent-insensitive guesses all match
+  const k = answerKeys('Rodri (footballer, born 1996)'.replace(/\s*\(.*\)$/, ''));
+  assert.ok(k.has(matchKey('Rodri')), 'surname "Rodri" matches');
+  const ks = answerKeys('Mohamed Salah');
+  assert.ok(ks.has(matchKey('Salah')) && ks.has(matchKey('mohamed salah')), 'surname and full name match');
+  assert.ok(!answerKeys('Kevin De Bruyne').has(matchKey('Messi')), 'a wrong guess does not match');
 });
 
 test("shipped builders produce valid puzzles for today (real game.js code)", () => {

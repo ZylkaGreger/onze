@@ -105,6 +105,25 @@ export function buildGridPuzzle(DATA, diff){
   return {date:todayStr(), rowIds, colIds, rows:rowIds.map(id=>DATA.clubs[id]), cols:colIds.map(id=>DATA.clubs[id]), sig:g.join('|')};
 }
 
+// Mystery player: one player a day, clues revealed one at a time (no difficulty tiers). CLUES is the
+// data/player-clues.json array [{answer, clues:[…]}]. Deterministic daily pick like the other modes.
+export function buildPlayerPuzzle(CLUES, diff){
+  const date = todayStr();
+  if(!CLUES || !CLUES.length) return {date, answer:'', clues:[], sig:''};
+  const rnd = mulberry32(hashStr(date + '|player'));
+  const p = CLUES[Math.floor(rnd() * CLUES.length)];
+  const answer = (p.answer || p.a || '').replace(/\s*\(.*\)$/, '');   // strip wiki disambiguation suffix
+  return { date, answer, clues: p.clues || p.c || [], sig: 'player|' + answer };
+}
+// acceptable guesses for a mystery answer: full name, surname, particle-surname phrase, surname-only.
+// All routed through matchKey (token-sorted) so word order and accents don't matter.
+export function answerKeys(name){
+  const k = new Set([matchKey(name)]);
+  const t = norm(name).split(' ').filter(Boolean);
+  if(t.length > 1){ k.add(matchKey(t[t.length-1])); k.add(matchKey(t.slice(-2).join(' '))); k.add(matchKey(t.slice(1).join(' '))); }
+  return k;
+}
+
 // proxy "rarity" (0–99): how non-obvious a grid pick is. Among players who fit the cell, famous
 // ones get picked by most people, so a low-fame pick — or a pick in a thin/old cell — scores higher.
 // Fame = sofifa overall where known (DATA.playerInfo), else 0 (treated as a deep cut). No backend.

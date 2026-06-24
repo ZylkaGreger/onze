@@ -161,7 +161,7 @@
 
 <script type="module">
 import { norm, matchKey, hashStr, mulberry32, todayStr,
-         buildPuzzle, buildLinkPuzzle, buildGridPuzzle, cellRarity } from './game.js';
+         buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity } from './game.js';
 
 const MAX_GUESSES = 6;
 const LEAGUE_TRACKS = [
@@ -181,10 +181,11 @@ const MODES = [
   ['squad','📋 Squads'],
   ['link','🔗 Find the link'],
   ['grid','▦ Grid'],
+  ['player','🕵️ Mystery player'],
 ];
 const GRID_GUESSES = 9;
 
-let DATA, STATE, ALL_NAMES = [], PLAYERS = {};
+let DATA, CLUES = [], STATE, ALL_NAMES = [], PLAYERS = {};
 
 // Core game logic (name matching, daily PRNG, puzzle builders, rarity) lives in ./game.js
 // so the browser and the Node tests/health-check run the exact same code — see the import above.
@@ -201,6 +202,10 @@ function loadState(mode, league, diff){
     const puzzle=buildGridPuzzle(DATA, diff);
     st={key, mode, league, diff, puzzle, cells:Array(9).fill(null), rarity:Array(9).fill(null), active:null, guesses:[], done:false};
     if(saved){try{const s=JSON.parse(saved); if(s.sig===puzzle.sig){st.cells=s.cells;st.rarity=s.rarity||Array(9).fill(null);st.guesses=s.guesses;st.done=s.done;}}catch(e){}}
+  } else if(mode==='player'){
+    const puzzle=buildPlayerPuzzle(CLUES, diff);
+    st={key, mode, league, diff, puzzle, shown:1, guesses:[], done:false, win:false};
+    if(saved){try{const s=JSON.parse(saved); if(s.sig===puzzle.sig){st.shown=s.shown;st.guesses=s.guesses;st.done=s.done;st.win=s.win;}}catch(e){}}
   } else {
     const puzzle=buildPuzzle(DATA, league, diff);
     st={key, mode, league, diff, puzzle, solved:Array(puzzle.cells.length).fill(null), guesses:[], done:false};
@@ -210,10 +215,11 @@ function loadState(mode, league, diff){
 }
 function cellsSig(p){return p.cells.map(c=>c.cid+'@'+c.season).join('|');}
 function save(){
-  const sig = (STATE.mode==='link'||STATE.mode==='grid') ? STATE.puzzle.sig : cellsSig(STATE.puzzle);
+  const sig = (STATE.mode==='link'||STATE.mode==='grid'||STATE.mode==='player') ? STATE.puzzle.sig : cellsSig(STATE.puzzle);
   let body;
   if(STATE.mode==='link') body={sig, answer:STATE.answer, guesses:STATE.guesses, done:STATE.done};
   else if(STATE.mode==='grid') body={sig, cells:STATE.cells, rarity:STATE.rarity, guesses:STATE.guesses, done:STATE.done};
+  else if(STATE.mode==='player') body={sig, shown:STATE.shown, guesses:STATE.guesses, done:STATE.done, win:STATE.win};
   else body={sig, solved:STATE.solved, guesses:STATE.guesses, done:STATE.done};
   localStorage.setItem(STATE.key, JSON.stringify(body));
 }
@@ -226,7 +232,26 @@ function renderPips(){
   if(STATE.done) showEnd(); else document.getElementById('end').classList.remove('show');
 }
 
-function render(){ if(STATE.mode==='link') renderLink(); else if(STATE.mode==='grid') renderGrid(); else renderSquad(); }
+function render(){ if(STATE.mode==='link') renderLink(); else if(STATE.mode==='grid') renderGrid(); else if(STATE.mode==='player') renderPlayer(); else renderSquad(); }
+
+function renderPlayer(){
+  const p=STATE.puzzle, cellsEl=document.getElementById('cells'); cellsEl.innerHTML='';
+  p.clues.forEach((clue,i)=>{
+    const open = i<STATE.shown || STATE.done;
+    const el=document.createElement('div'); el.className='cell'+(open?'':'');
+    el.innerHTML=`<div class="num">${i+1}</div>
+      <div class="info"><div class="club" style="${open?'':'color:var(--dim);font-weight:500'}">${open?clue:'🔒 guess to reveal'}</div></div>`;
+    cellsEl.appendChild(el);
+  });
+  document.getElementById('hint').style.display='none';
+  document.getElementById('pips').innerHTML='';
+  const n=p.clues.length, g=STATE.guesses.length;
+  document.getElementById('left').textContent = STATE.done
+    ? (STATE.win?`solved in ${STATE.shown} clue${STATE.shown===1?'':'s'}`:'revealed')
+    : `Clue ${Math.min(STATE.shown,n)}/${n} · ${g} guess${g===1?'':'es'}`;
+  const input=document.getElementById('guess'); input.disabled=STATE.done;
+  if(STATE.done) showEnd(); else document.getElementById('end').classList.remove('show');
+}
 
 function renderSquad(){
   const cellsEl=document.getElementById('cells'); cellsEl.innerHTML='';
@@ -325,7 +350,19 @@ function gridRarity(){
   return rs.length?Math.round(rs.reduce((a,b)=>a+b,0)/rs.length):0;
 }
 
-function submitGuess(raw){ if(STATE.mode==='link') return submitLink(raw); if(STATE.mode==='grid') return submitGrid(raw); return submitSquad(raw); }
+function submitGuess(raw){ if(STATE.mode==='link') return submitLink(raw); if(STATE.mode==='grid') return submitGrid(raw); if(STATE.mode==='player') return submitPlayer(raw); return submitSquad(raw); }
+
+function submitPlayer(raw){
+  if(STATE.done) return;
+  const g=matchKey(raw); if(!g) return;
+  const ok=answerKeys(STATE.puzzle.answer).has(g);
+  STATE.guesses.push({hit:ok});
+  document.getElementById('guess').value=''; hideSugg();
+  if(ok){ STATE.win=true; STATE.done=true; toast('🏆 '+STATE.puzzle.answer+' — in '+STATE.shown+' clue'+(STATE.shown===1?'':'s')); }
+  else if(STATE.shown<STATE.puzzle.clues.length){ STATE.shown++; toast('❌ Not '+raw+' — new clue'); }
+  else { STATE.done=true; toast('❌ It was '+STATE.puzzle.answer); }
+  save(); render();
+}
 
 function submitGrid(raw){
   if(STATE.done) return;
@@ -413,6 +450,11 @@ function shareText(){
   const row=STATE.guesses.map(g=>g.hit?'🟩':'🟥').join('');
   const d=new Date(); const dd=d.getUTCDate()+' '+d.toLocaleString('en',{month:'short',timeZone:'UTC'});
   const url=shareUrl();
+  if(STATE.mode==='player'){
+    const sq=STATE.guesses.map(g=>g.hit?'🟩':'🟥').join('');
+    const score=STATE.win?`in ${STATE.shown} clue${STATE.shown===1?'':'s'}`:'X';
+    return `🕵️ Onze Mystery — ${dd}\n${sq}\nGuessed ${score}\n${url}`;
+  }
   if(STATE.mode==='link'){
     const won=!!STATE.answer; const score=won?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;
     return `🔗 Onze Link ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · linked ${STATE.puzzle.clubs.length} clubs\n${url}`;
@@ -454,12 +496,18 @@ function showEnd(){
   const e=document.getElementById('end'); e.classList.add('show');
   const won = STATE.mode==='link' ? !!STATE.answer
     : STATE.mode==='grid' ? STATE.cells.filter(Boolean).length===9
+    : STATE.mode==='player' ? STATE.win
     : STATE.solved.filter(Boolean).length===5;
   const gridN = STATE.mode==='grid' ? STATE.cells.filter(Boolean).length : 0;
   const grar = STATE.mode==='grid' ? ` · rarity ${gridRarity()} 🧠` : '';
-  document.getElementById('endmsg').textContent = (won?'Solved! 🏆' : (STATE.mode==='grid'?`Grid done — ${gridN}/9`:'Out of guesses 😬')) + grar;
+  const endmsg = STATE.mode==='player'
+    ? (won?`Solved in ${STATE.shown} clue${STATE.shown===1?'':'s'}! 🏆`:'Out of clues 😬')
+    : (won?'Solved! 🏆' : (STATE.mode==='grid'?`Grid done — ${gridN}/9`:'Out of guesses 😬')) + grar;
+  document.getElementById('endmsg').textContent = endmsg;
   const rev=document.getElementById('reveal');
-  if(STATE.mode==='link' && !won){
+  if(STATE.mode==='player'){
+    rev.innerHTML=`The player was <b>${STATE.puzzle.answer}</b>`; rev.style.display='block';
+  } else if(STATE.mode==='link' && !won){
     const ans=validAnswers();
     const more=ans.length>1?' &nbsp;·&nbsp; also '+ans.slice(1,4).join(', '):'';
     rev.innerHTML=ans.length?`Linked by <b>${ans[0]}</b>${more}`:'';
@@ -494,8 +542,9 @@ function initSelects(){
   const qMode=q.get('m'), qDiff=q.get('d'), qLeague=q.get('l');
   const valid=(v,list)=>list.some(x=>x[0]===v);
   const msel=document.getElementById('mode');
-  msel.innerHTML=MODES.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
-  msel.value=(valid(qMode,MODES)?qMode:null)||localStorage.getItem('onze:lastMode')||'squad';
+  const modes=MODES.filter(([v])=>v!=='player'||CLUES.length);   // hide Mystery player if clues didn't load
+  msel.innerHTML=modes.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
+  msel.value=(valid(qMode,modes)?qMode:null)||localStorage.getItem('onze:lastMode')||'squad';
   const lsel=document.getElementById('league');
   lsel.innerHTML=LEAGUE_TRACKS.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
   lsel.value=(valid(qLeague,LEAGUE_TRACKS)?qLeague:null)||localStorage.getItem('onze:lastLeague')||'WORLD';
@@ -513,16 +562,19 @@ function initSelects(){
 function applyModeUI(){
   const mode=document.getElementById('mode').value;
   document.getElementById('league').style.display=(mode==='squad')?'':'none';
+  document.getElementById('diff').style.display=(mode==='player')?'none':'';   // mystery player has no difficulty
   // squads only count within the dataset's season window — state it so a pre-window
   // connection (e.g. Owen's 2004/05 Real Madrid) doesn't read as a broken answer.
   const win = (DATA&&DATA.seasons&&DATA.seasons.length) ? ` Squads ${DATA.seasons[0]}–${DATA.seasons[DATA.seasons.length-1]} only.` : '';
   const sub={squad:'Name one player from each squad — that exact club, that exact season.',
     link:'Find one player who turned out for ALL of these clubs.'+win,
-    grid:'Name a player who played for both clubs of each cell. 9 cells, 9 guesses.'+win}[mode];
+    grid:'Name a player who played for both clubs of each cell. 9 cells, 9 guesses.'+win,
+    player:'Guess the mystery player — a new clue with every wrong guess.'}[mode];
   document.querySelector('.sub').textContent=sub;
   document.getElementById('guess').placeholder=
     mode==='link'?'Name the player who links them…':
-    mode==='grid'?'Type a player — it lands in the right cell…':'Type a player name and press Enter…';
+    mode==='grid'?'Type a player — it lands in the right cell…':
+    mode==='player'?'Name the mystery player…':'Type a player name and press Enter…';
 }
 
 function buildNameIndex(){
@@ -546,7 +598,11 @@ function start(mode, league, diff){
 }
 
 document.addEventListener('DOMContentLoaded',async()=>{
-  DATA=await fetch('data/squads.json').then(r=>r.json());
+  const [sq, cl] = await Promise.all([
+    fetch('data/squads.json').then(r=>r.json()),
+    fetch('data/player-clues.json').then(r=>r.json()).catch(()=>[]),   // mystery-player clues (optional)
+  ]);
+  DATA=sq; CLUES=cl||[];
   buildNameIndex();
   initSelects();
   const input=document.getElementById('guess');
