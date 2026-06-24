@@ -46,6 +46,7 @@
     display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--dim);flex:0 0 auto}
   .cell .info{flex:1;min-width:0}
   .cell .club{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .cell .clue{font-weight:500;font-size:15px;white-space:normal;line-height:1.35}
   .cell .meta{font-size:12px;color:var(--dim);margin-top:1px}
   .cell .badge{font-size:10px;text-transform:uppercase;letter-spacing:.5px;
     background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--dim)}
@@ -240,7 +241,7 @@ function renderPlayer(){
     const open = i<STATE.shown || STATE.done;
     const el=document.createElement('div'); el.className='cell'+(open?'':'');
     el.innerHTML=`<div class="num">${i+1}</div>
-      <div class="info"><div class="club" style="${open?'':'color:var(--dim);font-weight:500'}">${open?clue:'🔒 guess to reveal'}</div></div>`;
+      <div class="info"><div class="clue" style="${open?'':'color:var(--dim)'}">${open?clue:'🔒 guess to reveal'}</div></div>`;
     cellsEl.appendChild(el);
   });
   document.getElementById('hint').style.display='none';
@@ -441,7 +442,8 @@ function submitLink(raw){
 
 // deep link back into the exact mode (and difficulty/league) the player just played
 function shareUrl(){
-  const p=new URLSearchParams(); p.set('m',STATE.mode); p.set('d',STATE.diff);
+  const p=new URLSearchParams(); p.set('m',STATE.mode);
+  if(STATE.mode!=='player') p.set('d',STATE.diff);   // mystery player has no difficulty
   if(STATE.mode==='squad') p.set('l',STATE.league);
   return 'onzedaily.com/?'+p.toString();
 }
