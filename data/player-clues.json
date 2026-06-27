@@ -4,10 +4,10 @@
   "ourName": "Lionel Messi",
   "overall": 94,
   "clues": [
-   "An Argentine forward, born in the 1980s.",
-   "Won the Ballon d'Or.",
+   "A forward, born in the 1980s.",
    "Began his senior career at Barcelona.",
-   "Also played for Paris Saint-Germain.",
+   "He's Argentine.",
+   "Won the Ballon d'Or.",
    "Club path: Barcelona → Paris Saint-Germain → Inter Miami."
   ]
  },
@@ -16,10 +16,10 @@
   "ourName": "Cristiano Ronaldo",
   "overall": 94,
   "clues": [
-   "A Portuguese forward, born in the 1980s.",
-   "Won The Best FIFA Men's Player.",
+   "A forward, born in the 1980s.",
    "Began his senior career at Sporting CP.",
-   "Also played for Juventus.",
+   "He's Portuguese.",
+   "Won The Best FIFA Men's Player.",
    "Club path: Sporting CP → Manchester United → Real Madrid → Juventus → Manchester United → Al-Nassr."
   ]
  },
@@ -28,10 +28,10 @@
   "ourName": "Robert Lewandowski",
   "overall": 92,
   "clues": [
-   "A Polish forward, born in the 1980s.",
-   "Won The Best FIFA Men's Player.",
+   "A forward, born in the 1980s.",
    "Began his senior career at Delta Warsaw.",
-   "Also played for Borussia Dortmund.",
+   "He's Polish.",
+   "Won The Best FIFA Men's Player.",
    "Club path: Delta Warsaw → Znicz Pruszków → Lech Poznań → Borussia Dortmund → Bayern Munich → Barcelona."
   ]
  },
@@ -40,10 +40,10 @@
   "ourName": "Luis Suárez",
   "overall": 92,
   "clues": [
-   "A Uruguayan forward, born in the 1980s.",
-   "Won the European Golden Shoe.",
+   "A forward, born in the 1980s.",
    "Began his senior career at Nacional.",
-   "Also played for Barcelona.",
+   "He's Uruguayan.",
+   "Won the European Golden Shoe.",
    "Club path: Nacional → Groningen → Ajax → Liverpool → Barcelona → Atlético Madrid → Nacional → Grêmio → Inter Miami."
   ]
  },
@@ -52,10 +52,10 @@
   "ourName": "Neymar",
   "overall": 92,
   "clues": [
-   "A Brazilian midfielder, born in the 1990s.",
-   "Won the UEFA Champions League top scorer.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Santos.",
-   "Also played for Paris Saint-Germain.",
+   "He's Brazilian.",
+   "Won the UEFA Champions League top scorer.",
    "Club path: Santos → Barcelona → Paris Saint-Germain → Al Hilal → Santos."
   ]
  },
@@ -64,10 +64,10 @@
   "ourName": "Eden Hazard",
   "overall": 91,
   "clues": [
-   "A Belgian winger, born in the 1990s.",
-   "Won the Premier League Player of the Season.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Lille.",
-   "Also played for Chelsea.",
+   "He's Belgian.",
+   "Won the Premier League Player of the Season.",
    "Club path: Lille → Chelsea → Real Madrid."
   ]
  },
@@ -76,10 +76,10 @@
   "ourName": "Luka Modrić",
   "overall": 91,
   "clues": [
-   "A Croatian midfielder, born in the 1980s.",
-   "Won the Ballon d'Or.",
+   "A midfielder, born in the 1980s.",
    "Began his senior career at Dinamo Zagreb.",
-   "Also played for Real Madrid.",
+   "He's Croatian.",
+   "Won the Ballon d'Or.",
    "Club path: Dinamo Zagreb → Tottenham Hotspur → Real Madrid → AC Milan."
   ]
  },
@@ -88,10 +88,10 @@
   "ourName": "David de Gea",
   "overall": 91,
   "clues": [
-   "A Spanish goalkeeper, born in the 1990s.",
-   "Has won the Premier League.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at Atlético Madrid.",
-   "Also played for Manchester United.",
+   "He's Spanish.",
+   "Has won the Premier League.",
    "Club path: Atlético Madrid → Manchester United → Fiorentina."
   ]
  },
@@ -100,10 +100,10 @@
   "ourName": "Kevin De Bruyne",
   "overall": 91,
   "clues": [
-   "A Belgian midfielder, born in the 1990s.",
-   "Won the PFA Players' Player of the Year.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Genk.",
-   "Also played for VfL Wolfsburg.",
+   "He's Belgian.",
+   "Won the PFA Players' Player of the Year.",
    "Club path: Genk → Chelsea → VfL Wolfsburg → Manchester City → Napoli."
   ]
  },
@@ -112,10 +112,10 @@
   "ourName": "Mohamed Salah",
   "overall": 91,
   "clues": [
-   "An Egyptian winger, born in the 1990s.",
-   "Won the Premier League Golden Boot.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Al-Mokawloon.",
-   "Also played for Chelsea.",
+   "He's Egyptian.",
+   "Won the Premier League Golden Boot.",
    "Club path: Al-Mokawloon → Basel → Chelsea → Roma → Liverpool."
   ]
  },
@@ -124,10 +124,10 @@
   "ourName": "Kylian Mbappé",
   "overall": 91,
   "clues": [
-   "A French forward, born in the 1990s.",
-   "Won the European Golden Shoe.",
+   "A forward, born in the 1990s.",
    "Began his senior career at Monaco.",
-   "Also played for Paris Saint-Germain.",
+   "He's French.",
+   "Won the European Golden Shoe.",
    "Club path: Monaco → Paris Saint-Germain → Real Madrid."
   ]
  },
@@ -136,10 +136,10 @@
   "ourName": "Virgil van Dijk",
   "overall": 91,
   "clues": [
-   "A Dutch defender, born in the 1990s.",
-   "Won the PFA Players' Player of the Year.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Groningen.",
-   "Also played for Southampton.",
+   "He's Dutch.",
+   "Won the PFA Players' Player of the Year.",
    "Club path: Groningen → Celtic → Southampton → Liverpool."
   ]
  },
@@ -148,10 +148,10 @@
   "ourName": "Mats Hummels",
   "overall": 90,
   "clues": [
-   "A German defender, born in the 1980s.",
-   "Has won the FIFA World Cup.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Bayern Munich.",
-   "Also played for Bayern Munich.",
+   "He's German.",
+   "Has won the FIFA World Cup.",
    "Club path: Bayern Munich → Borussia Dortmund → Bayern Munich → Borussia Dortmund → Roma."
   ]
  },
@@ -160,10 +160,10 @@
   "ourName": "Sergio Ramos",
   "overall": 90,
   "clues": [
-   "A Spanish defender, born in the 1980s.",
-   "Has won the FIFA World Cup.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Sevilla Atlético.",
-   "Also played for Paris Saint-Germain.",
+   "He's Spanish.",
+   "Has won the FIFA World Cup.",
    "Club path: Sevilla Atlético → Sevilla → Real Madrid → Paris Saint-Germain → Sevilla → Monterrey."
   ]
  },
@@ -172,10 +172,10 @@
   "ourName": "David Silva",
   "overall": 90,
   "clues": [
-   "A Spanish midfielder, born in the 1980s.",
-   "Has won the FIFA World Cup.",
+   "A midfielder, born in the 1980s.",
    "Began his senior career at Valencia.",
-   "Also played for Manchester City.",
+   "He's Spanish.",
+   "Has won the FIFA World Cup.",
    "Club path: Valencia → Manchester City → Real Sociedad."
   ]
  },
@@ -184,10 +184,10 @@
   "ourName": "Sergio Agüero",
   "overall": 90,
   "clues": [
-   "An Argentine forward, born in the 1980s.",
-   "Won the Premier League Golden Boot.",
+   "A forward, born in the 1980s.",
    "Began his senior career at Independiente.",
-   "Also played for Manchester City.",
+   "He's Argentine.",
+   "Won the Premier League Golden Boot.",
    "Club path: Independiente → Atlético Madrid → Manchester City → Barcelona."
   ]
  },
@@ -196,10 +196,10 @@
   "ourName": "Diego Godín",
   "overall": 90,
   "clues": [
-   "A Uruguayan defender, born in the 1980s.",
-   "Has won the Copa América.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Cerro.",
-   "Also played for Inter Milan.",
+   "He's Uruguayan.",
+   "Has won the Copa América.",
    "Club path: Cerro → Nacional → Villarreal → Atlético Madrid → Inter Milan → Cagliari → Atlético Mineiro → Vélez Sarsfield → Porongos (es)."
   ]
  },
@@ -208,10 +208,10 @@
   "ourName": "Gareth Bale",
   "overall": 90,
   "clues": [
-   "A Welsh winger, born in the 1980s.",
-   "Won the PFA Players' Player of the Year.",
+   "A winger, born in the 1980s.",
    "Began his senior career at Southampton.",
-   "Also played for Real Madrid.",
+   "He's Welsh.",
+   "Won the PFA Players' Player of the Year.",
    "Club path: Southampton → Tottenham Hotspur → Real Madrid → Los Angeles FC."
   ]
  },
@@ -220,9 +220,10 @@
   "ourName": "Marc-André ter Stegen",
   "overall": 90,
   "clues": [
-   "A German goalkeeper, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at Borussia Mönchengladbach.",
+   "He's German.",
+   "Has won the UEFA Champions League.",
    "Club path: Borussia Mönchengladbach → Barcelona."
   ]
  },
@@ -231,10 +232,10 @@
   "ourName": "Zlatan Ibrahimović",
   "overall": 90,
   "clues": [
-   "A Swedish forward, born in the 1980s.",
-   "Won the Capocannoniere.",
+   "A forward, born in the 1980s.",
    "Began his senior career at Malmö FF.",
-   "Also played for AC Milan.",
+   "He's Swedish.",
+   "Won the Capocannoniere.",
    "Club path: Malmö FF → Ajax → Juventus → Inter Milan → Barcelona → AC Milan → Paris Saint-Germain → Manchester United → LA Galaxy → AC Milan."
   ]
  },
@@ -243,10 +244,10 @@
   "ourName": "Thibaut Courtois",
   "overall": 90,
   "clues": [
-   "A Belgian goalkeeper, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at Genk.",
-   "Also played for Chelsea.",
+   "He's Belgian.",
+   "Has won the UEFA Champions League.",
    "Club path: Genk → Chelsea → Real Madrid."
   ]
  },
@@ -255,10 +256,10 @@
   "ourName": "NGolo Kanté",
   "overall": 90,
   "clues": [
-   "A French midfielder, born in the 1990s.",
-   "Won the PFA Players' Player of the Year.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Boulogne.",
-   "Also played for Chelsea.",
+   "He's French.",
+   "Won the PFA Players' Player of the Year.",
    "Club path: Boulogne → Caen → Leicester City → Chelsea → Al-Ittihad → Fenerbahçe."
   ]
  },
@@ -267,10 +268,10 @@
   "ourName": "Sadio Mané",
   "overall": 90,
   "clues": [
-   "A Senegalese winger, born in the 1990s.",
-   "Won the Premier League Golden Boot.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Metz.",
-   "Also played for Liverpool.",
+   "He's Senegalese.",
+   "Won the Premier League Golden Boot.",
    "Club path: Metz → Red Bull Salzburg → Southampton → Liverpool → Bayern Munich → Al-Nassr."
   ]
  },
@@ -279,10 +280,10 @@
   "ourName": "Rodri",
   "overall": 90,
   "clues": [
-   "A Spanish midfielder, born in the 1990s.",
-   "Won the Ballon d'Or.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Villarreal.",
-   "Also played for Atlético Madrid.",
+   "He's Spanish.",
+   "Won the Ballon d'Or.",
    "Club path: Villarreal → Atlético Madrid → Manchester City."
   ]
  },
@@ -291,10 +292,10 @@
   "ourName": "Ousmane Dembélé",
   "overall": 90,
   "clues": [
-   "A French winger, born in the 1990s.",
-   "Won the Ballon d'Or.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Rennes.",
-   "Also played for Barcelona.",
+   "He's French.",
+   "Won the Ballon d'Or.",
    "Club path: Rennes → Borussia Dortmund → Barcelona → Paris Saint-Germain."
   ]
  },
@@ -303,10 +304,10 @@
   "ourName": "Alisson",
   "overall": 90,
   "clues": [
-   "A Brazilian goalkeeper, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at Internacional.",
-   "Also played for Roma.",
+   "He's Brazilian.",
+   "Has won the UEFA Champions League.",
    "Club path: Internacional → Roma → Liverpool."
   ]
  },
@@ -315,10 +316,10 @@
   "ourName": "Erling Haaland",
   "overall": 90,
   "clues": [
-   "A Norwegian forward, born in the 2000s.",
-   "Won the European Golden Shoe.",
+   "A forward, born in the 2000s.",
    "Began his senior career at Bryne 2.",
-   "Also played for Molde.",
+   "He's Norwegian.",
+   "Won the European Golden Shoe.",
    "Club path: Bryne 2 → Bryne → Molde 2 → Molde → Red Bull Salzburg → Borussia Dortmund → Manchester City."
   ]
  },
@@ -327,10 +328,10 @@
   "ourName": "Jude Bellingham",
   "overall": 90,
   "clues": [
-   "An English midfielder, born in the 2000s.",
-   "Has won the UEFA Champions League.",
+   "A midfielder, born in the 2000s.",
    "Began his senior career at Birmingham City.",
-   "Also played for Borussia Dortmund.",
+   "He's English.",
+   "Has won the UEFA Champions League.",
    "Club path: Birmingham City → Borussia Dortmund → Real Madrid."
   ]
  },
@@ -339,10 +340,10 @@
   "ourName": "Jérôme Boateng",
   "overall": 89,
   "clues": [
-   "A German defender, born in the 1980s.",
-   "Has won the FIFA World Cup.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Hertha BSC.",
-   "Also played for Bayern Munich.",
+   "He's German.",
+   "Has won the FIFA World Cup.",
    "Club path: Hertha BSC → Hamburger SV → Manchester City → Bayern Munich → Lyon → Salernitana → LASK."
   ]
  },
@@ -351,10 +352,10 @@
   "ourName": "Edinson Cavani",
   "overall": 89,
   "clues": [
-   "A Uruguayan forward, born in the 1980s.",
-   "Won the Capocannoniere.",
+   "A forward, born in the 1980s.",
    "Began his senior career at Danubio.",
-   "Also played for Paris Saint-Germain.",
+   "He's Uruguayan.",
+   "Won the Capocannoniere.",
    "Club path: Danubio → Palermo → Napoli → Paris Saint-Germain → Manchester United → Valencia → Boca Juniors."
   ]
  },
@@ -363,10 +364,10 @@
   "ourName": "Gianluigi Buffon",
   "overall": 89,
   "clues": [
-   "An Italian goalkeeper, born in the 1970s.",
-   "Has won the FIFA World Cup.",
+   "A goalkeeper, born in the 1970s.",
    "Began his senior career at Parma.",
-   "Also played for Paris Saint-Germain.",
+   "He's Italian.",
+   "Has won the FIFA World Cup.",
    "Club path: Parma → Juventus → Paris Saint-Germain → Juventus → Parma."
   ]
  },
@@ -375,11 +376,11 @@
   "ourName": "Thiago Silva",
   "overall": 89,
   "clues": [
-   "A Brazilian defender, born in the 1980s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1980s.",
    "Began his senior career at RS Futebol.",
-   "Also played for AC Milan.",
-   "Club path: RS Futebol → Juventude → Dynamo Moscow → Fluminense → AC Milan → Paris Saint-Germain → Chelsea → Fluminense → Porto."
+   "He's Brazilian.",
+   "Has won the UEFA Champions League.",
+   "Club path: RS Futebol → Juventude → Dynamo Moscow → Fluminense → AC Milan → Paris Saint-Germain → Chelsea → Fluminense → Porto → Fluminense."
   ]
  },
  {
@@ -387,10 +388,10 @@
   "ourName": "Antoine Griezmann",
   "overall": 89,
   "clues": [
-   "A French midfielder, born in the 1990s.",
-   "Has won the FIFA World Cup.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Real Sociedad.",
-   "Also played for Barcelona.",
+   "He's French.",
+   "Has won the FIFA World Cup.",
    "Club path: Real Sociedad → Atlético Madrid → Barcelona → Atlético Madrid."
   ]
  },
@@ -399,10 +400,10 @@
   "ourName": "Casemiro",
   "overall": 89,
   "clues": [
-   "A Brazilian midfielder, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at São Paulo.",
-   "Also played for Real Madrid.",
+   "He's Brazilian.",
+   "Has won the UEFA Champions League.",
    "Club path: São Paulo → Real Madrid → Manchester United."
   ]
  },
@@ -411,10 +412,10 @@
   "ourName": "Paulo Dybala",
   "overall": 89,
   "clues": [
-   "An Argentine midfielder, born in the 1990s.",
-   "Has won the FIFA World Cup.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Instituto.",
-   "Also played for Juventus.",
+   "He's Argentine.",
+   "Has won the FIFA World Cup.",
    "Club path: Instituto → Palermo → Juventus → Roma."
   ]
  },
@@ -423,10 +424,10 @@
   "ourName": "Gianluigi Donnarumma",
   "overall": 89,
   "clues": [
-   "An Italian goalkeeper, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at AC Milan.",
-   "Also played for Paris Saint-Germain.",
+   "He's Italian.",
+   "Has won the UEFA Champions League.",
    "Club path: AC Milan → Paris Saint-Germain → Manchester City."
   ]
  },
@@ -435,10 +436,10 @@
   "ourName": "Achraf Hakimi",
   "overall": 89,
   "clues": [
-   "A Moroccan defender, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Real Madrid.",
-   "Also played for Inter Milan.",
+   "He's Moroccan.",
+   "Has won the UEFA Champions League.",
    "Club path: Real Madrid → Inter Milan → Paris Saint-Germain."
   ]
  },
@@ -447,9 +448,10 @@
   "ourName": "Florian Wirtz",
   "overall": 89,
   "clues": [
-   "A German midfielder, born in the 2000s.",
-   "Has won the Bundesliga.",
+   "A midfielder, born in the 2000s.",
    "Began his senior career at Bayer Leverkusen.",
+   "He's German.",
+   "Has won the Bundesliga.",
    "Club path: Bayer Leverkusen → Liverpool."
   ]
  },
@@ -458,10 +460,10 @@
   "ourName": "Raphinha",
   "overall": 89,
   "clues": [
-   "A Brazilian winger, born in the 1990s.",
-   "Won the UEFA Champions League top scorer.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Vitória de Guimarães.",
-   "Also played for Rennes.",
+   "He's Brazilian.",
+   "Won the UEFA Champions League top scorer.",
    "Club path: Vitória de Guimarães → Sporting CP → Rennes → Leeds United → Barcelona."
   ]
  },
@@ -470,10 +472,10 @@
   "ourName": "Petr Čech",
   "overall": 88,
   "clues": [
-   "A Czech goalkeeper.",
-   "Has won the UEFA Champions League.",
+   "A goalkeeper.",
    "Began his senior career at Chmel Blšany.",
-   "Also played for Rennes.",
+   "He's Czech.",
+   "Has won the UEFA Champions League.",
    "Club path: Chmel Blšany → Sparta Prague → Rennes → Chelsea → Arsenal."
   ]
  },
@@ -482,9 +484,9 @@
   "ourName": "Marco Reus",
   "overall": 88,
   "clues": [
-   "A German midfielder, born in the 1980s.",
+   "A midfielder, born in the 1980s.",
    "Began his senior career at Rot Weiss Ahlen.",
-   "Also played for Borussia Dortmund.",
+   "He's German.",
    "Club path: Rot Weiss Ahlen → Borussia Mönchengladbach → Borussia Dortmund → LA Galaxy."
   ]
  },
@@ -494,9 +496,8 @@
   "overall": 88,
   "clues": [
    "A forward, born in the 1980s.",
-   "Won the Premier League Golden Boot.",
    "Began his senior career at AC Milan.",
-   "Also played for Arsenal.",
+   "Won the Premier League Golden Boot.",
    "Club path: AC Milan → Saint-Étienne → Borussia Dortmund → Arsenal → Barcelona → Chelsea → Marseille."
   ]
  },
@@ -506,9 +507,8 @@
   "overall": 88,
   "clues": [
    "A winger, born in the 1980s.",
-   "Has won the Copa América.",
    "Began his senior career at Cobreloa.",
-   "Also played for Manchester United.",
+   "Has won the Copa América.",
    "Club path: Cobreloa → Udinese → Barcelona → Arsenal → Manchester United → Inter Milan → Marseille → Inter Milan."
   ]
  },
@@ -517,10 +517,10 @@
   "ourName": "Roberto Firmino",
   "overall": 88,
   "clues": [
-   "A Brazilian midfielder, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Figueirense.",
-   "Also played for Liverpool.",
+   "He's Brazilian.",
+   "Has won the UEFA Champions League.",
    "Club path: Figueirense → TSG Hoffenheim → Liverpool → Al-Ahli → Al Sadd."
   ]
  },
@@ -529,10 +529,10 @@
   "ourName": "Thiago",
   "overall": 88,
   "clues": [
-   "A Spanish midfielder, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Barcelona.",
-   "Also played for Bayern Munich.",
+   "He's Spanish.",
+   "Has won the UEFA Champions League.",
    "Club path: Barcelona → Bayern Munich → Liverpool."
   ]
  },
@@ -541,10 +541,10 @@
   "ourName": "Paul Pogba",
   "overall": 88,
   "clues": [
-   "A French midfielder, born in the 1990s.",
-   "Has won the FIFA World Cup.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Manchester United.",
-   "Also played for Manchester United.",
+   "He's French.",
+   "Has won the FIFA World Cup.",
    "Club path: Manchester United → Juventus → Manchester United → Juventus → Monaco."
   ]
  },
@@ -554,9 +554,8 @@
   "overall": 88,
   "clues": [
    "A goalkeeper, born in the 1980s.",
-   "Has won the UEFA Champions League.",
    "Began his senior career at Saprissa.",
-   "Also played for Real Madrid.",
+   "Has won the UEFA Champions League.",
    "Club path: Saprissa → Albacete → Levante → Real Madrid → Paris Saint-Germain → Newell's Old Boys → Pumas UNAM."
   ]
  },
@@ -565,10 +564,10 @@
   "ourName": "Raheem Sterling",
   "overall": 88,
   "clues": [
-   "An English winger, born in the 1990s.",
-   "Has won the Premier League.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Liverpool.",
-   "Also played for Chelsea.",
+   "He's English.",
+   "Has won the Premier League.",
    "Club path: Liverpool → Manchester City → Chelsea → Feyenoord."
   ]
  },
@@ -577,10 +576,10 @@
   "ourName": "Romelu Lukaku",
   "overall": 88,
   "clues": [
-   "A Belgian forward, born in the 1990s.",
-   "Has won the Serie A.",
+   "A forward, born in the 1990s.",
    "Began his senior career at Anderlecht.",
-   "Also played for Manchester United.",
+   "He's Belgian.",
+   "Has won the Serie A.",
    "Club path: Anderlecht → Chelsea → Everton → Manchester United → Inter Milan → Chelsea → Napoli."
   ]
  },
@@ -589,10 +588,10 @@
   "ourName": "Marquinhos",
   "overall": 88,
   "clues": [
-   "A Brazilian defender, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Corinthians.",
-   "Also played for Roma.",
+   "He's Brazilian.",
+   "Has won the UEFA Champions League.",
    "Club path: Corinthians → Roma → Paris Saint-Germain."
   ]
  },
@@ -601,10 +600,10 @@
   "ourName": "Christian Eriksen",
   "overall": 88,
   "clues": [
-   "A Danish midfielder, born in the 1990s.",
-   "Has won the Serie A.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Ajax.",
-   "Also played for Brentford.",
+   "He's Danish.",
+   "Has won the Serie A.",
    "Club path: Ajax → Tottenham Hotspur → Inter Milan → Brentford → Manchester United → VfL Wolfsburg."
   ]
  },
@@ -613,10 +612,10 @@
   "ourName": "Bruno Fernandes",
   "overall": 88,
   "clues": [
-   "A Portuguese midfielder, born in the 1990s.",
-   "Won the Premier League Player of the Season.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Novara.",
-   "Also played for Sampdoria.",
+   "He's Portuguese.",
+   "Won the Premier League Player of the Season.",
    "Club path: Novara → Udinese → Sampdoria → Sporting CP → Manchester United."
   ]
  },
@@ -625,10 +624,10 @@
   "ourName": "João Cancelo",
   "overall": 88,
   "clues": [
-   "A Portuguese defender, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Benfica.",
-   "Also played for Juventus.",
+   "He's Portuguese.",
+   "Has won the UEFA Champions League.",
    "Club path: Benfica → Valencia → Juventus → Manchester City → Al Hilal."
   ]
  },
@@ -637,10 +636,10 @@
   "ourName": "Bernardo Silva",
   "overall": 88,
   "clues": [
-   "A Portuguese midfielder, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Benfica.",
-   "Also played for Manchester City.",
+   "He's Portuguese.",
+   "Has won the UEFA Champions League.",
    "Club path: Benfica → Monaco → Manchester City → Real Madrid."
   ]
  },
@@ -649,9 +648,9 @@
   "ourName": "Kalidou Koulibaly",
   "overall": 88,
   "clues": [
-   "A Senegalese defender, born in the 1990s.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Metz.",
-   "Also played for Napoli.",
+   "He's Senegalese.",
    "Club path: Metz → Genk → Napoli → Chelsea → Al-Hilal."
   ]
  },
@@ -660,9 +659,9 @@
   "ourName": "Alexander Isak",
   "overall": 88,
   "clues": [
-   "A Swedish forward, born in the 1990s.",
+   "A forward, born in the 1990s.",
    "Began his senior career at AIK.",
-   "Also played for Real Sociedad.",
+   "He's Swedish.",
    "Club path: AIK → Borussia Dortmund → Real Sociedad → Newcastle United → Liverpool."
   ]
  },
@@ -671,10 +670,10 @@
   "ourName": "Arjen Robben",
   "overall": 87,
   "clues": [
-   "A Dutch winger, born in the 1980s.",
-   "Has won the UEFA Champions League.",
+   "A winger, born in the 1980s.",
    "Began his senior career at Groningen.",
-   "Also played for Real Madrid.",
+   "He's Dutch.",
+   "Has won the UEFA Champions League.",
    "Club path: Groningen → PSV → Chelsea → Real Madrid → Bayern Munich → Groningen."
   ]
  },
@@ -683,10 +682,10 @@
   "ourName": "Ivan Rakitić",
   "overall": 87,
   "clues": [
-   "A Croatian midfielder, born in the 1980s.",
-   "Has won the UEFA Champions League.",
+   "A midfielder, born in the 1980s.",
    "Began his senior career at Nordstern Basel.",
-   "Also played for Barcelona.",
+   "He's Croatian.",
+   "Has won the UEFA Champions League.",
    "Club path: Nordstern Basel → FC Basel → Schalke 04 → Sevilla → Barcelona → Sevilla → Al-Shabab → Hajduk Split."
   ]
  },
@@ -695,10 +694,10 @@
   "ourName": "Jordi Alba",
   "overall": 87,
   "clues": [
-   "A Spanish defender, born in the 1980s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Cornellà.",
-   "Also played for Barcelona.",
+   "He's Spanish.",
+   "Has won the UEFA Champions League.",
    "Club path: Cornellà → Valencia → Barcelona → Inter Miami."
   ]
  },
@@ -707,10 +706,10 @@
   "ourName": "Wojciech Szczęsny",
   "overall": 87,
   "clues": [
-   "A Polish goalkeeper, born in the 1990s.",
-   "Has won the La Liga.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at Arsenal.",
-   "Also played for Juventus.",
+   "He's Polish.",
+   "Has won the La Liga.",
    "Club path: Arsenal → Juventus → Barcelona."
   ]
  },
@@ -719,10 +718,10 @@
   "ourName": "Ciro Immobile",
   "overall": 87,
   "clues": [
-   "An Italian forward, born in the 1990s.",
-   "Won the European Golden Shoe.",
+   "A forward, born in the 1990s.",
    "Began his senior career at Sorrento.",
-   "Also played for Torino.",
+   "He's Italian.",
+   "Won the European Golden Shoe.",
    "Club path: Sorrento → Juventus → Genoa → Torino → Borussia Dortmund → Sevilla."
   ]
  },
@@ -731,10 +730,10 @@
   "ourName": "Isco",
   "overall": 87,
   "clues": [
-   "A Spanish winger, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Valencia.",
-   "Also played for Real Madrid.",
+   "He's Spanish.",
+   "Has won the UEFA Champions League.",
    "Club path: Valencia → Málaga → Real Madrid → Sevilla → Betis."
   ]
  },
@@ -743,10 +742,10 @@
   "ourName": "Philippe Coutinho",
   "overall": 87,
   "clues": [
-   "A Brazilian midfielder, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Inter Milan.",
-   "Also played for Barcelona.",
+   "He's Brazilian.",
+   "Has won the UEFA Champions League.",
    "Club path: Inter Milan → Liverpool → Barcelona → Aston Villa → Vasco da Gama."
   ]
  },
@@ -755,10 +754,10 @@
   "ourName": "Leonardo Bonucci",
   "overall": 87,
   "clues": [
-   "An Italian defender, born in the 1980s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Viterbese.",
-   "Also played for Bari.",
+   "He's Italian.",
+   "Has won the UEFA Champions League.",
    "Club path: Viterbese → Inter Milan → Genoa → Bari → Juventus → AC Milan → Juventus."
   ]
  },
@@ -767,10 +766,10 @@
   "ourName": "Antonio Rüdiger",
   "overall": 87,
   "clues": [
-   "A German defender, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1990s.",
    "Began his senior career at VfB Stuttgart.",
-   "Also played for Chelsea.",
+   "He's German.",
+   "Has won the UEFA Champions League.",
    "Club path: VfB Stuttgart → Roma → Chelsea → Real Madrid."
   ]
  },
@@ -779,10 +778,10 @@
   "ourName": "Samuel Umtiti",
   "overall": 87,
   "clues": [
-   "A French defender, born in the 1990s.",
-   "Has won the FIFA World Cup.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Lyon.",
-   "Also played for Barcelona.",
+   "He's French.",
+   "Has won the FIFA World Cup.",
    "Club path: Lyon → Barcelona → Lille."
   ]
  },
@@ -791,10 +790,10 @@
   "ourName": "Fabinho",
   "overall": 87,
   "clues": [
-   "A Brazilian defender, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Fluminense.",
-   "Also played for Monaco.",
+   "He's Brazilian.",
+   "Has won the UEFA Champions League.",
    "Club path: Fluminense → Rio Ave → Monaco → Liverpool → Al-Ittihad."
   ]
  },
@@ -803,10 +802,10 @@
   "ourName": "Mauro Icardi",
   "overall": 87,
   "clues": [
-   "An Argentine forward, born in the 1990s.",
-   "Won the Capocannoniere.",
+   "A forward, born in the 1990s.",
    "Began his senior career at Sampdoria.",
-   "Also played for Paris Saint-Germain.",
+   "He's Argentine.",
+   "Won the Capocannoniere.",
    "Club path: Sampdoria → Inter Milan → Paris Saint-Germain → Galatasaray."
   ]
  },
@@ -815,10 +814,10 @@
   "ourName": "Toby Alderweireld",
   "overall": 87,
   "clues": [
-   "A Belgian defender, born in the 1980s.",
-   "Has won the La Liga.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Ajax.",
-   "Also played for Tottenham Hotspur.",
+   "He's Belgian.",
+   "Has won the La Liga.",
    "Club path: Ajax → Atlético Madrid → Tottenham Hotspur → Al-Duhail → Royal Antwerp."
   ]
  },
@@ -827,10 +826,10 @@
   "ourName": "Parejo",
   "overall": 87,
   "clues": [
-   "A Spanish midfielder, born in the 1980s.",
-   "Has won the UEFA Europa League.",
+   "A midfielder, born in the 1980s.",
    "Began his senior career at Real Madrid.",
-   "Also played for Valencia.",
+   "He's Spanish.",
+   "Has won the UEFA Europa League.",
    "Club path: Real Madrid → Getafe → Valencia → Villarreal."
   ]
  },
@@ -839,9 +838,10 @@
   "ourName": "Mike Maignan",
   "overall": 87,
   "clues": [
-   "A French goalkeeper, born in the 1990s.",
-   "Has won the Serie A.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at Lille.",
+   "He's French.",
+   "Has won the Serie A.",
    "Club path: Lille → AC Milan."
   ]
  },
@@ -850,10 +850,10 @@
   "ourName": "James Rodríguez",
   "overall": 87,
   "clues": [
-   "A Colombian winger, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Envigado.",
-   "Also played for Everton.",
+   "He's Colombian.",
+   "Has won the UEFA Champions League.",
    "Club path: Envigado → Banfield → Porto → Monaco → Real Madrid → Everton → Al-Rayyan → Olympiacos → São Paulo → Rayo Vallecano."
   ]
  },
@@ -862,10 +862,10 @@
   "ourName": "Martin Ødegaard",
   "overall": 87,
   "clues": [
-   "A Norwegian midfielder, born in the 1990s.",
-   "Has won the Premier League.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Strømsgodset 3.",
-   "Also played for Strømsgodset.",
+   "He's Norwegian.",
+   "Has won the Premier League.",
    "Club path: Strømsgodset 3 → Strømsgodset 2 → Strømsgodset → Real Madrid → Arsenal."
   ]
  },
@@ -875,9 +875,8 @@
   "overall": 87,
   "clues": [
    "A forward, born in the 1990s.",
-   "Won the UEFA Champions League top scorer.",
    "Began his senior career at Laval.",
-   "Also played for 1. FC Köln.",
+   "Won the UEFA Champions League top scorer.",
    "Club path: Laval → Lille → 1. FC Köln → Amiens → Rennes."
   ]
  },
@@ -886,9 +885,10 @@
   "ourName": "Declan Rice",
   "overall": 87,
   "clues": [
-   "An English midfielder, born in the 1990s.",
-   "Has won the Premier League.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at West Ham United.",
+   "He's English.",
+   "Has won the Premier League.",
    "Club path: West Ham United → Arsenal."
   ]
  },
@@ -897,9 +897,10 @@
   "ourName": "Jadon Sancho",
   "overall": 87,
   "clues": [
-   "An English winger, born in the 2000s.",
-   "Has won the UEFA Europa League.",
+   "A winger, born in the 2000s.",
    "Began his senior career at Borussia Dortmund.",
+   "He's English.",
+   "Has won the UEFA Europa League.",
    "Club path: Borussia Dortmund → Manchester United."
   ]
  },
@@ -908,10 +909,10 @@
   "ourName": "Jules Koundé",
   "overall": 87,
   "clues": [
-   "A French defender, born in the 1990s.",
-   "Has won the La Liga.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Bordeaux.",
-   "Also played for Sevilla.",
+   "He's French.",
+   "Has won the La Liga.",
    "Club path: Bordeaux → Sevilla → Barcelona."
   ]
  },
@@ -920,10 +921,10 @@
   "ourName": "Viktor Gyökeres",
   "overall": 87,
   "clues": [
-   "A Swedish forward, born in the 1990s.",
-   "Has won the Premier League.",
+   "A forward, born in the 1990s.",
    "Began his senior career at IF Brommapojkarna.",
-   "Also played for Coventry City.",
+   "He's Swedish.",
+   "Has won the Premier League.",
    "Club path: IF Brommapojkarna → Brighton & Hove Albion → Coventry City → Sporting CP → Arsenal."
   ]
  },
@@ -932,9 +933,10 @@
   "ourName": "William Saliba",
   "overall": 87,
   "clues": [
-   "A French defender, born in the 2000s.",
-   "Has won the Premier League.",
+   "A defender, born in the 2000s.",
    "Began his senior career at Saint-Étienne.",
+   "He's French.",
+   "Has won the Premier League.",
    "Club path: Saint-Étienne → Arsenal."
   ]
  },
@@ -943,10 +945,10 @@
   "ourName": "A. Mac Allister",
   "overall": 87,
   "clues": [
-   "An Argentine midfielder, born in the 1990s.",
-   "Has won the FIFA World Cup.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Argentinos Juniors.",
-   "Also played for Brighton & Hove Albion.",
+   "He's Argentine.",
+   "Has won the FIFA World Cup.",
    "Club path: Argentinos Juniors → Brighton & Hove Albion → Liverpool."
   ]
  },
@@ -957,7 +959,6 @@
   "clues": [
    "A defender, born in the 2000s.",
    "Began his senior career at Independiente del Valle.",
-   "Also played for Brighton & Hove Albion.",
    "Club path: Independiente del Valle → Brighton & Hove Albion → Chelsea."
   ]
  },
@@ -966,9 +967,10 @@
   "ourName": "Cole Palmer",
   "overall": 87,
   "clues": [
-   "An English winger, born in the 2000s.",
-   "Has won the UEFA Champions League.",
+   "A winger, born in the 2000s.",
    "Began his senior career at Manchester City.",
+   "He's English.",
+   "Has won the UEFA Champions League.",
    "Club path: Manchester City → Chelsea."
   ]
  },
@@ -977,10 +979,10 @@
   "ourName": "David Raya",
   "overall": 87,
   "clues": [
-   "A Spanish goalkeeper, born in the 1990s.",
-   "Has won the UEFA European Championship.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at Blackburn Rovers.",
-   "Also played for Brentford.",
+   "He's Spanish.",
+   "Has won the UEFA European Championship.",
    "Club path: Blackburn Rovers → Brentford → Arsenal."
   ]
  },
@@ -990,9 +992,8 @@
   "overall": 87,
   "clues": [
    "A winger, born in the 2000s.",
-   "Has won the UEFA Champions League.",
    "Began his senior career at Dinamo Tbilisi.",
-   "Also played for Dinamo Batumi.",
+   "Has won the UEFA Champions League.",
    "Club path: Dinamo Tbilisi → Rustavi → Rubin Kazan → Dinamo Batumi → Napoli → Paris Saint-Germain."
   ]
  },
@@ -1001,10 +1002,10 @@
   "ourName": "Vincent Kompany",
   "overall": 86,
   "clues": [
-   "A Belgian defender, born in the 1980s.",
-   "Won the Premier League Player of the Season.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Anderlecht.",
-   "Also played for Manchester City.",
+   "He's Belgian.",
+   "Won the Premier League Player of the Season.",
    "Club path: Anderlecht → Hamburger SV → Manchester City → Anderlecht."
   ]
  },
@@ -1013,10 +1014,10 @@
   "ourName": "Filipe Luís",
   "overall": 86,
   "clues": [
-   "A Brazilian defender, born in the 1980s.",
-   "Has won the Copa América.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Figueirense.",
-   "Also played for Atlético Madrid.",
+   "He's Brazilian.",
+   "Has won the Copa América.",
    "Club path: Figueirense → Ajax → Deportivo La Coruña → Atlético Madrid → Chelsea → Atlético Madrid → Flamengo."
   ]
  },
@@ -1025,10 +1026,10 @@
   "ourName": "Franck Ribéry",
   "overall": 86,
   "clues": [
-   "A French winger, born in the 1980s.",
-   "Has won the UEFA Champions League.",
+   "A winger, born in the 1980s.",
    "Began his senior career at Boulogne.",
-   "Also played for Galatasaray.",
+   "He's French.",
+   "Has won the UEFA Champions League.",
    "Club path: Boulogne → Alès → Brest → Metz → Galatasaray → Marseille → Bayern Munich → Fiorentina → Salernitana."
   ]
  },
@@ -1037,10 +1038,10 @@
   "ourName": "Cesc Fàbregas",
   "overall": 86,
   "clues": [
-   "A Spanish midfielder, born in the 1980s.",
-   "Has won the FIFA World Cup.",
+   "A midfielder, born in the 1980s.",
    "Began his senior career at Arsenal.",
-   "Also played for Chelsea.",
+   "He's Spanish.",
+   "Has won the FIFA World Cup.",
    "Club path: Arsenal → Barcelona → Chelsea → Monaco → Como."
   ]
  },
@@ -1049,10 +1050,10 @@
   "ourName": "Andrea Barzagli",
   "overall": 86,
   "clues": [
-   "An Italian defender, born in the 1980s.",
-   "Has won the FIFA World Cup.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Rondinella.",
-   "Also played for Chievo.",
+   "He's Italian.",
+   "Has won the FIFA World Cup.",
    "Club path: Rondinella → Pistoiese → Rondinella → Piacenza → Chievo → Palermo → VfL Wolfsburg → Juventus."
   ]
  },
@@ -1062,9 +1063,8 @@
   "overall": 86,
   "clues": [
    "A midfielder, born in the 1990s.",
-   "Has won the Serie A.",
    "Began his senior career at Metz.",
-   "Also played for Juventus.",
+   "Has won the Serie A.",
    "Club path: Metz → Lyon → Roma → Juventus → Barcelona → Sharjah → CSKA Moscow."
   ]
  },
@@ -1073,10 +1073,10 @@
   "ourName": "Diego Costa",
   "overall": 86,
   "clues": [
-   "A Spanish forward, born in the 1980s.",
-   "Has won the Premier League.",
+   "A forward, born in the 1980s.",
    "Began his senior career at Braga.",
-   "Also played for Atlético Madrid.",
+   "He's Spanish.",
+   "Has won the Premier League.",
    "Club path: Braga → Atlético Madrid → Valladolid → Atlético Madrid → Chelsea → Atlético Madrid."
   ]
  },
@@ -1085,10 +1085,10 @@
   "ourName": "César Azpilicueta",
   "overall": 86,
   "clues": [
-   "A Spanish defender, born in the 1980s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Osasuna.",
-   "Also played for Chelsea.",
+   "He's Spanish.",
+   "Has won the UEFA Champions League.",
    "Club path: Osasuna → Marseille → Chelsea → Atlético Madrid → Sevilla."
   ]
  },
@@ -1097,10 +1097,10 @@
   "ourName": "Milan Škriniar",
   "overall": 86,
   "clues": [
-   "A Slovak defender, born in the 1990s.",
-   "Has won the Serie A.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Žilina.",
-   "Also played for Inter Milan.",
+   "He's Slovak.",
+   "Has won the Serie A.",
    "Club path: Žilina → Sampdoria → Inter Milan → Paris Saint-Germain → Fenerbahçe."
   ]
  },
@@ -1109,10 +1109,10 @@
   "ourName": "Medhi Benatia",
   "overall": 86,
   "clues": [
-   "A Moroccan defender, born in the 1980s.",
-   "Has won the Serie A.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Marseille.",
-   "Also played for Bayern Munich.",
+   "He's Moroccan.",
+   "Has won the Serie A.",
    "Club path: Marseille → Clermont → Udinese → Roma → Bayern Munich → Juventus → Al-Duhail → Fatih Karagümrük."
   ]
  },
@@ -1121,9 +1121,9 @@
   "ourName": "Bernd Leno",
   "overall": 86,
   "clues": [
-   "A German goalkeeper, born in the 1990s.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at Bayer Leverkusen.",
-   "Also played for Arsenal.",
+   "He's German.",
    "Club path: Bayer Leverkusen → Arsenal → Fulham."
   ]
  },
@@ -1132,9 +1132,9 @@
   "ourName": "Koen Casteels",
   "overall": 86,
   "clues": [
-   "A Belgian goalkeeper, born in the 1990s.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at Genk.",
-   "Also played for VfL Wolfsburg.",
+   "He's Belgian.",
    "Club path: Genk → TSG Hoffenheim → VfL Wolfsburg → Al-Qadsiah."
   ]
  },
@@ -1143,10 +1143,10 @@
   "ourName": "Raphaël Varane",
   "overall": 86,
   "clues": [
-   "A French defender, born in the 1990s.",
-   "Has won the FIFA World Cup.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Lens.",
-   "Also played for Manchester United.",
+   "He's French.",
+   "Has won the FIFA World Cup.",
    "Club path: Lens → Real Madrid → Manchester United → Como."
   ]
  },
@@ -1155,9 +1155,10 @@
   "ourName": "Dani Carvajal",
   "overall": 86,
   "clues": [
-   "A Spanish defender, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Bayer Leverkusen.",
+   "He's Spanish.",
+   "Has won the UEFA Champions League.",
    "Club path: Bayer Leverkusen → Real Madrid."
   ]
  },
@@ -1166,10 +1167,10 @@
   "ourName": "Kingsley Coman",
   "overall": 86,
   "clues": [
-   "A French winger, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Paris Saint-Germain.",
-   "Also played for Bayern Munich.",
+   "He's French.",
+   "Has won the UEFA Champions League.",
    "Club path: Paris Saint-Germain → Juventus → Bayern Munich → Al-Nassr."
   ]
  },
@@ -1178,10 +1179,10 @@
   "ourName": "Radja Nainggolan",
   "overall": 86,
   "clues": [
-   "A Belgian midfielder, born in the 1980s.",
-   "Has won the Serie A.",
+   "A midfielder, born in the 1980s.",
    "Began his senior career at Piacenza.",
-   "Also played for Inter Milan.",
+   "He's Belgian.",
+   "Has won the Serie A.",
    "Club path: Piacenza → Cagliari → Roma → Inter Milan → Antwerp → SPAL → Bhayangkara."
   ]
  },
@@ -1191,9 +1192,8 @@
   "overall": 86,
   "clues": [
    "A midfielder, born in the 1980s.",
-   "Has won the Serie A.",
    "Began his senior career at Pyunik.",
-   "Also played for Manchester United.",
+   "Has won the Serie A.",
    "Club path: Pyunik → Metalurh Donetsk → Shakhtar Donetsk → Borussia Dortmund → Manchester United → Arsenal → Roma → Inter Milan."
   ]
  },
@@ -1203,9 +1203,8 @@
   "overall": 86,
   "clues": [
    "A midfielder, born in the 1990s.",
-   "Has won the Serie A.",
    "Began his senior career at Karlsruher.",
-   "Also played for Bayer Leverkusen.",
+   "Has won the Serie A.",
    "Club path: Karlsruher → Hamburger SV → Bayer Leverkusen → AC Milan → Inter Milan."
   ]
  },
@@ -1214,10 +1213,10 @@
   "ourName": "Riyad Mahrez",
   "overall": 86,
   "clues": [
-   "An Algerian winger, born in the 1990s.",
-   "Won the PFA Players' Player of the Year.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Quimper.",
-   "Also played for Leicester City.",
+   "He's Algerian.",
+   "Won the PFA Players' Player of the Year.",
    "Club path: Quimper → Le Havre → Leicester City → Manchester City → Al-Ahli."
   ]
  },
@@ -1226,11 +1225,23 @@
   "ourName": "Christopher Nkunku",
   "overall": 86,
   "clues": [
-   "A French midfielder, born in the 1990s.",
-   "Has won the Ligue 1.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Paris Saint-Germain.",
-   "Also played for Chelsea.",
+   "He's French.",
+   "Has won the Ligue 1.",
    "Club path: Paris Saint-Germain → RB Leipzig → Chelsea → AC Milan."
+  ]
+ },
+ {
+  "answer": "Jordan Henderson",
+  "ourName": "J. Henderson",
+  "overall": 86,
+  "clues": [
+   "A midfielder, born in the 1990s.",
+   "Began his senior career at Sunderland.",
+   "He's English.",
+   "Has won the UEFA Champions League.",
+   "Club path: Sunderland → Liverpool → Al-Ettifaq → Ajax → Brentford."
   ]
  },
  {
@@ -1238,10 +1249,10 @@
   "ourName": "Clément Lenglet",
   "overall": 86,
   "clues": [
-   "A French defender, born in the 1990s.",
-   "Has won the La Liga.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Nancy.",
-   "Also played for Barcelona.",
+   "He's French.",
+   "Has won the La Liga.",
    "Club path: Nancy → Sevilla → Barcelona → Atlético Madrid."
   ]
  },
@@ -1250,9 +1261,9 @@
   "ourName": "Gregor Kobel",
   "overall": 86,
   "clues": [
-   "A Swiss goalkeeper, born in the 1990s.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at TSG Hoffenheim.",
-   "Also played for VfB Stuttgart.",
+   "He's Swiss.",
    "Club path: TSG Hoffenheim → VfB Stuttgart → Borussia Dortmund."
   ]
  },
@@ -1261,10 +1272,10 @@
   "ourName": "Gerard Moreno",
   "overall": 86,
   "clues": [
-   "A Spanish forward, born in the 1990s.",
-   "Has won the UEFA Europa League.",
+   "A forward, born in the 1990s.",
    "Began his senior career at Villarreal.",
-   "Also played for Espanyol.",
+   "He's Spanish.",
+   "Has won the UEFA Europa League.",
    "Club path: Villarreal → Espanyol → Villarreal."
   ]
  },
@@ -1273,10 +1284,10 @@
   "ourName": "Timo Werner",
   "overall": 86,
   "clues": [
-   "A German forward, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A forward, born in the 1990s.",
    "Began his senior career at VfB Stuttgart.",
-   "Also played for Chelsea.",
+   "He's German.",
+   "Has won the UEFA Champions League.",
    "Club path: VfB Stuttgart → RB Leipzig → Chelsea → RB Leipzig → San Jose Earthquakes."
   ]
  },
@@ -1285,10 +1296,10 @@
   "ourName": "Ibrahima Konaté",
   "overall": 86,
   "clues": [
-   "A French defender, born in the 1990s.",
-   "Has won the Premier League.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Sochaux.",
-   "Also played for Liverpool.",
+   "He's French.",
+   "Has won the Premier League.",
    "Club path: Sochaux → RB Leipzig → Liverpool → Real Madrid."
   ]
  },
@@ -1297,10 +1308,10 @@
   "ourName": "Sandro Tonali",
   "overall": 86,
   "clues": [
-   "An Italian midfielder, born in the 2000s.",
-   "Has won the Serie A.",
+   "A midfielder, born in the 2000s.",
    "Began his senior career at Brescia.",
-   "Also played for AC Milan.",
+   "He's Italian.",
+   "Has won the Serie A.",
    "Club path: Brescia → AC Milan → Newcastle United."
   ]
  },
@@ -1310,9 +1321,8 @@
   "overall": 86,
   "clues": [
    "A defender, born in the 2000s.",
-   "Has won the UEFA Champions League.",
    "Began his senior career at Independiente del Valle.",
-   "Also played for Eintracht Frankfurt.",
+   "Has won the UEFA Champions League.",
    "Club path: Independiente del Valle → Royal Antwerp → Eintracht Frankfurt → Paris Saint-Germain."
   ]
  },
@@ -1321,9 +1331,9 @@
   "ourName": "Tijjani Reijnders",
   "overall": 86,
   "clues": [
-   "A Dutch midfielder, born in the 1990s.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at PEC Zwolle.",
-   "Also played for AZ.",
+   "He's Dutch.",
    "Club path: PEC Zwolle → Jong AZ → AZ → AC Milan → Manchester City."
   ]
  },
@@ -1332,10 +1342,10 @@
   "ourName": "Juan Mata",
   "overall": 85,
   "clues": [
-   "A Spanish winger, born in the 1980s.",
-   "Has won the FIFA World Cup.",
+   "A winger, born in the 1980s.",
    "Began his senior career at Valencia.",
-   "Also played for Galatasaray.",
+   "He's Spanish.",
+   "Has won the FIFA World Cup.",
    "Club path: Valencia → Chelsea → Manchester United → Galatasaray → Vissel Kobe → Western Sydney Wanderers → Melbourne Victory."
   ]
  },
@@ -1344,10 +1354,10 @@
   "ourName": "Blaise Matuidi",
   "overall": 85,
   "clues": [
-   "A French midfielder, born in the 1980s.",
-   "Has won the FIFA World Cup.",
+   "A midfielder, born in the 1980s.",
    "Began his senior career at Troyes.",
-   "Also played for Paris Saint-Germain.",
+   "He's French.",
+   "Has won the FIFA World Cup.",
    "Club path: Troyes → Saint-Étienne → Paris Saint-Germain → Juventus → Inter Miami."
   ]
  },
@@ -1357,9 +1367,8 @@
   "overall": 85,
   "clues": [
    "A forward, born in the 1980s.",
-   "Has won the Premier League.",
    "Began his senior career at Željezničar.",
-   "Also played for Roma.",
+   "Has won the Premier League.",
    "Club path: Željezničar → Teplice → VfL Wolfsburg → Manchester City → Roma → Inter Milan → Fenerbahçe → Fiorentina → Schalke 04."
   ]
  },
@@ -1368,10 +1377,10 @@
   "ourName": "İlkay Gündoğan",
   "overall": 85,
   "clues": [
-   "A German midfielder, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at 1. FC Nürnberg.",
-   "Also played for Barcelona.",
+   "He's German.",
+   "Has won the UEFA Champions League.",
    "Club path: 1. FC Nürnberg → Borussia Dortmund → Manchester City → Barcelona → Manchester City → Galatasaray."
   ]
  },
@@ -1380,10 +1389,10 @@
   "ourName": "Santi Cazorla",
   "overall": 85,
   "clues": [
-   "A Spanish midfielder, born in the 1980s.",
-   "Has won the UEFA European Championship.",
+   "A midfielder, born in the 1980s.",
    "Began his senior career at Villarreal.",
-   "Also played for Arsenal.",
+   "He's Spanish.",
+   "Has won the UEFA European Championship.",
    "Club path: Villarreal → Recreativo → Villarreal → Málaga → Arsenal → Villarreal → Al Sadd → Oviedo."
   ]
  },
@@ -1392,10 +1401,10 @@
   "ourName": "Sokratis Papastathopoulos",
   "overall": 85,
   "clues": [
-   "A Greek defender, born in the 1980s.",
-   "Has won the Serie A.",
+   "A defender, born in the 1980s.",
    "Began his senior career at AEK Athens.",
-   "Also played for Werder Bremen.",
+   "He's Greek.",
+   "Has won the Serie A.",
    "Club path: AEK Athens → Genoa → AC Milan → Genoa → Werder Bremen → Borussia Dortmund → Arsenal → Olympiacos → Real Betis."
   ]
  },
@@ -1404,9 +1413,9 @@
   "ourName": "Luis Alberto",
   "overall": 85,
   "clues": [
-   "A Spanish midfielder, born in the 1990s.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Sevilla.",
-   "Also played for Lazio.",
+   "He's Spanish.",
    "Club path: Sevilla → Liverpool → Lazio → Al Duhail → Al-Wakrah."
   ]
  },
@@ -1415,10 +1424,10 @@
   "ourName": "Nemanja Matić",
   "overall": 85,
   "clues": [
-   "A Serbian midfielder, born in the 1980s.",
-   "Has won the Premier League.",
+   "A midfielder, born in the 1980s.",
    "Began his senior career at Kolubara.",
-   "Also played for Manchester United.",
+   "He's Serbian.",
+   "Has won the Premier League.",
    "Club path: Kolubara → Košice → Chelsea → Benfica → Chelsea → Manchester United → Roma → Rennes → Lyon → Sassuolo."
   ]
  },
@@ -1427,10 +1436,10 @@
   "ourName": "Kyle Walker",
   "overall": 85,
   "clues": [
-   "An English defender, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Sheffield United.",
-   "Also played for Manchester City.",
+   "He's English.",
+   "Has won the UEFA Champions League.",
    "Club path: Sheffield United → Tottenham Hotspur → Manchester City → Burnley."
   ]
  },
@@ -1439,10 +1448,10 @@
   "ourName": "Mario Mandžukić",
   "overall": 85,
   "clues": [
-   "A Croatian forward, born in the 1980s.",
-   "Has won the UEFA Champions League.",
+   "A forward, born in the 1980s.",
    "Began his senior career at Marsonia.",
-   "Also played for Bayern Munich.",
+   "He's Croatian.",
+   "Has won the UEFA Champions League.",
    "Club path: Marsonia → NK Zagreb → Dinamo Zagreb → VfL Wolfsburg → Bayern Munich → Atlético Madrid → Juventus → Al-Duhail → AC Milan."
   ]
  },
@@ -1453,7 +1462,6 @@
   "clues": [
    "A goalkeeper, born in the 1990s.",
    "Began his senior career at Liverpool.",
-   "Also played for Red Bull Salzburg.",
    "Club path: Liverpool → Red Bull Salzburg → RB Leipzig."
   ]
  },
@@ -1462,10 +1470,10 @@
   "ourName": "Ivan Perišić",
   "overall": 85,
   "clues": [
-   "A Croatian winger, born in the 1980s.",
-   "Has won the UEFA Champions League.",
+   "A winger, born in the 1980s.",
    "Began his senior career at Club Brugge.",
-   "Also played for Inter Milan.",
+   "He's Croatian.",
+   "Has won the UEFA Champions League.",
    "Club path: Club Brugge → Borussia Dortmund → VfL Wolfsburg → Inter Milan → Tottenham Hotspur → Hajduk Split → PSV."
   ]
  },
@@ -1474,10 +1482,10 @@
   "ourName": "Falcao",
   "overall": 85,
   "clues": [
-   "A Colombian forward, born in the 1980s.",
-   "Has won the Ligue 1.",
+   "A forward, born in the 1980s.",
    "Began his senior career at Lanceros Boyacá.",
-   "Also played for Monaco.",
+   "He's Colombian.",
+   "Has won the Ligue 1.",
    "Club path: Lanceros Boyacá → River Plate → Porto → Atlético Madrid → Monaco → Galatasaray → Rayo Vallecano → Millonarios."
   ]
  },
@@ -1486,9 +1494,9 @@
   "ourName": "Dimitri Payet",
   "overall": 85,
   "clues": [
-   "A French midfielder, born in the 1980s.",
+   "A midfielder, born in the 1980s.",
    "Began his senior career at AS Excelsior.",
-   "Also played for Marseille.",
+   "He's French.",
    "Club path: AS Excelsior → Nantes → Saint-Étienne → Lille → Marseille → West Ham United → Marseille → Vasco da Gama."
   ]
  },
@@ -1497,10 +1505,10 @@
   "ourName": "Granit Xhaka",
   "overall": 85,
   "clues": [
-   "A Swiss midfielder, born in the 1990s.",
-   "Has won the Bundesliga.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Basel.",
-   "Also played for Arsenal.",
+   "He's Swiss.",
+   "Has won the Bundesliga.",
    "Club path: Basel → Borussia Mönchengladbach → Arsenal → Bayer Leverkusen → Sunderland."
   ]
  },
@@ -1509,10 +1517,10 @@
   "ourName": "Iago Aspas",
   "overall": 85,
   "clues": [
-   "A Spanish forward, born in the 1980s.",
-   "Has won the UEFA Europa League.",
+   "A forward, born in the 1980s.",
    "Began his senior career at Celta.",
-   "Also played for Liverpool.",
+   "He's Spanish.",
+   "Has won the UEFA Europa League.",
    "Club path: Celta → Liverpool → Celta."
   ]
  },
@@ -1521,10 +1529,10 @@
   "ourName": "Serge Gnabry",
   "overall": 85,
   "clues": [
-   "A German winger, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Arsenal.",
-   "Also played for Werder Bremen.",
+   "He's German.",
+   "Has won the UEFA Champions League.",
    "Club path: Arsenal → Werder Bremen → Bayern Munich."
   ]
  },
@@ -1533,10 +1541,10 @@
   "ourName": "Niklas Süle",
   "overall": 85,
   "clues": [
-   "A German defender, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1990s.",
    "Began his senior career at TSG Hoffenheim.",
-   "Also played for Bayern Munich.",
+   "He's German.",
+   "Has won the UEFA Champions League.",
    "Club path: TSG Hoffenheim → Bayern Munich → Borussia Dortmund."
   ]
  },
@@ -1545,10 +1553,10 @@
   "ourName": "Willian",
   "overall": 85,
   "clues": [
-   "A Brazilian winger, born in the 1980s.",
-   "Has won the Copa América.",
+   "A winger, born in the 1980s.",
    "Began his senior career at Corinthians.",
-   "Also played for Corinthians.",
+   "He's Brazilian.",
+   "Has won the Copa América.",
    "Club path: Corinthians → Shakhtar Donetsk → Anzhi Makhachkala → Chelsea → Arsenal → Corinthians → Fulham → Olympiacos → Fulham → Grêmio."
   ]
  },
@@ -1557,10 +1565,10 @@
   "ourName": "Jorginho",
   "overall": 85,
   "clues": [
-   "An Italian midfielder, born in the 1990s.",
-   "Won the UEFA Men's Player of the Year.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Hellas Verona.",
-   "Also played for Chelsea.",
+   "He's Italian.",
+   "Won the UEFA Men's Player of the Year.",
    "Club path: Hellas Verona → Napoli → Chelsea → Arsenal → Flamengo."
   ]
  },
@@ -1569,9 +1577,9 @@
   "ourName": "Roman Bürki",
   "overall": 85,
   "clues": [
-   "A Swiss goalkeeper, born in the 1990s.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at Young Boys.",
-   "Also played for Borussia Dortmund.",
+   "He's Swiss.",
    "Club path: Young Boys → Grasshoppers → SC Freiburg → Borussia Dortmund → St. Louis City 2 → St. Louis City SC."
   ]
  },
@@ -1580,10 +1588,10 @@
   "ourName": "Filip Kostić",
   "overall": 85,
   "clues": [
-   "A Serbian winger, born in the 1990s.",
-   "Has won the UEFA Europa League.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Radnički Kragujevac.",
-   "Also played for Hamburger SV.",
+   "He's Serbian.",
+   "Has won the UEFA Europa League.",
    "Club path: Radnički Kragujevac → Groningen → VfB Stuttgart → Hamburger SV → Eintracht Frankfurt → Juventus."
   ]
  },
@@ -1592,10 +1600,10 @@
   "ourName": "Nicolás Otamendi",
   "overall": 85,
   "clues": [
-   "An Argentine defender, born in the 1980s.",
-   "Has won the FIFA World Cup.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Vélez Sarsfield.",
-   "Also played for Valencia.",
+   "He's Argentine.",
+   "Has won the FIFA World Cup.",
    "Club path: Vélez Sarsfield → Porto → Valencia → Manchester City → Benfica."
   ]
  },
@@ -1604,9 +1612,9 @@
   "ourName": "Kostas Manolas",
   "overall": 85,
   "clues": [
-   "A Greek defender, born in the 1990s.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Thrasyvoulos.",
-   "Also played for Napoli.",
+   "He's Greek.",
    "Club path: Thrasyvoulos → AEK Athens → Olympiacos → Roma → Napoli → Olympiacos → Sharjah → Salernitana → Pannaxiakos."
   ]
  },
@@ -1615,10 +1623,10 @@
   "ourName": "Memphis Depay",
   "overall": 85,
   "clues": [
-   "A Dutch forward, born in the 1990s.",
-   "Has won the La Liga.",
+   "A forward, born in the 1990s.",
    "Began his senior career at PSV Eindhoven.",
-   "Also played for Barcelona.",
+   "He's Dutch.",
+   "Has won the La Liga.",
    "Club path: PSV Eindhoven → Manchester United → Lyon → Barcelona → Atlético Madrid → Corinthians."
   ]
  },
@@ -1627,10 +1635,10 @@
   "ourName": "Georginio Wijnaldum",
   "overall": 85,
   "clues": [
-   "A Dutch midfielder, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Feyenoord.",
-   "Also played for Liverpool.",
+   "He's Dutch.",
+   "Has won the UEFA Champions League.",
    "Club path: Feyenoord → PSV → Newcastle United → Liverpool → Paris Saint-Germain → Al-Ettifaq."
   ]
  },
@@ -1639,9 +1647,9 @@
   "ourName": "Dele Alli",
   "overall": 85,
   "clues": [
-   "An English midfielder, born in the 1990s.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Milton Keynes Dons.",
-   "Also played for Everton.",
+   "He's English.",
    "Club path: Milton Keynes Dons → Tottenham Hotspur → Everton → Como."
   ]
  },
@@ -1650,9 +1658,10 @@
   "ourName": "Scott McTominay",
   "overall": 85,
   "clues": [
-   "A Scottish midfielder, born in the 1990s.",
-   "Has won the Serie A.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Manchester United.",
+   "He's Scottish.",
+   "Has won the Serie A.",
    "Club path: Manchester United → Napoli."
   ]
  },
@@ -1661,10 +1670,10 @@
   "ourName": "Kai Havertz",
   "overall": 85,
   "clues": [
-   "A German midfielder, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Bayer Leverkusen.",
-   "Also played for Chelsea.",
+   "He's German.",
+   "Has won the UEFA Champions League.",
    "Club path: Bayer Leverkusen → Chelsea → Arsenal."
   ]
  },
@@ -1673,10 +1682,10 @@
   "ourName": "Théo Hernandez",
   "overall": 85,
   "clues": [
-   "A French defender, born in the 1990s.",
-   "Has won the UEFA Champions League.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Real Madrid.",
-   "Also played for AC Milan.",
+   "He's French.",
+   "Has won the UEFA Champions League.",
    "Club path: Real Madrid → AC Milan → Al Hilal."
   ]
  },
@@ -1686,9 +1695,8 @@
   "overall": 85,
   "clues": [
    "A forward, born in the 1990s.",
-   "Has won the Bundesliga.",
    "Began his senior career at Sparta Prague.",
-   "Also played for Roma.",
+   "Has won the Bundesliga.",
    "Club path: Sparta Prague → Sampdoria → Roma → Bayer Leverkusen."
   ]
  },
@@ -1697,10 +1705,10 @@
   "ourName": "Youri Tielemans",
   "overall": 85,
   "clues": [
-   "A Belgian midfielder, born in the 1990s.",
-   "Has won the UEFA Europa League.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Anderlecht.",
-   "Also played for Leicester City.",
+   "He's Belgian.",
+   "Has won the UEFA Europa League.",
    "Club path: Anderlecht → Monaco → Leicester City → Aston Villa."
   ]
  },
@@ -1709,9 +1717,10 @@
   "ourName": "E. Martínez",
   "overall": 85,
   "clues": [
-   "An Argentine goalkeeper, born in the 1990s.",
-   "Has won the FIFA World Cup.",
+   "A goalkeeper, born in the 1990s.",
    "Began his senior career at Arsenal.",
+   "He's Argentine.",
+   "Has won the FIFA World Cup.",
    "Club path: Arsenal → Aston Villa."
   ]
  },
@@ -1720,10 +1729,10 @@
   "ourName": "Arthur",
   "overall": 85,
   "clues": [
-   "A Brazilian midfielder, born in the 1990s.",
-   "Has won the Copa América.",
+   "A midfielder, born in the 1990s.",
    "Began his senior career at Grêmio.",
-   "Also played for Barcelona.",
+   "He's Brazilian.",
+   "Has won the Copa América.",
    "Club path: Grêmio → Barcelona → Juventus."
   ]
  },
@@ -1732,9 +1741,9 @@
   "ourName": "Axel Witsel",
   "overall": 85,
   "clues": [
-   "A Belgian defender, born in the 1980s.",
+   "A defender, born in the 1980s.",
    "Began his senior career at Standard Liège.",
-   "Also played for Tianjin Quanjian.",
+   "He's Belgian.",
    "Club path: Standard Liège → Benfica → Zenit Saint Petersburg → Tianjin Quanjian → Borussia Dortmund → Atlético Madrid → Girona."
   ]
  },
@@ -1743,10 +1752,10 @@
   "ourName": "Diogo Jota",
   "overall": 85,
   "clues": [
-   "A Portuguese winger, born in the 1990s.",
-   "Has won the Premier League.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Paços de Ferreira.",
-   "Also played for Wolverhampton Wanderers.",
+   "He's Portuguese.",
+   "Has won the Premier League.",
    "Club path: Paços de Ferreira → Atlético Madrid → Wolverhampton Wanderers → Liverpool."
   ]
  },
@@ -1755,20 +1764,10 @@
   "ourName": "Bremer",
   "overall": 85,
   "clues": [
-   "A Brazilian defender, born in the 1990s.",
+   "A defender, born in the 1990s.",
    "Began his senior career at Atlético Mineiro.",
-   "Also played for Torino.",
+   "He's Brazilian.",
    "Club path: Atlético Mineiro → Torino → Juventus."
-  ]
- },
- {
-  "answer": "Nico Schlotterbeck",
-  "ourName": "Nico Schlotterbeck",
-  "overall": 85,
-  "clues": [
-   "A German defender, born in the 1990s.",
-   "Began his senior career at SC Freiburg.",
-   "Club path: SC Freiburg → Borussia Dortmund."
   ]
  }
 ]
