@@ -180,7 +180,7 @@ const DIFFICULTIES = [
 ];
 const MODES = [
   ['squad','📋 Squads'],
-  ['link','🔗 Find the link'],
+  // ['link','🔗 Find the link'],   // hidden Jun 2026 (kept in code/data — re-add this line to bring it back)
   ['grid','▦ Grid'],
   ['player','🕵️ Mystery player'],
 ];
@@ -546,7 +546,8 @@ function initSelects(){
   const msel=document.getElementById('mode');
   const modes=MODES.filter(([v])=>v!=='player'||CLUES.length);   // hide Mystery player if clues didn't load
   msel.innerHTML=modes.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
-  msel.value=(valid(qMode,modes)?qMode:null)||localStorage.getItem('onze:lastMode')||'squad';
+  const lastMode=localStorage.getItem('onze:lastMode');           // validate — a hidden mode (e.g. link) must fall back
+  msel.value=(valid(qMode,modes)?qMode:null)||(valid(lastMode,modes)?lastMode:null)||'squad';
   const lsel=document.getElementById('league');
   lsel.innerHTML=LEAGUE_TRACKS.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
   lsel.value=(valid(qLeague,LEAGUE_TRACKS)?qLeague:null)||localStorage.getItem('onze:lastLeague')||'WORLD';
