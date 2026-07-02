@@ -124,6 +124,7 @@
   <header>
     <h1><img src="assets/favicon.svg" alt="" class="logo" /> Onze</h1>
     <div class="sub">Name one player from each squad — that exact club, that exact season.</div>
+    <div id="streak" style="margin-top:6px;font-size:13px;font-weight:600;color:var(--accent);display:none"></div>
   </header>
 
   <div class="controls">
@@ -161,7 +162,7 @@
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { norm, matchKey, hashStr, mulberry32, todayStr,
+import { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity } from './game.js';
 
 const MAX_GUESSES = 6;
@@ -187,6 +188,16 @@ const MODES = [
 const GRID_GUESSES = 9;
 
 let DATA, CLUES = [], STATE, ALL_NAMES = [], PLAYERS = {};
+let STREAK = { last:'', cur:0, best:0 };
+function renderStreak(){
+  const n=liveStreak(STREAK), el=document.getElementById('streak');
+  if(n>0){ el.textContent = `🔥 ${n}-day streak` + (STREAK.best>n?` · best ${STREAK.best}`:''); el.style.display=''; }
+  else el.style.display='none';
+}
+function recordPlay(){                                        // call when a daily is completed (once/day)
+  if(STREAK.last!==todayStr()){ STREAK=bumpStreak(STREAK); localStorage.setItem('onze:streak',JSON.stringify(STREAK)); }
+  renderStreak();
+}
 
 // Core game logic (name matching, daily PRNG, puzzle builders, rarity) lives in ./game.js
 // so the browser and the Node tests/health-check run the exact same code — see the import above.
@@ -452,10 +463,11 @@ function shareText(){
   const row=STATE.guesses.map(g=>g.hit?'🟩':'🟥').join('');
   const d=new Date(); const dd=d.getUTCDate()+' '+d.toLocaleString('en',{month:'short',timeZone:'UTC'});
   const url=shareUrl();
+  const st=liveStreak(STREAK), stag=st>1?` · 🔥 ${st}d`:'';
   if(STATE.mode==='player'){
     const sq=STATE.guesses.map(g=>g.hit?'🟩':'🟥').join('');
     const score=STATE.win?`in ${STATE.shown} clue${STATE.shown===1?'':'s'}`:'X';
-    return `🕵️ Onze Mystery — ${dd}\n${sq}\nGuessed ${score}\n${url}`;
+    return `🕵️ Onze Mystery — ${dd}\n${sq}\nGuessed ${score}${stag}\n${url}`;
   }
   if(STATE.mode==='link'){
     const won=!!STATE.answer; const score=won?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;
@@ -465,13 +477,13 @@ function shareText(){
     const filled=STATE.cells.filter(Boolean).length;
     let g=''; for(let r=0;r<3;r++){ for(let c=0;c<3;c++) g+=STATE.cells[r*3+c]?'🟩':'⬜'; g+='\n'; }
     const rar=gridRarity();
-    return `▦ Onze Grid ${dmap[STATE.diff]||''} — ${dd}\n${g}${filled}/9 in ${STATE.guesses.length} guesses · rarity ${rar} 🧠\n${url}`;
+    return `▦ Onze Grid ${dmap[STATE.diff]||''} — ${dd}\n${g}${filled}/9 in ${STATE.guesses.length} guesses · rarity ${rar} 🧠${stag}\n${url}`;
   }
   const t=LEAGUE_TRACKS.find(l=>l[0]===STATE.league);
   const label=t?t[1].replace(/^[^ ]+ /,''):STATE.league;
   const solvedN=STATE.solved.filter(Boolean).length;
   const score=solvedN===5?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;
-  return `⚽ Onze ${label} ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · ${solvedN}/5 clubs\n${url}`;
+  return `⚽ Onze ${label} ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · ${solvedN}/5 clubs${stag}\n${url}`;
 }
 // robust cross-platform share: native share sheet (mobile) -> async clipboard -> legacy execCommand
 function legacyCopy(text){
@@ -502,9 +514,12 @@ function showEnd(){
     : STATE.solved.filter(Boolean).length===5;
   const gridN = STATE.mode==='grid' ? STATE.cells.filter(Boolean).length : 0;
   const grar = STATE.mode==='grid' ? ` · rarity ${gridRarity()} 🧠` : '';
-  const endmsg = STATE.mode==='player'
+  recordPlay();                                              // finishing a daily counts toward the streak
+  const st = liveStreak(STREAK);
+  const endmsg = (STATE.mode==='player'
     ? (won?`Solved in ${STATE.shown} clue${STATE.shown===1?'':'s'}! 🏆`:'Out of clues 😬')
-    : (won?'Solved! 🏆' : (STATE.mode==='grid'?`Grid done — ${gridN}/9`:'Out of guesses 😬')) + grar;
+    : (won?'Solved! 🏆' : (STATE.mode==='grid'?`Grid done — ${gridN}/9`:'Out of guesses 😬')) + grar)
+    + (st>1?` · 🔥 ${st}-day streak`:'');
   document.getElementById('endmsg').textContent = endmsg;
   const rev=document.getElementById('reveal');
   if(STATE.mode==='player'){
@@ -606,6 +621,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
     fetch('data/player-clues.json').then(r=>r.json()).catch(()=>[]),   // mystery-player clues (optional)
   ]);
   DATA=sq; CLUES=cl||[];
+  try{ STREAK=JSON.parse(localStorage.getItem('onze:streak'))||STREAK; }catch(e){}
+  renderStreak();
   buildNameIndex();
   initSelects();
   const input=document.getElementById('guess');

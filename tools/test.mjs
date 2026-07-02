@@ -13,7 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 // The shipped game logic — the SAME module the browser imports (index.html). No more
 // regex-slicing functions out of the HTML; tests track behaviour by importing it directly.
-import { norm, matchKey, todayStr, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys } from '../game.js';
+import { norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -175,6 +175,19 @@ test('identity: same-name players split by sofifa id (no phantom links)', () => 
   assert.ok(hasClubs('Luis Suárez', 'FC Barcelona', 'Atlético Madrid'), 'Uruguayan Suárez should have Barça + Atlético');
   // and his real rating attached (under-merge of the short/full form fixed)
   assert.equal(D.playerInfo['Luis Suárez']?.o, 92, 'Uruguayan Suárez should carry his real overall (92)');
+});
+
+test('daily streak: consecutive days build, a gap resets, display goes stale', () => {
+  const s = bumpStreak(null);
+  assert.equal(s.cur, 1); assert.equal(s.best, 1); assert.equal(s.last, todayStr());
+  assert.equal(bumpStreak(s).cur, 1, 'same day must not double-count');
+  const grew = bumpStreak({ last: yesterdayStr(), cur: 4, best: 4 });
+  assert.equal(grew.cur, 5); assert.equal(grew.best, 5);
+  const reset = bumpStreak({ last: '2000-01-01', cur: 9, best: 9 });
+  assert.equal(reset.cur, 1); assert.equal(reset.best, 9, 'best is preserved across a broken streak');
+  assert.equal(liveStreak({ last: todayStr(), cur: 3 }), 3, 'alive today');
+  assert.equal(liveStreak({ last: yesterdayStr(), cur: 3 }), 3, 'still alive the next day');
+  assert.equal(liveStreak({ last: '2000-01-01', cur: 3 }), 0, 'stale streak shows 0');
 });
 
 test('mystery-player mode: deterministic daily pick + lenient answer matching', () => {

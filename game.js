@@ -24,6 +24,18 @@ export function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math
 // Daily puzzle is keyed to UTC so every player worldwide gets the SAME puzzle each day
 // (otherwise friends in different time zones see different boards and shares don't match).
 export function todayStr(){const d=new Date();return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');}
+export function yesterdayStr(){const d=new Date(Date.now()-864e5);return d.getUTCFullYear()+'-'+String(d.getUTCMonth()+1).padStart(2,'0')+'-'+String(d.getUTCDate()).padStart(2,'0');}
+// Daily streak (game-wide, UTC), the retention/brag loop. s = {last, cur, best}.
+// bumpStreak: call once when the day's puzzle is completed — consecutive day +1, a missed day resets to 1.
+// liveStreak: the streak to display (0 once a day has been missed).
+export function bumpStreak(s){
+  const t = todayStr(); s = s || { last: '', cur: 0, best: 0 };
+  if(s.last === t) return s;                                  // already counted today
+  s.cur = (s.last === yesterdayStr()) ? (s.cur || 0) + 1 : 1;
+  s.best = Math.max(s.best || 0, s.cur); s.last = t;
+  return s;
+}
+export function liveStreak(s){ return (s && (s.last === todayStr() || s.last === yesterdayStr())) ? (s.cur || 0) : 0; }
 
 // --- puzzle builders (DATA passed in) ---------------------------------------
 // weighted pick without replacement; difficulty reshapes the pool/weights:
