@@ -198,8 +198,15 @@ test('mystery-player mode: deterministic daily pick + lenient answer matching', 
   ];
   const p1 = buildPlayerPuzzle(CLUES), p2 = buildPlayerPuzzle(CLUES);
   assert.equal(p1.answer, p2.answer, 'same day must give the same player');
+  assert.deepEqual(p1.clues, p2.clues, 'same day must give the same clue ORDER (seeded shuffle)');
   assert.ok(CLUES.some(c => c.answer.replace(/\s*\(.*\)$/, '') === p1.answer), 'answer comes from the pool');
   assert.ok(p1.clues.length >= 1 && p1.sig, 'puzzle has clues + a sig');
+  // clue order is mixed daily, but the giveaway club path must stay LAST, and no clue lost
+  const src = CLUES.find(c => c.answer.replace(/\s*\(.*\)$/, '') === p1.answer);
+  assert.equal(p1.clues.length, src.clues.length, 'shuffle must not drop or duplicate clues');
+  assert.deepEqual([...p1.clues].sort(), [...src.clues].sort(), 'shuffle preserves the clue set');
+  const pathIdx = p1.clues.findIndex(c => /^Club path:/i.test(c));
+  if (pathIdx >= 0) assert.equal(pathIdx, p1.clues.length - 1, 'club path must be the final clue');
   assert.equal(buildPlayerPuzzle([]).answer, '', 'empty clue set degrades gracefully');
   // wiki disambiguation suffix stripped, and surname / full / accent-insensitive guesses all match
   const k = answerKeys('Rodri (footballer, born 1996)'.replace(/\s*\(.*\)$/, ''));

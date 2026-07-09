@@ -119,13 +119,22 @@ export function buildGridPuzzle(DATA, diff){
 
 // Mystery player: one player a day, clues revealed one at a time (no difficulty tiers). CLUES is the
 // data/player-clues.json array [{answer, clues:[…]}]. Deterministic daily pick like the other modes.
+// The clue ORDER is shuffled per day (seeded by the date, so everyone gets the same order) to keep
+// the reveal from feeling formulaic — except the club path, which stays LAST: it's the giveaway,
+// and the difficulty curve collapses if it can appear early.
 export function buildPlayerPuzzle(CLUES, diff){
   const date = todayStr();
   if(!CLUES || !CLUES.length) return {date, answer:'', clues:[], sig:''};
   const rnd = mulberry32(hashStr(date + '|player'));
   const p = CLUES[Math.floor(rnd() * CLUES.length)];
   const answer = (p.answer || p.a || '').replace(/\s*\(.*\)$/, '');   // strip wiki disambiguation suffix
-  return { date, answer, clues: p.clues || p.c || [], sig: 'player|' + answer };
+  const raw = p.clues || p.c || [];
+  const path = raw.filter(c => /^Club path:/i.test(c));
+  const rest = raw.filter(c => !/^Club path:/i.test(c));
+  for(let i = rest.length - 1; i > 0; i--){                          // seeded Fisher–Yates
+    const j = Math.floor(rnd() * (i + 1)); [rest[i], rest[j]] = [rest[j], rest[i]];
+  }
+  return { date, answer, clues: [...rest, ...path], sig: 'player|' + answer };
 }
 // acceptable guesses for a mystery answer: full name, surname, particle-surname phrase, surname-only.
 // All routed through matchKey (token-sorted) so word order and accents don't matter.
