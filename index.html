@@ -415,9 +415,18 @@ function gridRarity(){
 
 function submitGuess(raw){ if(STATE.mode==='link') return submitLink(raw); if(STATE.mode==='grid') return submitGrid(raw); if(STATE.mode==='player') return submitPlayer(raw); return submitSquad(raw); }
 
+// Final-day only (World Cup skin on): guessing any Ronaldo gets a cheeky rebuke — no clue burned, no guess spent.
+const RONALDO_KEYS = new Set(
+  ['Cristiano Ronaldo','Ronaldo','Cristiano','CR7','Cristiano Ronaldo dos Santos Aveiro'].map(matchKey)
+);
 function submitPlayer(raw){
   if(STATE.done) return;
   const g=matchKey(raw); if(!g) return;
+  if(document.body.classList.contains('wc') && RONALDO_KEYS.has(g) && !answerKeys(STATE.puzzle.answer).has(g)){
+    document.getElementById('guess').value=''; hideSugg();
+    toast('🐐 No — definitely NOT the GOAT');
+    return;
+  }
   const ok=answerKeys(STATE.puzzle.answer).has(g);
   STATE.guesses.push({hit:ok});
   document.getElementById('guess').value=''; hideSugg();
