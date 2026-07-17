@@ -117,6 +117,37 @@
   @media (min-width:381px) and (max-width:480px){
     select{flex:1 1 46%;}                  /* roomier phones: two dropdowns per row */
   }
+
+  /* ---- World Cup Final one-day skin (auto-on 2026-07-19 UTC; append ?wc to preview any day) ---- */
+  body.wc{
+    --accent:#f0c040; --gold:#f0c040;
+    background:
+      radial-gradient(120% 85% at 50% -12%, rgba(240,192,64,.14), transparent 60%),
+      radial-gradient(90% 60% at 50% 118%, rgba(58,110,180,.12), transparent 60%),
+      #0a0e1a;
+  }
+  body.wc h1{background:linear-gradient(90deg,#f6d885,#f0c040,#dfa626);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  body.wc .cell.solved{border-color:#8a6a1e;
+    background:linear-gradient(90deg,rgba(240,192,64,.12),transparent)}
+  body.wc .gcell.solved{border-color:#8a6a1e;
+    background:linear-gradient(180deg,rgba(240,192,64,.16),transparent)}
+  body.wc .gcell .gname{color:var(--gold)}
+  body.wc .cell .ans,body.wc .end .reveal b{color:var(--gold)}
+  body.wc button.share{background:linear-gradient(90deg,#f0c040,#e0a828);color:#241a02}
+  body.wc #guess:focus{border-color:var(--gold)}
+  body.wc #streak{color:var(--gold)}
+  .wc-banner{display:none}
+  body.wc .wc-banner{display:block;margin:0 0 14px;text-align:center;
+    border:1px solid rgba(240,192,64,.42);border-radius:12px;padding:11px 12px;
+    background:linear-gradient(180deg,rgba(240,192,64,.13),rgba(240,192,64,.03));
+    box-shadow:0 0 26px rgba(240,192,64,.09)}
+  .wc-banner .kick{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--gold);font-weight:700}
+  .wc-banner .head{font-size:16px;font-weight:800;margin-top:3px}
+  .wc-spot{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:9px;flex-wrap:wrap}
+  .wc-spot .who{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:700}
+  .wc-spot .who .flag{font-size:16px}
+  .wc-spot .vs{color:var(--dim);font-size:11px;font-weight:800;letter-spacing:1.5px}
 </style>
 </head>
 <body>
@@ -126,6 +157,16 @@
     <div class="sub">Name one player from each squad — that exact club, that exact season.</div>
     <div id="streak" style="margin-top:6px;font-size:13px;font-weight:600;color:var(--accent);display:none"></div>
   </header>
+
+  <div class="wc-banner">
+    <div class="kick">🏆 World Cup Final · one day only</div>
+    <div class="head">Two generations, one crown</div>
+    <div class="wc-spot">
+      <span class="who"><span class="flag">🇦🇷</span> Leo Messi</span>
+      <span class="vs">VS</span>
+      <span class="who"><span class="flag">🇪🇸</span> Lamine Yamal</span>
+    </div>
+  </div>
 
   <div class="controls">
     <select id="mode"></select>
@@ -189,6 +230,14 @@ const GRID_GUESSES = 9;
 
 let DATA, CLUES = [], STATE, ALL_NAMES = [], PLAYERS = {};
 let STREAK = { last:'', cur:0, best:0 };
+// One-day World Cup Final skin: auto-on for the final (2026-07-19, UTC via todayStr), or forced with ?wc / ?final.
+// Cosmetic only — no puzzle/logic/share changes. Reverts by itself the next day.
+function applyFinalTheme(){
+  const forced = /[?&](wc|final)(=|&|$)/.test(location.search);
+  if(todayStr() !== '2026-07-19' && !forced) return;
+  document.body.classList.add('wc');
+  document.title = '🏆 Onze — World Cup Final';
+}
 function renderStreak(){
   const n=liveStreak(STREAK), el=document.getElementById('streak');
   if(n>0){ el.textContent = `🔥 ${n}-day streak` + (STREAK.best>n?` · best ${STREAK.best}`:''); el.style.display=''; }
@@ -621,6 +670,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
     fetch('data/player-clues.json').then(r=>r.json()).catch(()=>[]),   // mystery-player clues (optional)
   ]);
   DATA=sq; CLUES=cl||[];
+  applyFinalTheme();
   try{ STREAK=JSON.parse(localStorage.getItem('onze:streak'))||STREAK; }catch(e){}
   renderStreak();
   buildNameIndex();
