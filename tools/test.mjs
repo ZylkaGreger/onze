@@ -13,7 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 // The shipped game logic — the SAME module the browser imports (index.html). No more
 // regex-slicing functions out of the HTML; tests track behaviour by importing it directly.
-import { norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys } from '../game.js';
+import { norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -207,6 +207,16 @@ test('mystery-player mode: deterministic daily pick + lenient answer matching', 
   assert.deepEqual([...p1.clues].sort(), [...src.clues].sort(), 'shuffle preserves the clue set');
   const pathIdx = p1.clues.findIndex(c => /^Club path:/i.test(c));
   if (pathIdx >= 0) assert.equal(pathIdx, p1.clues.length - 1, 'club path must be the final clue');
+  // editorial override: every featured date must resolve to a real dossier in the SHIPPED pool, and force that pick
+  const REAL_CLUES = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/player-clues.json'), 'utf8'));
+  for(const [date, name] of Object.entries(FEATURED_PLAYER)){
+    assert.ok(REAL_CLUES.some(c => (c.answer||c.a) === name), `featured "${name}" (${date}) must exist in the shipped pool`);
+    const forced = buildPlayerPuzzle(REAL_CLUES, date);
+    assert.equal(forced.answer, name.replace(/\s*\(.*\)$/, ''), `${date} must force ${name} as the mystery player`);
+    const fpath = forced.clues.findIndex(c => /^Club path:/i.test(c));
+    if (fpath >= 0) assert.equal(fpath, forced.clues.length - 1, 'forced pick keeps club path last');
+    assert.notEqual(buildPlayerPuzzle(REAL_CLUES, '2026-07-18').answer, forced.answer, 'a non-featured day is not forced');
+  }
   assert.equal(buildPlayerPuzzle([]).answer, '', 'empty clue set degrades gracefully');
   // wiki disambiguation suffix stripped, and surname / full / accent-insensitive guesses all match
   const k = answerKeys('Rodri (footballer, born 1996)'.replace(/\s*\(.*\)$/, ''));

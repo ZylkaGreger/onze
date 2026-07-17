@@ -232,11 +232,13 @@ let DATA, CLUES = [], STATE, ALL_NAMES = [], PLAYERS = {};
 let STREAK = { last:'', cur:0, best:0 };
 // One-day World Cup Final skin: auto-on for the final (2026-07-19, UTC via todayStr), or forced with ?wc / ?final.
 // Cosmetic only — no puzzle/logic/share changes. Reverts by itself the next day.
+let WC_FORCE_DATE = null;   // set in preview so the mystery player shows the final-day featured pick early
 function applyFinalTheme(){
   const forced = /[?&](wc|final)(=|&|$)/.test(location.search);
   if(todayStr() !== '2026-07-19' && !forced) return;
   document.body.classList.add('wc');
   document.title = '🏆 Onze — World Cup Final';
+  if(forced && todayStr() !== '2026-07-19') WC_FORCE_DATE = '2026-07-19';
 }
 function renderStreak(){
   const n=liveStreak(STREAK), el=document.getElementById('streak');
@@ -264,7 +266,7 @@ function loadState(mode, league, diff){
     st={key, mode, league, diff, puzzle, cells:Array(9).fill(null), rarity:Array(9).fill(null), active:null, guesses:[], done:false};
     if(saved){try{const s=JSON.parse(saved); if(s.sig===puzzle.sig){st.cells=s.cells;st.rarity=s.rarity||Array(9).fill(null);st.guesses=s.guesses;st.done=s.done;}}catch(e){}}
   } else if(mode==='player'){
-    const puzzle=buildPlayerPuzzle(CLUES, diff);
+    const puzzle=buildPlayerPuzzle(CLUES, WC_FORCE_DATE);
     st={key, mode, league, diff, puzzle, shown:1, guesses:[], done:false, win:false};
     if(saved){try{const s=JSON.parse(saved); if(s.sig===puzzle.sig){st.shown=s.shown;st.guesses=s.guesses;st.done=s.done;st.win=s.win;}}catch(e){}}
   } else {

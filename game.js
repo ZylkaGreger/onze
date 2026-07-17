@@ -117,16 +117,23 @@ export function buildGridPuzzle(DATA, diff){
   return {date:todayStr(), rowIds, colIds, rows:rowIds.map(id=>DATA.clubs[id]), cols:colIds.map(id=>DATA.clubs[id]), sig:g.join('|')};
 }
 
+// Editorial overrides: force a specific player on a given UTC date, no matter the seeded pick.
+// Used to spotlight a name for an occasion (World Cup Final day → Messi). Name must exist in the pool.
+export const FEATURED_PLAYER = { '2026-07-19': 'Lionel Messi' };
+
 // Mystery player: one player a day, clues revealed one at a time (no difficulty tiers). CLUES is the
 // data/player-clues.json array [{answer, clues:[…]}]. Deterministic daily pick like the other modes.
 // The clue ORDER is shuffled per day (seeded by the date, so everyone gets the same order) to keep
 // the reveal from feeling formulaic — except the club path, which stays LAST: it's the giveaway,
 // and the difficulty curve collapses if it can appear early.
-export function buildPlayerPuzzle(CLUES, diff){
-  const date = todayStr();
+// forceDate: optional override so a preview (?wc) can show a future day's featured player early.
+export function buildPlayerPuzzle(CLUES, forceDate){
+  const date = forceDate || todayStr();
   if(!CLUES || !CLUES.length) return {date, answer:'', clues:[], sig:''};
   const rnd = mulberry32(hashStr(date + '|player'));
-  const p = CLUES[Math.floor(rnd() * CLUES.length)];
+  const want = FEATURED_PLAYER[date];
+  const pick = want && CLUES.find(c => (c.answer || c.a || '') === want);
+  const p = pick || CLUES[Math.floor(rnd() * CLUES.length)];
   const answer = (p.answer || p.a || '').replace(/\s*\(.*\)$/, '');   // strip wiki disambiguation suffix
   const raw = p.clues || p.c || [];
   const path = raw.filter(c => /^Club path:/i.test(c));
