@@ -118,8 +118,11 @@ export function buildGridPuzzle(DATA, diff){
 }
 
 // Editorial overrides: force a specific player on a given UTC date, no matter the seeded pick.
-// Used to spotlight a name for an occasion (World Cup Final day → Messi). Name must exist in the pool.
-export const FEATURED_PLAYER = { '2026-07-19': 'Lionel Messi' };
+// Used to spotlight a name for an occasion (World Cup Final day → Messi). name must exist in the pool.
+// Optional `opener` is pinned as the FIRST clue that day only — a one-off flourish, not in the dossier.
+export const FEATURED_PLAYER = {
+  '2026-07-19': { name: 'Lionel Messi', opener: 'HE IS THE GOAT 🐐' },
+};
 
 // Mystery player: one player a day, clues revealed one at a time (no difficulty tiers). CLUES is the
 // data/player-clues.json array [{answer, clues:[…]}]. Deterministic daily pick like the other modes.
@@ -132,7 +135,7 @@ export function buildPlayerPuzzle(CLUES, forceDate){
   if(!CLUES || !CLUES.length) return {date, answer:'', clues:[], sig:''};
   const rnd = mulberry32(hashStr(date + '|player'));
   const want = FEATURED_PLAYER[date];
-  const pick = want && CLUES.find(c => (c.answer || c.a || '') === want);
+  const pick = want && CLUES.find(c => (c.answer || c.a || '') === want.name);
   const p = pick || CLUES[Math.floor(rnd() * CLUES.length)];
   const answer = (p.answer || p.a || '').replace(/\s*\(.*\)$/, '');   // strip wiki disambiguation suffix
   const raw = p.clues || p.c || [];
@@ -141,7 +144,8 @@ export function buildPlayerPuzzle(CLUES, forceDate){
   for(let i = rest.length - 1; i > 0; i--){                          // seeded Fisher–Yates
     const j = Math.floor(rnd() * (i + 1)); [rest[i], rest[j]] = [rest[j], rest[i]];
   }
-  return { date, answer, clues: [...rest, ...path], sig: 'player|' + answer };
+  const opener = (pick && want.opener) ? [want.opener] : [];        // featured-day flourish, pinned first
+  return { date, answer, clues: [...opener, ...rest, ...path], sig: 'player|' + answer };
 }
 // acceptable guesses for a mystery answer: full name, surname, particle-surname phrase, surname-only.
 // All routed through matchKey (token-sorted) so word order and accents don't matter.
