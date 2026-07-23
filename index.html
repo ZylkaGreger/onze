@@ -3,18 +3,55 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Onze — name the squad</title>
-<meta name="description" content="A daily football guessing game. Name one player from each of 5 mystery squads — or find the player who links them. New puzzle every day." />
+<title>Onze — Daily Football Wordle · Guess the Player &amp; Squad</title>
+<meta name="description" content="Onze is a free daily football (soccer) guessing game — a Wordle for football. Name a player from each of 5 mystery squads, or guess the hidden player from clues. A new puzzle every day." />
+<link rel="canonical" href="https://onzedaily.com/" />
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg" />
 <link rel="apple-touch-icon" href="assets/onze-avatar.png" />
+<meta name="theme-color" content="#0d1117" />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://onzedaily.com" />
-<meta property="og:title" content="Onze — name the squad" />
-<meta property="og:description" content="A daily football guessing game. Name a player from 5 mystery squads — or find the player who links them." />
+<meta property="og:url" content="https://onzedaily.com/" />
+<meta property="og:title" content="Onze — Daily Football Wordle" />
+<meta property="og:description" content="A free daily football guessing game. Name a player from 5 mystery squads, or guess the hidden player from clues. New puzzle every day." />
 <meta property="og:image" content="https://onzedaily.com/assets/onze-banner.png" />
 <meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:title" content="Onze — name the squad" />
-<meta name="twitter:description" content="A daily football guessing game. Name a player from 5 mystery squads — or find the player who links them." />
+<meta name="twitter:title" content="Onze — Daily Football Wordle" />
+<meta name="twitter:description" content="A free daily football guessing game — a Wordle for football. New puzzle every day." />
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "Onze",
+      "url": "https://onzedaily.com/",
+      "description": "A free daily football (soccer) guessing game — a Wordle for football."
+    },
+    {
+      "@type": "Game",
+      "name": "Onze",
+      "url": "https://onzedaily.com/",
+      "genre": ["Puzzle", "Sports", "Trivia"],
+      "gamePlatform": "Web browser",
+      "description": "A free daily football guessing game. Name a player from each of 5 mystery club squads, or guess the hidden player from clues that unlock one at a time. A new puzzle every day, the same for everyone.",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "Is there a Wordle for football?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes. Onze is a free daily football Wordle: one new puzzle every day, the same for everyone, with a spoiler-free result you can share." } },
+        { "@type": "Question", "name": "How do you play Onze?",
+          "acceptedAnswer": { "@type": "Answer", "text": "In Squads you are shown five mystery club-and-season line-ups; name any one player who was in each squad that season. In Mystery Player you guess a hidden footballer from clues that unlock one at a time." } },
+        { "@type": "Question", "name": "Is Onze free?",
+          "acceptedAnswer": { "@type": "Answer", "text": "Yes, Onze is completely free and needs no account or sign-up." } },
+        { "@type": "Question", "name": "How often are there new puzzles?",
+          "acceptedAnswer": { "@type": "Answer", "text": "A new puzzle appears every day at midnight UTC, so players around the world all get the same daily puzzle." } }
+      ]
+    }
+  ]
+}
+</script>
 <meta name="twitter:image" content="https://onzedaily.com/assets/onze-banner.png" />
 <!-- Cloudflare Web Analytics (cookieless, privacy-friendly) -->
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "31334058083a4b378fd80062bcd872f1"}'></script>
@@ -90,6 +127,20 @@
     opacity:0;transition:.3s;pointer-events:none}
   .toast.show{opacity:1}
   .foot{text-align:center;color:var(--dim);font-size:11px;margin-top:24px;line-height:1.6}
+  .about{margin-top:34px;padding-top:20px;border-top:1px solid var(--line);color:var(--dim);
+    font-size:13px;line-height:1.6}
+  .about h2{font-size:16px;color:var(--txt);margin:0 0 8px}
+  .about h3{font-size:13px;color:var(--txt);margin:16px 0 6px;text-transform:uppercase;letter-spacing:.5px}
+  .about p{margin:0 0 8px}
+  .about ol{margin:0;padding-left:20px}
+  .about ol li{margin:4px 0}
+  .about b{color:var(--txt)}
+  .about details{border-top:1px solid var(--line);padding:8px 0}
+  .about summary{cursor:pointer;color:var(--txt);font-weight:500;list-style:none}
+  .about summary::-webkit-details-marker{display:none}
+  .about summary::before{content:'＋ ';color:var(--dim)}
+  .about details[open] summary::before{content:'－ '}
+  .about details p{margin:6px 0 2px}
 
   /* ---- grid mode ---- */
   .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:14px 0}
@@ -204,6 +255,29 @@
   <div class="foot">
     a new puzzle every day · free-text guessing · spoiler-free share
   </div>
+
+  <section class="about">
+    <h2>Onze — a daily football Wordle</h2>
+    <p>Onze is a free daily football (soccer) guessing game — a Wordle for football fans.
+       Every day there's one new puzzle, the same for everyone, with a spoiler-free result you can share.
+       No account, no sign-up.</p>
+    <h3>How to play</h3>
+    <ol>
+      <li><b>Squads:</b> you're shown five mystery club-and-season line-ups. Name any one player who was in each squad that season.</li>
+      <li>Type a player's name and press Enter — autocomplete helps, and spelling or accents don't have to be exact.</li>
+      <li>You get six guesses. A row turns green when you've named a player from that club.</li>
+      <li><b>Mystery player:</b> guess a hidden footballer from clues that unlock one at a time — the fewer clues you need, the better your score.</li>
+    </ol>
+    <h3>FAQ</h3>
+    <details><summary>Is there a Wordle for football?</summary>
+      <p>Yes — Onze is a daily football Wordle: one new puzzle a day, the same for everyone, with a shareable spoiler-free result.</p></details>
+    <details><summary>Is Onze free?</summary>
+      <p>Completely free, and you don't need an account or sign-up.</p></details>
+    <details><summary>When does the puzzle change?</summary>
+      <p>A new puzzle appears every day at midnight UTC, so players everywhere get the same daily puzzle.</p></details>
+    <details><summary>Do I have to spell names perfectly?</summary>
+      <p>No — matching is lenient, so accents and small spelling differences are fine, and the autocomplete will help you.</p></details>
+  </section>
 </div>
 <div class="toast" id="toast"></div>
 
@@ -507,9 +581,10 @@ function submitLink(raw){
   save(); render();
 }
 
-// deep link back into the mode the player just played (one config now — no difficulty/league to carry)
+// deep link back into the mode the player just played (one config now — no difficulty/league to carry).
+// Full https:// so chat apps render a rich preview card instead of dead plain text.
 function shareUrl(){
-  return STATE.mode==='player' ? 'onzedaily.com/?m=player' : 'onzedaily.com';
+  return STATE.mode==='player' ? 'https://onzedaily.com/?m=player' : 'https://onzedaily.com';
 }
 function shareText(){
   const dmap={easy:'🟢',medium:'🟡',hard:'🔴'};
@@ -549,7 +624,13 @@ function legacyCopy(text){
 }
 async function shareResult(){
   const text=shareText();
-  // copy to clipboard on every platform (no native share sheet)
+  // Native share sheet first (mobile) — collapses copy→switch app→paste into one tap,
+  // which is where football banter actually spreads (WhatsApp/iMessage group chats).
+  if(navigator.share){
+    try{ await navigator.share({text}); return; }
+    catch(e){ if(e && e.name==='AbortError') return;   // user dismissed the sheet — don't fall through to a false "copied" toast
+      /* real share failure (e.g. NotAllowedError) — fall through to clipboard */ }
+  }
   try{
     if(navigator.clipboard && window.isSecureContext){
       await navigator.clipboard.writeText(text); toast('Copied to clipboard!'); return;
@@ -674,7 +755,8 @@ document.addEventListener('DOMContentLoaded',async()=>{
     if(e.key==='Escape')hideSugg();
   });
   document.addEventListener('click',e=>{if(!e.target.closest('.inputrow'))hideSugg();});
-  document.getElementById('shareBtn').onclick=()=>shareResult();
+  const sb=document.getElementById('shareBtn'); sb.onclick=()=>shareResult();
+  if(navigator.share) sb.textContent='Share result';   // native sheet available (mobile) — it's a share, not a copy
   start(MODE, FIXED_LEAGUE, FIXED_DIFF);
 });
 </script>
