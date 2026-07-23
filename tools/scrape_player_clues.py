@@ -205,29 +205,39 @@ def pick_honour(bullets):
     return None
 
 def make_clues(nat, role, by, career, bullets):
-    """Ordered hard -> easy (no difficulty tiers). `role` is a readable position word.
-    Clue 1 is deliberately BROAD — position + era only. Nationality is held back to clue 3, because
-    'Belgian midfielder' / 'Argentine forward' gives the answer away on the very first clue."""
+    """A pool of attribute clues (game.js shuffles them per day and always pins the club-path LAST,
+    so generation order only matters for keeping 'Club path:' as the final giveaway). Each clue is a
+    single fact that narrows the field without being a one-player giveaway on its own."""
     clues = []
     seniors, prev = [], None
     for _, c, loan in career:                       # senior, non-loan, non-reserve, de-duped
         if loan or is_reserve(c) or c == prev: continue
         seniors.append(c); prev = c
-    # 1) broadest: position + era, NO nationality
+    # position + era (broad; NO nationality here — 'Belgian midfielder' would give it away)
     c1 = f"A {role}"
     if by: c1 += f", born in the {by // 10 * 10}s"
     clues.append(c1 + ".")
-    # 2) first senior club (specific, often non-obvious)
+    # first senior club (specific, often non-obvious)
     if seniors:
         clues.append(f"Began his senior career at {seniors[0]}.")
-    # 3) nationality, on its own and later in the reveal
+    # nationality, on its own
     demo = DEMONYM.get(nat)
     if demo:
         clues.append(f"He's {demo}.")
-    # 4) a major honour
+    # career shape: one-club loyalty or a well-travelled journeyman
+    if len(seniors) == 1:
+        clues.append("A one-club man.")
+    elif len(seniors) >= 6:
+        clues.append(f"Well-travelled — {len(seniors)} senior clubs.")
+    # a mid-career club (a partial path hint, before the full reveal)
+    if len(seniors) >= 3:
+        mid = seniors[len(seniors) // 2]
+        if mid != seniors[0]:
+            clues.append(f"Also had a spell at {mid}.")
+    # a major honour
     hon = pick_honour(bullets)
     if hon: clues.append(hon)
-    # 5) the giveaway: full senior club path
+    # the giveaway: full senior club path (game.js keeps this last)
     if len(seniors) >= 2:
         clues.append("Club path: " + " → ".join(seniors) + ".")
     return clues
