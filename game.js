@@ -42,11 +42,14 @@ export function liveStreak(s){ return (s && (s.last === todayStr() || s.last ===
 //   easy  = only star-studded club-seasons (top 30% by weight), still weighted to giants
 //   medium= full pool, weighted toward bigger clubs (default)
 //   hard  = full pool, uniform weight (any top-5 club equally likely -> more deep cuts)
-// MEDIUM_BIAS: medium is the only live difficulty, and a single unrecognisable club among the five
-// (e.g. Crotone 2020/21) is an instant day-one loss for a casual fan — the #1 churn driver. Raising
-// the club-fame weight to this power makes deep cuts rare (not impossible — the occasional spicy one
-// keeps variety + the deep-cut brag) so a casual fan can find a path into all five most days.
-const MEDIUM_BIAS = 1.8;
+// MEDIUM_BIAS: medium is the only live difficulty. Raising the club-fame weight to this power tunes
+// how many hard-to-name ("deep cut") clubs land in the daily five. Target ≈ ONE deep cut per board:
+// a casual fan finds a path into ~four clubs, with one spicy club as the "did you get all five?" flex.
+// That keeps the original challenge + club variety while trimming the brutal days that used to throw
+// 2–3 unguessable clubs at once (the #1 cold-visitor churn driver). Roughly: 1.0 = original (~1.7 deep
+// cuts/board, no help), 1.3 = ~1 deep cut/board, 1.8 = mostly all-giants (too soft). Tune with real
+// win-rate data when it exists.
+const MEDIUM_BIAS = 1.3;
 export function buildPuzzle(DATA, league, diff){
   const date = todayStr();
   const rnd = mulberry32(hashStr(date+'|'+league+'|'+diff));
