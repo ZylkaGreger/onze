@@ -39,6 +39,12 @@
     -webkit-appearance:none;appearance:none;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%238b949e' stroke-width='1.5' fill='none'/></svg>");
     background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+  .modes{display:inline-flex;background:var(--panel2);border:1px solid var(--line);
+    border-radius:11px;padding:3px;gap:3px}
+  .mbtn{background:transparent;border:none;color:var(--dim);font:inherit;font-size:14px;font-weight:600;
+    padding:9px 18px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:.15s}
+  .mbtn.active{background:var(--panel);color:var(--txt);box-shadow:0 1px 3px rgba(0,0,0,.35)}
+  body.wc .mbtn.active{color:var(--gold)}
   .cells{display:flex;flex-direction:column;gap:8px;margin:14px 0}
   .cell{background:var(--panel);border:1px solid var(--line);border-radius:10px;
     padding:10px 12px;display:flex;align-items:center;gap:12px;transition:.25s}
@@ -104,6 +110,7 @@
     h1{font-size:25px}
     .sub{font-size:12px;padding:0 4px}
     .controls{gap:7px;margin:12px 0}
+    .mbtn{padding:9px 14px;font-size:13px}
     select{flex:1 1 100%;}                 /* full-width stacked dropdowns — clean & tappable */
     .cells{gap:7px;margin:12px 0}
     .cell{padding:9px 11px;gap:10px}
@@ -169,9 +176,7 @@
   </div>
 
   <div class="controls">
-    <select id="mode"></select>
-    <select id="league"></select>
-    <select id="diff"></select>
+    <div class="modes" id="modeToggle"></div>
   </div>
 
   <div class="cells" id="cells"></div>
@@ -207,25 +212,16 @@ import { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity } from './game.js';
 
 const MAX_GUESSES = 6;
-const LEAGUE_TRACKS = [
-  ['WORLD','⭐ Top 5 leagues (mixed)'],
-  ['Premier League','🏴 Premier League'],
-  ['La Liga','🇪🇸 La Liga'],
-  ['Bundesliga','🇩🇪 Bundesliga'],
-  ['Serie A','🇮🇹 Serie A'],
-  ['Ligue 1','🇫🇷 Ligue 1'],
-];
-const DIFFICULTIES = [
-  ['medium','🟡 Medium'],
-  ['easy','🟢 Easy — big clubs'],
-  ['hard','🔴 Hard — anyone'],
-];
 const MODES = [
   ['squad','📋 Squads'],
   // ['link','🔗 Find the link'],   // hidden Jun 2026 (kept in code/data — re-add this line to bring it back)
-  ['grid','▦ Grid'],
+  // ['grid','▦ Grid'],             // removed Jul 2026 — simplified UI (code/data kept — re-add this line to bring it back)
   ['player','🕵️ Mystery player'],
 ];
+// League and difficulty are no longer player-facing — every squad puzzle is Top-5 mixed, medium.
+// (The per-league / easy / hard code paths stay in game.js, just not exposed.) See onze:lastMode below.
+const FIXED_LEAGUE = 'WORLD', FIXED_DIFF = 'medium';
+let MODE = 'squad';
 const GRID_GUESSES = 9;
 
 let DATA, CLUES = [], STATE, ALL_NAMES = [], PLAYERS = {};
@@ -511,12 +507,9 @@ function submitLink(raw){
   save(); render();
 }
 
-// deep link back into the exact mode (and difficulty/league) the player just played
+// deep link back into the mode the player just played (one config now — no difficulty/league to carry)
 function shareUrl(){
-  const p=new URLSearchParams(); p.set('m',STATE.mode);
-  if(STATE.mode!=='player') p.set('d',STATE.diff);   // mystery player has no difficulty
-  if(STATE.mode==='squad') p.set('l',STATE.league);
-  return 'onzedaily.com/?'+p.toString();
+  return STATE.mode==='player' ? 'onzedaily.com/?m=player' : 'onzedaily.com';
 }
 function shareText(){
   const dmap={easy:'🟢',medium:'🟡',hard:'🔴'};
@@ -539,11 +532,9 @@ function shareText(){
     const rar=gridRarity();
     return `▦ Onze Grid ${dmap[STATE.diff]||''} — ${dd}\n${g}${filled}/9 in ${STATE.guesses.length} guesses · rarity ${rar} 🧠${stag}\n${url}`;
   }
-  const t=LEAGUE_TRACKS.find(l=>l[0]===STATE.league);
-  const label=t?t[1].replace(/^[^ ]+ /,''):STATE.league;
   const solvedN=STATE.solved.filter(Boolean).length;
   const score=solvedN===5?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;
-  return `⚽ Onze ${label} ${dmap[STATE.diff]||''} — ${dd}\n${row}\n${score} · ${solvedN}/5 clubs${stag}\n${url}`;
+  return `⚽ Onze — ${dd}\n${row}\n${score} · ${solvedN}/5 clubs${stag}\n${url}`;
 }
 // robust cross-platform share: native share sheet (mobile) -> async clipboard -> legacy execCommand
 function legacyCopy(text){
@@ -613,46 +604,29 @@ function hideSugg(){document.getElementById('sugg').style.display='none';suggIte
 
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1600);}
 
-function initSelects(){
-  // a shared link (?m=grid&d=easy&l=WORLD) opens that exact mode
+function initModes(){
   const q=new URLSearchParams(location.search);
-  const qMode=q.get('m'), qDiff=q.get('d'), qLeague=q.get('l');
-  const valid=(v,list)=>list.some(x=>x[0]===v);
-  const msel=document.getElementById('mode');
+  const qMode=q.get('m');
   const modes=MODES.filter(([v])=>v!=='player'||CLUES.length);   // hide Mystery player if clues didn't load
-  msel.innerHTML=modes.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
-  const lastMode=localStorage.getItem('onze:lastMode');           // validate — a hidden mode (e.g. link) must fall back
-  msel.value=(valid(qMode,modes)?qMode:null)||(valid(lastMode,modes)?lastMode:null)||'squad';
-  const lsel=document.getElementById('league');
-  lsel.innerHTML=LEAGUE_TRACKS.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
-  lsel.value=(valid(qLeague,LEAGUE_TRACKS)?qLeague:null)||localStorage.getItem('onze:lastLeague')||'WORLD';
-  const dsel=document.getElementById('diff');
-  dsel.innerHTML=DIFFICULTIES.map(([v,l])=>`<option value="${v}">${l}</option>`).join('');
-  dsel.value=(valid(qDiff,DIFFICULTIES)?qDiff:null)||localStorage.getItem('onze:lastDiff')||'medium';
-  const go=()=>{localStorage.setItem('onze:lastMode',msel.value);
-    localStorage.setItem('onze:lastLeague',lsel.value);
-    localStorage.setItem('onze:lastDiff',dsel.value);
-    applyModeUI(); start(msel.value,lsel.value,dsel.value);};
-  msel.onchange=go; lsel.onchange=go; dsel.onchange=go;
+  const valid=v=>modes.some(x=>x[0]===v);
+  const lastMode=localStorage.getItem('onze:lastMode');          // a removed mode (grid/link) must fall back
+  MODE=(valid(qMode)?qMode:null)||(valid(lastMode)?lastMode:null)||'squad';
+  const wrap=document.getElementById('modeToggle');
+  wrap.innerHTML=modes.map(([v,l])=>`<button type="button" class="mbtn" data-mode="${v}">${l}</button>`).join('');
+  wrap.querySelectorAll('.mbtn').forEach(b=>b.onclick=()=>{
+    if(b.dataset.mode===MODE) return;
+    MODE=b.dataset.mode; localStorage.setItem('onze:lastMode',MODE);
+    applyModeUI(); start(MODE,FIXED_LEAGUE,FIXED_DIFF);
+  });
   applyModeUI();
 }
-// link & grid modes span leagues, so the league picker is irrelevant there
 function applyModeUI(){
-  const mode=document.getElementById('mode').value;
-  document.getElementById('league').style.display=(mode==='squad')?'':'none';
-  document.getElementById('diff').style.display=(mode==='player')?'none':'';   // mystery player has no difficulty
-  // squads only count within the dataset's season window — state it so a pre-window
-  // connection (e.g. Owen's 2004/05 Real Madrid) doesn't read as a broken answer.
-  const win = (DATA&&DATA.seasons&&DATA.seasons.length) ? ` Squads ${DATA.seasons[0]}–${DATA.seasons[DATA.seasons.length-1]} only.` : '';
+  document.querySelectorAll('#modeToggle .mbtn').forEach(b=>b.classList.toggle('active',b.dataset.mode===MODE));
   const sub={squad:'Name one player from each squad — that exact club, that exact season.',
-    link:'Find one player who turned out for ALL of these clubs.'+win,
-    grid:'Name a player who played for both clubs of each cell. 9 cells, 9 guesses.'+win,
-    player:'Guess the mystery player — a new clue with every wrong guess.'}[mode];
+    player:'Guess the mystery player — a new clue with every wrong guess.'}[MODE];
   document.querySelector('.sub').textContent=sub;
   document.getElementById('guess').placeholder=
-    mode==='link'?'Name the player who links them…':
-    mode==='grid'?'Type a player — it lands in the right cell…':
-    mode==='player'?'Name the mystery player…':'Type a player name and press Enter…';
+    MODE==='player'?'Name the mystery player…':'Type a player name and press Enter…';
 }
 
 function buildNameIndex(){
@@ -685,7 +659,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   try{ STREAK=JSON.parse(localStorage.getItem('onze:streak'))||STREAK; }catch(e){}
   renderStreak();
   buildNameIndex();
-  initSelects();
+  initModes();
   const input=document.getElementById('guess');
   input.addEventListener('input',e=>updateSugg(e.target.value));
   input.addEventListener('keydown',e=>{
@@ -701,7 +675,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
   });
   document.addEventListener('click',e=>{if(!e.target.closest('.inputrow'))hideSugg();});
   document.getElementById('shareBtn').onclick=()=>shareResult();
-  start(document.getElementById('mode').value, document.getElementById('league').value, document.getElementById('diff').value);
+  start(MODE, FIXED_LEAGUE, FIXED_DIFF);
 });
 </script>
 </body>
