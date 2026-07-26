@@ -286,6 +286,10 @@ import { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity } from './game.js';
 
 const MAX_GUESSES = 6;
+// DATA_V: cache-buster for the data files. BUMP THIS whenever data/*.json changes, or players with
+// a cached copy see a DIFFERENT daily puzzle than everyone else (the mystery-player pick depends on
+// pool size — the 150→300 pool change split users onto two different daily players).
+const DATA_V = '2026-07-24';
 const MODES = [
   ['squad','📋 Squads'],
   // ['link','🔗 Find the link'],   // hidden Jun 2026 (kept in code/data — re-add this line to bring it back)
@@ -622,11 +626,15 @@ function legacyCopy(text){
     const ok=document.execCommand('copy'); document.body.removeChild(ta); return ok;
   }catch(e){ return false; }
 }
+// Share sheet ONLY on real touch devices. Desktop Chrome/Edge/Safari also expose navigator.share,
+// but there it opens a confusing OS dialog instead of copying — users reported share as "broken"
+// on PC. maxTouchPoints also catches iPads that masquerade as macOS in the user agent.
+const MOBILE_SHARE = !!navigator.share && (navigator.maxTouchPoints > 0 || /Android|iPhone|iPad|iPod/i.test(navigator.userAgent));
 async function shareResult(){
   const text=shareText();
   // Native share sheet first (mobile) — collapses copy→switch app→paste into one tap,
   // which is where football banter actually spreads (WhatsApp/iMessage group chats).
-  if(navigator.share){
+  if(MOBILE_SHARE){
     try{ await navigator.share({text}); return; }
     catch(e){ if(e && e.name==='AbortError') return;   // user dismissed the sheet — don't fall through to a false "copied" toast
       /* real share failure (e.g. NotAllowedError) — fall through to clipboard */ }
@@ -732,8 +740,8 @@ function start(mode, league, diff){
 
 document.addEventListener('DOMContentLoaded',async()=>{
   const [sq, cl] = await Promise.all([
-    fetch('data/squads.json').then(r=>r.json()),
-    fetch('data/player-clues.json').then(r=>r.json()).catch(()=>[]),   // mystery-player clues (optional)
+    fetch('data/squads.json?v='+DATA_V).then(r=>r.json()),
+    fetch('data/player-clues.json?v='+DATA_V).then(r=>r.json()).catch(()=>[]),   // mystery-player clues (optional)
   ]);
   DATA=sq; CLUES=cl||[];
   applyFinalTheme();
@@ -756,7 +764,14 @@ document.addEventListener('DOMContentLoaded',async()=>{
   });
   document.addEventListener('click',e=>{if(!e.target.closest('.inputrow'))hideSugg();});
   const sb=document.getElementById('shareBtn'); sb.onclick=()=>shareResult();
-  if(navigator.share) sb.textContent='Share result';   // native sheet available (mobile) — it's a share, not a copy
+  if(MOBILE_SHARE) sb.textContent='Share result';   // native sheet in use (touch devices) — it's a share, not a copy
+  // Mobile browsers keep tabs alive for days without reloading. A tab left open across the UTC
+  // day boundary would keep showing YESTERDAY's puzzle (and yesterday's cached data pool) — one
+  // more way two players end up on different puzzles. Reload when the day has rolled over.
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible' && STATE && STATE.puzzle && STATE.puzzle.date && STATE.puzzle.date!==todayStr())
+      location.reload();
+  });
   start(MODE, FIXED_LEAGUE, FIXED_DIFF);
 });
 </script>
