@@ -220,7 +220,18 @@ test('mystery-player mode: deterministic daily pick + lenient answer matching', 
       assert.equal(forced.clues[0], spec.opener, `${date} opener must be the first clue`);
       assert.ok(!buildPlayerPuzzle(REAL_CLUES, '2026-07-18').clues.includes(spec.opener), 'opener must not leak to other days');
     }
-    assert.notEqual(buildPlayerPuzzle(REAL_CLUES, '2026-07-18').answer, forced.answer, 'a non-featured day is not forced');
+    // (no "other days differ" check: with the rotation, every pool player legitimately appears on
+    // their own cycle day — the featured mechanism pins a date, it doesn't ban the player elsewhere)
+  }
+  // no-repeat rotation: across a full pool-length run of consecutive days, every non-featured
+  // day must produce a DIFFERENT player (the cycle only restarts after the whole pool has run)
+  const seen = new Map();
+  for(let i = 0; i < REAL_CLUES.length; i++){
+    const d = new Date(Date.UTC(2026, 7, 1) + i * 864e5).toISOString().slice(0, 10);
+    if (FEATURED_PLAYER[d]) continue;                          // featured days interrupt the cycle by design
+    const a = buildPlayerPuzzle(REAL_CLUES, d).answer;
+    assert.ok(!seen.has(a), `player "${a}" repeats on ${d} (already on ${seen.get(a)})`);
+    seen.set(a, d);
   }
   assert.equal(buildPlayerPuzzle([]).answer, '', 'empty clue set degrades gracefully');
   // wiki disambiguation suffix stripped, and surname / full / accent-insensitive guesses all match

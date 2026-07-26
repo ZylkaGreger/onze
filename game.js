@@ -132,6 +132,7 @@ export function buildGridPuzzle(DATA, diff){
 // Optional `opener` is pinned as the FIRST clue that day only — a one-off flourish, not in the dossier.
 export const FEATURED_PLAYER = {
   '2026-07-19': { name: 'Lionel Messi', opener: 'HE IS THE GOAT 🐐' },
+  '2026-07-26': { name: 'Scott McTominay' },   // pin the day the no-repeat cycle shipped — no mid-day player flip
 };
 
 // Mystery player: one player a day, clues revealed one at a time (no difficulty tiers). CLUES is the
@@ -140,13 +141,27 @@ export const FEATURED_PLAYER = {
 // the reveal from feeling formulaic — except the club path, which stays LAST: it's the giveaway,
 // and the difficulty curve collapses if it can appear early.
 // forceDate: optional override so a preview (?wc) can show a future day's featured player early.
+// Fixed epoch for the no-repeat rotation (any past UTC date works; never change it once live).
+const PLAYER_EPOCH = Date.parse('2026-06-18T00:00:00Z');
 export function buildPlayerPuzzle(CLUES, forceDate){
   const date = forceDate || todayStr();
   if(!CLUES || !CLUES.length) return {date, answer:'', clues:[], sig:''};
   const rnd = mulberry32(hashStr(date + '|player'));
   const want = FEATURED_PLAYER[date];
   const pick = want && CLUES.find(c => (c.answer || c.a || '') === want.name);
-  const p = pick || CLUES[Math.floor(rnd() * CLUES.length)];
+  // No-repeat rotation instead of an independent daily draw (which repeated players within weeks —
+  // birthday paradox): shuffle the pool ONCE with a fixed seed, then step through it one player per
+  // day. No repeats until the whole pool has run (~10 months at 300), then the cycle restarts.
+  // NOTE: the order depends on pool size — changing the pool reshuffles the schedule, so bump
+  // DATA_V *and* pin that day via FEATURED_PLAYER when deploying pool changes mid-day.
+  let p = pick;
+  if(!p){
+    const idx = CLUES.map((_, i) => i);
+    const prng = mulberry32(hashStr('onze|player|cycle|v1'));
+    for(let i = idx.length - 1; i > 0; i--){ const j = Math.floor(prng() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+    const day = Math.round((Date.parse(date + 'T00:00:00Z') - PLAYER_EPOCH) / 864e5);
+    p = CLUES[idx[((day % idx.length) + idx.length) % idx.length]];
+  }
   const answer = (p.answer || p.a || '').replace(/\s*\(.*\)$/, '');   // strip wiki disambiguation suffix
   const raw = p.clues || p.c || [];
   const path = raw.filter(c => /^Club path:/i.test(c));
