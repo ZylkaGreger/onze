@@ -215,7 +215,13 @@ export const CAREER = Object.freeze({
   K_POS: 5.0, K_NEG: 9.0,                // asymmetric logistic — the bench is a slope, not a cliff
   M_FLOOR: 0.06, M_CAP: 0.92,
   // growth
-  GROWTH_AGE: [5.5, 5.0, 4.2, 3.2, 2.2, 1.3, 0.5, -1.5, -3.5, -5.5, -7.5],
+  // Decline softened from [-1.5,-3.5,-5.5,-7.5] after playing the reference game to retirement.
+  // Ours fell 82 to 67 and marched PSG > Al Hilal > Genoa > Koln > Baník Ostrava: realistic, but a
+  // humiliating end to a fantasy, and far steeper than theirs (94 to 91 over the same years).
+  // Raising GROWTH instead was tried and rejected — it lifted 62% of careers to ICON, pushed par
+  // to 94 and made chasing minutes strictly dominant, because minutes drive growth. Softening only
+  // the tail keeps the shape (rise, peak near 30, inevitable decline) and the balance intact.
+  GROWTH_AGE: [5.5, 5.0, 4.2, 3.2, 2.2, 1.3, 0.5, -1.2, -2.4, -3.6, -5.0],
   GAIN_A: 0.12, GAIN_B: 1.25, GAIN_E: 0.9,
   ENV_A: 0.92, ENV_B: 0.0025,
   CHALLENGE_DIV: 12, CHALLENGE_LO: -0.35, CHALLENGE_HI: +0.25,
