@@ -2041,3 +2041,32 @@ All of v1 is live on onzedaily.com. Slices 00-07 built, verified in the browser 
 **All nine slices are shipped.** What remains is not features but calibration: the constants are a
 first pass, REP_WEIGHT is still 0, and — the honest gap — the mode is uninstrumented, so none of
 this document's KPIs can be measured yet.
+
+
+---
+
+## Wave: DELIVER / [REF] Open items closed
+
+Every open question from DISCUSS and DESIGN is now either resolved with evidence or
+deliberately parked with a reason. Nothing is left "to be decided later" without a note.
+
+| Item | Resolution |
+|---|---|
+| O-1 reputation drag | **Premise was wrong.** Measured over 100 careers per strategy: prestige-chasing 28 (never wins), minutes 68, balance 63 — but ambition taken *only when you would play there* scores 74 and beats pure minutes 46/60. The depth was already there. REP_WEIGHT stays 0; raising it depressed every strategy without reordering them. The real bug found was BAND_UP +18 making slot A a decoy — narrowed to +12. |
+| O-2 GK careers | Resolved. Keepers show clean sheets, header included, and par is within 4 points of every other position. |
+| O-3 event rate | **Turned into a player choice** rather than a guess: Express 1.9 / Normal 4.9 / Story 7.2 events per career. |
+| O-4 prestige source | `clubs.json.prestige` is the single source; `squads.json`'s `w` is no longer used by career mode. |
+| O-5 loan destinations | **Was a real bug.** 1-in-6 loans stayed in-country. Loans now search the parent's country first: 14/14 domestic. |
+| O-6 rows vs decisions | 9–11 career rows, 10–12 player decisions (position counts). Confirmed by the shipped code. |
+| O-7 tier bands | **Recut on 800 careers** instead of two hand-simulated ones. Old ICON floor sat on the ceiling and was never reached; new bands give 20/23/35/17/5 %. Frozen — moving them needs a SCORE_VERSION bump. |
+| O-8 biggest moment | Shipped: career tags ride the share card ("Played the final injured"). |
+| TT-001 analytics | **Shipped.** Script-tag only, no key, no backend, no identifiers: career opened / started / event answered / finished, plus shares by mode. Ad-blockers suppress it by design — the numbers are a floor, never a census. |
+
+Also shipped beyond the plan: national-team difficulty (a first cap needs ~76.5 for Portugal,
+~66.5 for Cyprus), a year-by-year career table, and a local archive of the last 30 careers.
+
+### What is genuinely left
+
+Nothing on the plan. What remains is the thing no amount of building substitutes for: **players.**
+The mode is now instrumented, so the next decision about it should come from data rather than
+from taste.
