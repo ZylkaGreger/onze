@@ -101,13 +101,26 @@
   .mbar i{display:block;height:100%;background:var(--accent);border-radius:3px}
   .mlab{font-size:10px;color:var(--dim);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
   .rwin{font-size:12px;color:var(--gold);margin-top:7px}
-  .offer{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 13px;
-    cursor:pointer;text-align:left;width:100%;font:inherit;color:var(--txt);display:block;transition:.15s}
-  .offer:hover{border-color:var(--accent)}
-  .offer .kind{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);font-weight:700}
-  .offer .oclub{font-weight:700;font-size:16px;margin-top:2px}
-  .offer .ometa{font-size:12px;color:var(--dim);margin-top:2px}
-  .offer .stars{color:var(--gold);font-size:12px;letter-spacing:1px}
+  /* A club with no crest still needs a face. A monogram tile — two letters on a hue derived
+     from the club's own name — gives every club a stable identity we are allowed to ship,
+     and does the job crests do for the reference game. */
+  .mono{width:38px;height:38px;border-radius:9px;flex:0 0 auto;display:flex;align-items:center;
+    justify-content:center;font-weight:800;font-size:13px;letter-spacing:.5px;
+    color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+  .offer{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;
+    cursor:pointer;text-align:left;width:100%;font:inherit;color:var(--txt);display:flex;gap:11px;
+    align-items:center;transition:background .15s,border-color .15s,transform .06s}
+  .offer:hover{border-color:var(--raised);background:var(--panel2)}
+  .offer:active{transform:scale(.995)}
+  .offer .obody{flex:1;min-width:0}
+  .offer.plain{display:block}                    /* cards with no monogram stack rather than sit in a row */
+  .offer.plain .ometa{margin-top:4px}
+  .offer .kind{font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--dim);font-weight:700}
+  .offer .oclub{font-weight:700;font-size:15.5px;margin-top:1px;line-height:1.2}
+  .offer .ometa{font-size:11.5px;color:var(--dim);margin-top:3px}
+  .offer .stars{color:var(--gold);font-size:11px;letter-spacing:.5px}
+  .pbar{height:3px;background:var(--bg);border-radius:2px;margin-top:6px;overflow:hidden}
+  .pbar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),#f0c040)}
   .crow{display:flex;align-items:center;gap:6px;padding:7px 9px;border-bottom:1px solid var(--line);font-size:13px}
   .crow:last-child{border-bottom:none}
   .crow .cage{width:22px;color:var(--dim);font-size:11.5px;flex:0 0 auto}
@@ -120,6 +133,8 @@
   .crow .cval,.chead .cval{width:46px;text-align:right;font-variant-numeric:tabular-nums;
     color:var(--dim);font-size:11.5px;flex:0 0 auto}
   .crow .cnum:first-of-type{color:var(--txt);font-weight:600}
+  .crow.ghost{opacity:.26}
+  .crow.ghost .cclub{color:var(--dim);font-weight:400}
   .ctable{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow:hidden}
   .chead{display:flex;gap:6px;padding:6px 9px;font-size:10px;text-transform:uppercase;letter-spacing:.6px;
     color:var(--dim);background:var(--panel2);border-bottom:1px solid var(--line)}
@@ -131,6 +146,7 @@
   .sv{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
   .sv.big{font-size:26px;color:var(--accent);line-height:1.1}
   .sl{font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);margin-top:2px}
+  .spark{display:block;width:100%;height:34px;margin-top:10px;overflow:visible}
   .sbreak{display:flex;justify-content:center;gap:14px;font-size:12px;color:var(--dim);margin-top:6px}
   .cells{display:flex;flex-direction:column;gap:8px;margin:14px 0}
   .cell{background:var(--panel);border:1px solid var(--line);border-radius:10px;
@@ -453,8 +469,38 @@ function track(name){
 function careerSig(){ const st=careerStart(CLUBS, todayStr()); return todayStr()+'|'+CLUBS.length+'|'+st.club.name+'|'+CAREER_PACE; }
 const stars = p => '★'.repeat(Math.max(1,Math.min(5,Math.ceil((p-34)/13)))) + '☆'.repeat(5-Math.max(1,Math.min(5,Math.ceil((p-34)/13))));
 const KIND_LABEL = { ambition:'AMBITION', minutes:'GAME TIME', balance:'BALANCE' };
+// Stable colour per club, derived from its own name — no lookup table to maintain, and two clubs
+// never collide visually within one career because the career only ever shows a handful at once.
+function clubHue(name){ let h=0; for(const ch of name) h=(h*31+ch.charCodeAt(0))>>>0; return h%360; }
+function monogram(club){
+  const words=club.name.replace(/^(1\.|FC|AC|AS|SC|SS|CF|CD|SV|VfB|VfL|RC|SL|CR|SE)\s+/i,'').split(/[\s.-]+/).filter(Boolean);
+  const letters=(words.length>1 ? words[0][0]+words[1][0] : club.name.replace(/[^A-Za-zÀ-ÿ]/g,'').slice(0,2)).toUpperCase();
+  const h=clubHue(club.name);
+  return '<div class="mono" style="background:linear-gradient(145deg,hsl('+h+' 42% 34%),hsl('+((h+22)%360)+' 46% 24%))">'+letters+'</div>';
+}
 const STATUS_LABEL = { loan:'On loan · guaranteed minutes', guaranteed:'Guaranteed minutes',
   rotation:'In the rotation', stay:'Stay and fight for your place', prospect:'One for the future — you will wait' };
+
+// Inline SVG, no library, no build step: the rating curve so far. A career is ABOUT a number
+// rising and then falling, and a column of digits does not show that — a line does, instantly.
+function sparkline(c){
+  const pts=[]; c.rows.forEach(r=>(r.seasons||[r]).forEach(sn=>pts.push(sn.ovr)));
+  if(pts.length<3) return '';
+  const W=280,H=34,lo=Math.min(...pts)-2,hi=Math.max(...pts)+2,span=Math.max(1,hi-lo);
+  const total=CAREER.BLOCKS*2;                       // full life, so the drawn part shows progress
+  const x=i=>(i/(total-1))*W, y=v=>H-((v-lo)/span)*H;
+  const d=pts.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
+  const area=d+' L'+x(pts.length-1).toFixed(1)+' '+H+' L0 '+H+' Z';
+  const peakI=pts.indexOf(Math.max(...pts));
+  return '<svg class="spark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true">'+
+    '<defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">'+
+      '<stop offset="0%" stop-color="var(--accent)" stop-opacity=".28"/>'+
+      '<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>'+
+    '<path d="'+area+'" fill="url(#sg)"/>'+
+    '<path d="'+d+'" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>'+
+    '<circle cx="'+x(peakI).toFixed(1)+'" cy="'+y(pts[peakI]).toFixed(1)+'" r="2.4" fill="var(--accent)"/>'+
+    '</svg>';
+}
 
 const stat = (label, v, big) => '<div class="sitem"><div class="sv'+(big?' big':'')+'">'+v+'</div>'+
   '<div class="sl">'+label+'</div></div>';
@@ -501,7 +547,9 @@ function renderCareer(){
     const wrap=document.createElement('div'); wrap.style.cssText='display:flex;flex-direction:column;gap:8px';
     (c.positions||CAREER_POSITIONS).forEach(pos=>{
       const b=document.createElement('button'); b.className='offer'; b.type='button';
-      b.innerHTML='<div class="oclub">'+pos.name+'</div><div class="ometa">'+pos.blurb+'</div>';
+      b.className='offer plain';
+      b.innerHTML='<div class="obody"><div class="oclub">'+pos.name+'</div>'+
+                  '<div class="ometa">'+pos.blurb+'</div></div>';
       b.onclick=()=>{ track('career_started'); STATE.path.push('P:'+pos.id); save(); render(); };
       wrap.appendChild(b);
     });
@@ -520,7 +568,7 @@ function renderCareer(){
       stat('Age', c.rows.length? (16+2*c.rows.length) : 16)+
       stat('Rating', Math.round(c.rows.length? c.rows[c.rows.length-1].ovr : 50), 'big')+
       stat('Value', money(c.rows.length? c.rows[c.rows.length-1].value : 0.1))+
-    '</div>';
+    '</div>'+ sparkline(c);
   cells.appendChild(card);
 
   // the career so far
@@ -540,6 +588,16 @@ function renderCareer(){
           '<span class="cnum">'+sn.apps+'</span>'+
           '<span class="cnum">'+(s.pos==='GK'? sn.cs : (sn.goals+'/'+sn.assists))+'</span>'+
           '<span class="cval">'+(i===0 ? money(r.value) : '')+'</span></div>').join('')).join('');
+    // The years still ahead, faint. The reference game pre-lists them and it is the reason the
+    // table reads as a LIFE rather than as a log: you can see how much is left to play for.
+    const playedYears=c.rows.length*2, totalYears=CAREER.BLOCKS*2;
+    if(playedYears<totalYears){
+      const ahead=[];
+      for(let a=16+playedYears; a<16+totalYears; a+=1) ahead.push(a);
+      t.innerHTML += ahead.slice(0,Math.min(ahead.length,6)).map(a=>
+        '<div class="crow ghost"><span class="cage">'+a+'</span><span class="cclub">·</span>'+
+        '<span class="cnum"></span><span class="cnum"></span><span class="cnum"></span><span class="cval"></span></div>').join('');
+    }
     cells.appendChild(t);
   }
 
@@ -601,10 +659,15 @@ function renderCareer(){
   const wrap=document.createElement('div'); wrap.style.cssText='display:flex;flex-direction:column;gap:8px';
   c.offers.forEach((o,i)=>{
     const b=document.createElement('button'); b.className='offer'; b.type='button';
-    b.innerHTML='<div class="kind">'+(KIND_LABEL[o.kind]||'')+'</div>'+
-      '<div class="oclub">'+(o.status==='stay'?'Stay at ':'')+o.club.name+(o.loan?' (loan)':'')+'</div>'+
-      '<div class="ometa">'+o.club.league+' · '+(o.club.tier===2?'2nd tier · ':'')+'<span class="stars">'+stars(o.club.prestige)+'</span></div>'+
-      '<div class="ometa">'+(STATUS_LABEL[o.status]||'')+'</div>';
+    const pct=Math.round(Math.max(0,Math.min(100,(o.club.prestige-34)/65*100)));
+    b.innerHTML=monogram(o.club)+
+      '<div class="obody">'+
+        '<div class="kind">'+(KIND_LABEL[o.kind]||'')+'</div>'+
+        '<div class="oclub">'+(o.status==='stay'?'Stay at ':'')+o.club.name+(o.loan?' <span style="color:var(--dim);font-weight:500">(loan)</span>':'')+'</div>'+
+        '<div class="ometa">'+o.club.league+(o.club.tier===2?' · 2nd tier':'')+' · <span class="stars">'+stars(o.club.prestige)+'</span></div>'+
+        '<div class="pbar"><i style="width:'+pct+'%"></i></div>'+
+        '<div class="ometa">'+(STATUS_LABEL[o.status]||'')+'</div>'+
+      '</div>';
     b.onclick=()=>{ STATE.path.push(c.rows.length+'ABC'[i]); save(); render(); };
     wrap.appendChild(b);
   });
