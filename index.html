@@ -437,9 +437,14 @@ function renderCareer(){
   if(c.rows.length){
     const t=document.createElement('div'); t.className='ctable';
     t.innerHTML='<div class="chead"><span style="width:26px">Age</span><span style="flex:1">Club</span><span>OVR · Apps · '+(s.pos==='GK'?'CS':'G/A')+'</span></div>'+
-      c.rows.map(r=>'<div class="crow"><span class="cage">'+r.age+'</span>'+
-        '<span class="cclub">'+r.club.name+(r.loan?' <span style="color:var(--dim);font-weight:400">(loan)</span>':'')+'</span>'+
-        '<span class="cst">'+r.ovr+' · '+r.apps+' · '+(s.pos==='GK'? (r.cs+' cs') : (r.goals+'/'+r.assists))+'</span></div>').join('');
+      c.rows.map(r=>(r.seasons||[{age:r.age,ovr:r.ovr,apps:r.apps,goals:r.goals,assists:r.assists,cs:r.cs}])
+        .map((sn,i)=>'<div class="crow"'+(i===0?'':' style="border-top:none"')+'>'+
+          '<span class="cage">'+sn.age+'</span>'+
+          '<span class="cclub">'+(i===0
+             ? r.club.name+(r.loan?' <span style="color:var(--dim);font-weight:400">(loan)</span>':'')
+             : '<span style="color:var(--dim);font-weight:400">↳</span>')+
+            (i===0&&r.honours&&r.honours.length?' <span style="color:var(--gold)">'+'🏆'.repeat(r.honours.length)+'</span>':'')+'</span>'+
+          '<span class="cst">'+sn.ovr+' · '+sn.apps+' · '+(s.pos==='GK'? sn.cs : (sn.goals+'/'+sn.assists))+'</span></div>').join('')).join('');
     cells.appendChild(t);
   }
 

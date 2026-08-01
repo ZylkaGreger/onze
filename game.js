@@ -445,13 +445,25 @@ export function simulateCareer(CLUBS, date, path, EVENTS){
       declineMod: applyMods(1, 'declineMult', st.mods, k),
       appsMod: applyMods(1, 'appsMult', st.mods, k) }, r);
     const hon = blockHonours(pick.club, out.m, sub('honours', k + 1), CLUBS);
-    const cap = blockCaps(st.ovr, out.m, st.pos, sub('caps', k + 1));
+    const cap = blockCaps(st.ovr, out.m, st.pos, sub('caps', k + 1), start.nat);
     honours.push(...hon.map(h => ({ ...h, age: 16 + 2 * k, club: pick.club.name })));
     caps.total += cap.caps; caps.goals += cap.goals;
+    // A block is two seasons. Split it so the career reads year by year, the way a real
+    // career table does — the DECISION cadence stays two seasons, only the display is finer.
+    const r2 = sub('season', k + 1);
+    const half = (v, w) => { const a = Math.round(v * w); return [a, v - a]; };
+    const w1 = 0.44 + 0.12 * r2();                       // the first season is usually the quieter one
+    const [a1, a2] = half(out.apps, w1), [g1, g2] = half(out.goals, w1);
+    const [s1, s2] = half(out.assists, w1), [c1, c2] = half(out.cs, w1);
+    const ovrMid = st.ovr + (out.ovrNext - st.ovr) * 0.5;
+    const seasons = [
+      { age: 16 + 2 * k,     ovr: Math.round(st.ovr),  apps: a1, goals: g1, assists: s1, cs: c1 },
+      { age: 16 + 2 * k + 1, ovr: Math.round(ovrMid),  apps: a2, goals: g2, assists: s2, cs: c2 },
+    ];
     rows.push({
       age: 16 + 2 * k, club: pick.club, loan: !!pick.loan, honours: hon, caps: cap.caps,
       ovr: Math.round(st.ovr), apps: out.apps, goals: out.goals, assists: out.assists,
-      cs: out.cs, value: out.value, m: out.m,
+      cs: out.cs, value: out.value, m: out.m, seasons,
     });
     // advance
     st.ovr = out.ovrNext;
@@ -679,10 +691,28 @@ export function blockHonours(club, m, rnd, CLUBS){
   return out;
 }
 
+// How hard it is to get into a national side. This is the difference between being a very good
+// player and being one of the best in your country: at 74 you are a fixture for Cyprus and
+// nowhere near the Portugal squad. Higher = harder. Deliberately about the NATIONAL TEAM, not the
+// domestic league — Saudi Arabia and the USA have strong leagues and weaker national sides.
+export const NATION_STRENGTH = Object.freeze({
+  France:95, Spain:94, Brazil:94, Argentina:93, England:93, Portugal:92, Netherlands:90, Germany:90,
+  Italy:89, Belgium:88, Croatia:84, Uruguay:83, Colombia:82, Morocco:82, Switzerland:80, Denmark:80,
+  Mexico:78, USA:78, Japan:78, Austria:77, Serbia:77, Sweden:76, Ukraine:76, Turkey:75, Poland:75,
+  'South Korea':75, Norway:74, Greece:73, Czechia:73, Egypt:73, Scotland:72, Australia:72, Chile:72,
+  Russia:71, Hungary:70, Romania:69, Israel:68, Bulgaria:67, 'South Africa':67, 'Saudi Arabia':66,
+  Qatar:65, UAE:63, Cyprus:60,
+});
+export const DEFAULT_NATION_STRENGTH = 70;
+export const nationStrength = c => NATION_STRENGTH[c] ?? DEFAULT_NATION_STRENGTH;
+
 // International caps. Your country calls once you are good enough, and keeps calling while you are.
-export function blockCaps(ovr, m, pos, rnd){
-  if(ovr < 68 || m < 0.3) return { caps: 0, goals: 0 };
-  const strength = Math.min(1, (ovr - 66) / 20);
+export function blockCaps(ovr, m, pos, rnd, country){
+  // The bar scales with the queue you are joining: ~77 for Portugal, ~65 for Cyprus.
+  const nat = nationStrength(country);
+  const bar = 48 + nat * 0.31;
+  if(ovr < bar || m < 0.3) return { caps: 0, goals: 0 };
+  const strength = Math.min(1, (ovr - bar + 2) / 20);
   const caps = Math.round((6 + 14 * strength) * Math.min(1, m / 0.55) * (0.75 + 0.5 * rnd()));
   const pm = POS_MOD[pos] || POS_MOD.MF;
   const goals = Math.round(caps * pm.g * 0.75 * (0.6 + 0.8 * rnd()));

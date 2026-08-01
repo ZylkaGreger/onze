@@ -15,7 +15,8 @@ import { fileURLToPath } from 'node:url';
 // regex-slicing functions out of the HTML; tests track behaviour by importing it directly.
 import { mulberry32, hashStr, norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
          careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS,
-         validateCatalogue, pickEvent, resolveEvent, applyMods, eligible, titleOdds, SCORE_VERSION } from '../game.js';
+         validateCatalogue, pickEvent, resolveEvent, applyMods, eligible, titleOdds, SCORE_VERSION,
+         nationStrength, blockCaps } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -444,4 +445,27 @@ test('honours: a continental cup is worth more than a domestic one', () => {
   const cont = scoreCareer({ ...base, honours: [{ kind: 'continental' }] });
   const cup = scoreCareer({ ...base, honours: [{ kind: 'cup' }] });
   assert.ok(cont.honPts > cup.honPts, 'winning Europe must outrank a domestic cup');
+});
+
+test('internationals: a strong nation is a much harder squad to break into', () => {
+  const rnd = () => 0.5;
+  const ovr = 72, m = 0.8;
+  const cyprus = blockCaps(ovr, m, 'MF', rnd, 'Cyprus');
+  const portugal = blockCaps(ovr, m, 'MF', rnd, 'Portugal');
+  assert.ok(cyprus.caps > 0, 'a 72-rated player is a fixture for Cyprus');
+  assert.equal(portugal.caps, 0, 'the same player is nowhere near the Portugal squad');
+  // and a genuinely elite player gets in anywhere
+  assert.ok(blockCaps(85, m, 'MF', rnd, 'Portugal').caps > 0, 'an 85 plays for anyone');
+  assert.ok(nationStrength('Brazil') > nationStrength('Cyprus'));
+  assert.ok(nationStrength('Nowhereland') === 70, 'unknown countries take a sane default');
+});
+
+test('career table reads year by year, and the seasons add up', () => {
+  const c = playPolicy('2026-08-06', 'B', 'FW');
+  for (const r of c.rows) {
+    assert.equal(r.seasons.length, 2, 'a two-season block renders as two years');
+    assert.equal(r.seasons[0].age + 1, r.seasons[1].age, 'consecutive years');
+    assert.equal(r.seasons.reduce((s, x) => s + x.apps, 0), r.apps, 'seasons sum to the block');
+    assert.equal(r.seasons.reduce((s, x) => s + x.goals, 0), r.goals, 'no goals invented or lost');
+  }
 });
