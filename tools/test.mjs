@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { mulberry32, hashStr, norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
          careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS,
          validateCatalogue, pickEvent, resolveEvent, applyMods, eligible, titleOdds, SCORE_VERSION,
-         nationStrength, blockCaps, parScore, POS_MOD } from '../game.js';
+         nationStrength, blockCaps, parScore, POS_MOD, roadNotTaken } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -525,4 +525,28 @@ test('strategy depth: well-timed ambition beats simply chasing minutes', () => {
   }
   assert.ok(smart / n > mins / n,
     `timed ambition (${(smart/n).toFixed(1)}) must beat pure minutes (${(mins/n).toFixed(1)}) — otherwise the mode has one right answer`);
+});
+
+test('road not taken: an exact counterfactual, not a guess', () => {
+  const date = '2026-08-03';
+  const p = ['P:FW'];
+  let guard = 0;
+  while (guard++ < 40) {
+    const c = simulateCareer(CLUBS, date, p, EVENTS, 'normal');
+    if (c.done) break;
+    if (c.event) { p.push('E0'); continue; }
+    if (!c.offers.length) break;
+    p.push(c.rows.length + 'B');
+  }
+  const actual = scoreCareer(simulateCareer(CLUBS, date, p, EVENTS, 'normal')).total;
+  const rd = roadNotTaken(CLUBS, date, p, EVENTS, 'normal');
+  assert.ok(rd, 'a pivotal decision is always found');
+  assert.equal(rd.actualScore, actual, 'it compares against the career actually played');
+  assert.ok(rd.instead && rd.instead !== '?', 'the alternative club is named');
+  assert.ok(rd.altScore >= 0 && rd.altScore <= 100, 'the alternative is a real career');
+  assert.equal(rd.altScore - rd.actualScore, rd.delta, 'the delta is arithmetic, not narrative');
+  // and it must be reproducible — it is a claim about a specific alternative life
+  const again = roadNotTaken(CLUBS, date, p, EVENTS, 'normal');
+  assert.equal(again.altScore, rd.altScore);
+  assert.equal(again.age, rd.age);
 });

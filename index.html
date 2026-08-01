@@ -85,6 +85,9 @@
   .mbtn{background:transparent;border:none;color:var(--dim);font:inherit;font-size:14px;font-weight:600;
     padding:9px 18px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:.15s}
   .mbtn.active{background:var(--panel);color:var(--txt);box-shadow:0 1px 3px rgba(0,0,0,.35)}
+  .mbtn .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);
+    vertical-align:2px;margin-left:5px;animation:pulse 2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
   body.wc .mbtn.active{color:var(--gold)}
   .offer{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 13px;
     cursor:pointer;text-align:left;width:100%;font:inherit;color:var(--txt);display:block;transition:.15s}
@@ -142,7 +145,8 @@
   .end .reveal b{color:var(--accent)}
   .end h2{margin:0 0 6px;font-size:20px}
   .end pre{background:var(--panel);border:1px solid var(--line);border-radius:10px;
-    padding:12px;font-size:15px;line-height:1.5;display:inline-block;margin:8px 0}
+    padding:12px;font-size:14px;line-height:1.5;display:block;margin:8px 0;text-align:left;
+    white-space:pre-wrap;overflow-wrap:anywhere;max-width:100%}
   button.share{background:var(--accent);color:#06210e;border:none;border-radius:9px;
     padding:11px 20px;font-size:15px;font-weight:700;cursor:pointer}
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
@@ -315,7 +319,7 @@
 <script type="module">
 import { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity,
-         simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS, parScore } from './game.js';
+         simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS, parScore, roadNotTaken } from './game.js';
 
 const MAX_GUESSES = 6;
 // DATA_V: cache-buster for the data files. BUMP THIS whenever data/*.json changes, or players with
@@ -434,6 +438,10 @@ function renderCareer(){
   document.getElementById('pips').innerHTML='';
   document.querySelector('.inputrow').style.display='none';   // career is tapped, not typed
   track('career_opened');
+  if(!localStorage.getItem('onze:seenCareer')){
+    localStorage.setItem('onze:seenCareer','1');
+    const d=document.querySelector('#modeToggle .dot'); if(d) d.remove();
+  }
   const c = simulateCareer(CLUBS, todayStr(), STATE.path, EVENTS, CAREER_PACE);
   const s = c.start;
 
@@ -605,6 +613,23 @@ function showCareerEnd(c){
       c.log.map(l=>'<div style="padding:4px 0;border-top:1px solid var(--line)"><b style="color:var(--txt)">'+(18+2*l.k)+'</b> '+l.copy+'</div>').join('')+'</div>';
   }
   rev.style.display='block';
+  // THE ROAD NOT TAKEN — the single decision that mattered most, replayed exactly. Only possible
+  // because a career is a pure function of its decision path; a stateful sim cannot do this.
+  try{
+    const rd = roadNotTaken(CLUBS, todayStr(), STATE.path, EVENTS, CAREER_PACE);
+    if(rd && Math.abs(rd.delta) >= 4 && rd.instead && rd.instead !== '?'){
+      const better = rd.delta > 0;
+      rev.innerHTML += '<div style="margin-top:16px;padding:12px;border-radius:11px;text-align:left;'+
+        'background:rgba(63,185,80,.07);border:1px solid rgba(63,185,80,.28)">'+
+        '<div style="font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--accent);font-weight:700">The road not taken</div>'+
+        '<div style="font-size:13px;line-height:1.5;margin-top:5px">At <b>'+rd.age+'</b> you chose <b>'+rd.took+'</b>.<br>'+
+        'Had you gone to <b>'+rd.instead+'</b> instead, you would have retired '+
+        '<b style="color:'+(better?'var(--accent)':'var(--txt)')+'">'+rd.altScore+' · '+rd.altTier+'</b>'+
+        ' <span style="color:var(--dim)">('+(better?'+':'')+rd.delta+')</span>.</div>'+
+        '<div style="font-size:11px;color:var(--dim);margin-top:6px">'+
+        (better ? 'The one that got away.' : 'You chose well.')+'</div></div>';
+    }
+  }catch(e){}
   document.getElementById('sharetext').textContent = careerShare(c, sc);
   // past careers
   const past = archiveCareer(c, sc).slice(1, 6);
@@ -978,7 +1003,11 @@ function initModes(){
   const lastMode=localStorage.getItem('onze:lastMode');          // a removed mode (grid/link) must fall back
   MODE=(valid(qMode)?qMode:null)||(valid(lastMode)?lastMode:null)||'squad';
   const wrap=document.getElementById('modeToggle');
-  wrap.innerHTML=modes.map(([v,l])=>`<button type="button" class="mbtn" data-mode="${v}">${l}</button>`).join('');
+  // A quiet dot on Career until it has been opened once — the mode is new and nothing else in the
+  // UI says so. It disappears for good on first open; no banner, no dismissal to hunt for.
+  const seenCareer = localStorage.getItem('onze:seenCareer');
+  wrap.innerHTML=modes.map(([v,l])=>`<button type="button" class="mbtn" data-mode="${v}">${l}`+
+    (v==='career' && !seenCareer ? '<span class="dot"></span>' : '')+`</button>`).join('');
   wrap.querySelectorAll('.mbtn').forEach(b=>b.onclick=()=>{
     if(b.dataset.mode===MODE) return;
     MODE=b.dataset.mode; localStorage.setItem('onze:lastMode',MODE);

@@ -797,3 +797,68 @@ export function parScore(CLUBS, date, EVENTS, pos){
   const c = simulateCareer(CLUBS, date, path, EVENTS);
   return { score: scoreCareer(c).total, career: c };
 }
+
+// ── The road not taken ───────────────────────────────────────────────────────────────────────
+// The one thing a career sim built on a decision PATH can do that a stateful one cannot: replay
+// your life with a single choice changed. Because a career is a pure function of (date, path),
+// every counterfactual is exact — not a guess, not a narrative flourish. This is the payoff of
+// the determinism contract (C4), and it is the emotional core of the whole fantasy: what if.
+//
+// Returns the decision whose alternative would have changed the career MOST, in either direction.
+export function roadNotTaken(CLUBS, date, path, EVENTS, pace){
+  const actual = simulateCareer(CLUBS, date, path, EVENTS, pace);
+  const actualScore = scoreCareer(actual).total;
+  const blockTokens = [];                       // where in `path` each club decision sits
+  path.forEach((t, i) => { if(/^\d+[ABC]$/.test(String(t))) blockTokens.push(i); });
+
+  let best = null;
+  for(const idx of blockTokens){
+    const tok = String(path[idx]);
+    const k = tok.slice(0, -1), slot = tok.slice(-1);
+    for(const alt of ['A', 'B', 'C']){
+      if(alt === slot) continue;
+      // Replay: same decisions as before wherever they still apply, and where the fork has made
+      // the original answer meaningless, fall back to the sensible par choice. This keeps the
+      // comparison about the ONE changed decision rather than about diverging afterwards at random.
+      const want = path.slice();
+      want[idx] = k + alt;
+      // Index the intended answers so the replay reuses them exactly: club decisions by block
+      // number (anchored — "1B" must not be matched by "10B"), events in the order they were met.
+      const slotFor = {};
+      for(const t of want){ const m = /^(\d+)([ABC])$/.exec(String(t)); if(m) slotFor[m[1]] = m[2]; }
+      const eventQueue = want.filter(t => /^E\d+$/.test(String(t)));
+      // The position token must lead, or the replay stalls on needsPosition before it starts.
+      const posTok = want.find(t => String(t).startsWith('P:'));
+      const replay = posTok ? [posTok] : [];
+      let guard = 0;
+      while(guard++ < 60){
+        const c = simulateCareer(CLUBS, date, replay, EVENTS, pace);
+        if(c.done) break;
+        if(c.event){
+          const nxt = eventQueue.shift();
+          const optIdx = nxt !== undefined ? Math.min(+String(nxt).slice(1), c.event.options.length - 1)
+                                           : c.event.options.length - 1;   // else the safe option
+          replay.push('E' + optIdx);
+          continue;
+        }
+        if(!c.offers || !c.offers.length) break;
+        const bi = c.rows.length;
+        const wanted = slotFor[bi];
+        const si = wanted !== undefined ? 'ABC'.indexOf(wanted) : parPolicy(c);
+        replay.push(bi + 'ABC'[Math.min(si < 0 ? 0 : si, c.offers.length - 1)]);
+      }
+      const alt$ = simulateCareer(CLUBS, date, replay, EVENTS, pace);
+      const altScore = scoreCareer(alt$).total;
+      const delta = altScore - actualScore;
+      if(!best || Math.abs(delta) > Math.abs(best.delta)){
+        const age = 16 + 2 * (+k);
+        const took = actual.rows[+k];
+        best = { age, delta, altScore, actualScore,
+                 took: took ? took.club.name : '?',
+                 instead: alt$.rows[+k] ? alt$.rows[+k].club.name : '?',
+                 altTier: scoreCareer(alt$).tier, career: alt$ };
+      }
+    }
+  }
+  return best;
+}
