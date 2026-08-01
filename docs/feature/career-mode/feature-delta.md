@@ -8,8 +8,8 @@
 **Owner:** Peter (solo founder)
 **Product:** Onze — onzedaily.com, static site on GitHub Pages, no backend
 
-**One line:** a third daily mode where the same seeded 22-year football career is offered to
-every player in the world, and only their decisions differ.
+**One line:** a third daily mode where every player in the world starts the same 16-year-old at
+the same club on a given day, and the careers diverge completely from there on decisions alone.
 
 ---
 
@@ -159,7 +159,7 @@ component and every score shifts meaning. Share cards must then carry a version 
 "61" is not silently compared against a v2 "61". Jonas *will* notice. Deciding this now is
 cheaper than apologising later.
 
-### D-2: Comparability comes from the seed, not from a percentile
+### D-2: Comparability comes from a shared STARTING POINT, and paths then diverge
 
 Rejected: computing a percentile. We cannot measure the population (C3, C5).
 
@@ -167,11 +167,34 @@ Rejected for v1: enumerating the day's full decision tree to report "you got 61 
 78". 3^11 ≈ 177k paths is borderline feasible client-side but the gamble makes outcomes a
 distribution rather than a single value, and it is a lot of compute to put on a phone.
 
-**Chosen:** in v1, comparability *is* the shared seed. Two players faced the identical offers,
-so their raw numbers are directly comparable and the share card is self-evidently meaningful.
-In v2 (Slice 09), "par" — the score a deterministic reference bot achieves on the same seed —
-gives a target without inventing a population. Par is the only percentile-shaped claim we are
-ever allowed to make.
+**Rejected (owner call, 2026-08-01): fixing the offers at every step.** An earlier draft had two
+players who made identical choices walking an identical tree the whole way down. That is fair but
+lifeless — it makes the day feel like one puzzle with a hidden best answer, and it throws away
+the thing that makes a career sim fun, which is that *your* career is nobody else's.
+
+**Chosen:** the seed fixes only the **starting point** — the same club, position, nationality and
+starting rating for everyone on a given UTC date. Every offer after that is generated from
+`(current career state, seed)`, so the moment two players choose differently their careers
+genuinely fork: different clubs, different leagues, different events, different endings.
+
+Comparability survives because the start is identical and public: "we all began as a 16-year-old
+at {club}". The share card's PATH row *is* the story, precisely because the reader knows where it
+started. This is a strictly better social hook than comparing two walks of the same tree, and it
+is the thing the reference game cannot claim.
+
+**Determinism is preserved along a path.** Every draw — offers, event outcomes, gamble
+resolutions — is seeded by `hash(date + '|career|' + decisionPath)`, where `decisionPath` is the
+sequence of choices made so far. Consequences:
+
+- The same choices always produce the same career. The sim is never a slot machine, and a player
+  who reloads mid-run cannot reroll a bad two-season block.
+- The only way to change your outcome is to genuinely change a decision — which is just playing
+  the game. This meaningfully defuses R8: replay stops being a way to farm luck and becomes a way
+  to explore the tree, which is a feature, not an exploit.
+
+In v2 (Slice 09), "par" — the score a deterministic reference bot achieves from the same starting
+point — gives a target without inventing a population. Par is the only percentile-shaped claim we
+are ever allowed to make.
 
 ### D-3: v1 creation is one optional text field
 
@@ -384,11 +407,23 @@ Scenario: A first career row appears from a first decision
   And a career row shows Crotone with an OVR, appearances, goals and assists
   And the OVR shown is higher than the 50 he started with
 
-Scenario: Two players in different countries get the same offers
+Scenario: Two players in different countries start from the same point
   Given Marco in Milan and Aisha in London both open Career on 1 August
-  When each reaches the academy offer
-  Then both are offered the same three clubs in the same order
-  And both started from the same nationality, position and rating
+  When each meets their 16-year-old
+  Then both start at the same club, position, nationality and rating
+  And both are offered the same first decision
+
+Scenario: The careers fork as soon as the choices differ
+  Given Marco and Aisha have both taken their first decision on 1 August
+  When Marco stays at his club and Aisha goes on loan
+  Then the offers each is shown at the next decision are not the same set
+  And by retirement the two PATH rows differ by at least three clubs
+
+Scenario: The same choices always produce the same career
+  Given Marco finishes a career on 1 August with a recorded sequence of choices
+  When that identical sequence of choices is replayed on the same date
+  Then every career row, the final rating and the Career Score are identical
+  And no outcome along the path was re-rolled
 
 Scenario: Different choices produce visibly different outcomes
   Given the academy offer contains a top-prestige club and a low-prestige club

@@ -9,9 +9,9 @@ schema_version: 1
 journey:
   name: Daily seeded career
   goal: >
-    Author a 22-year football career out of ~11 decisions in under 8 minutes, from the same
-    starting position and the same offers as every other player in the world today, and end
-    with one number worth arguing about.
+    Author a 22-year football career out of ~11 decisions in under 8 minutes, starting from the
+    same club as every other player in the world today but forking away from them on the very
+    first decision, and end with one number worth arguing about.
   persona: daily-football-fan (Marco Bianchi)
   jobs: [J1, J2, J3, J5]
   platform: web — static, mobile-first, no backend, localStorage only
@@ -52,7 +52,7 @@ steps:
       |  [ 📋 Squads ][ 🕵️ Mystery ][ 🎽 Career ]  |
       +--------------------------------------------+
       |  Make eleven decisions. Live one career.    |
-      |  Everyone gets the same offers today.       |
+      |  Everyone starts at the same club today.    |
       +--------------------------------------------+
 
     shared_artifacts:

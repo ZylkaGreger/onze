@@ -4,8 +4,9 @@
 
 ## Goal
 
-Career mode appears as a third segment in the mode toggle. A player meets a seeded 16-year-old,
-picks one of three named clubs, and sees a single career row appear.
+Career mode appears as a third segment in the mode toggle. A player meets a seeded 16-year-old
+**already at the day's club — the same club for everyone in the world** — takes the first real
+decision about that player's future, and sees a single career row appear.
 
 ## Learning hypothesis
 
@@ -20,9 +21,13 @@ registry. One day spent, not nine.
 ## In scope
 
 - Third segment `🎽 Career` in the existing mode toggle, fitting a 360px viewport.
-- Seeded identity screen: nationality, age 16, OVR 50, position, pre-filled surname, Start.
-- One academy offer of three distinct top-5 clubs, each with league label and ★ prestige from
-  the existing fame weight `w`.
+- Seeded identity screen: **the day's starting club**, nationality, age 16, OVR 50, position,
+  pre-filled surname, Start. The club is the same for every player worldwide on that date.
+- The first decision — the fork. Three options derived from the starting club's prestige, e.g.
+  stay and fight for minutes, go on loan for game time, or drop a rung for guaranteed football.
+  Each option labelled with club, league and ★ prestige from the existing fame weight `w`.
+- Every draw seeded by `hash(date + '|career|' + decisionPath)` so the same choices always give
+  the same career, and no outcome can be re-rolled by reloading (D-2).
 - One resolution: two seasons, an OVR change, appearances, goals, assists.
 - One career row rendered.
 - Honest stop: "More seasons coming soon."
@@ -46,9 +51,11 @@ registry. One day spent, not nine.
 
 ## Done when
 
-- A player on 1 August in Milan and a player in London are offered the identical three clubs.
-- Picking the low-prestige club produces visibly more appearances and more OVR growth than
-  picking the top-prestige club, per the thresholds in US-001.
+- A player on 1 August in Milan and a player in London start at the identical club with the
+  identical 16-year-old, and see the identical first decision.
+- Choosing game time over prestige produces visibly more appearances and more OVR growth than
+  staying to fight for minutes, per the thresholds in US-001.
+- Replaying the same choice on the same date reproduces the career row exactly.
 - `onze:lastMode` handles `career` and still falls back to `squad` for retired modes.
 - `buildCareer()` lives in `game.js` and is covered by `tools/test.mjs`.
 
