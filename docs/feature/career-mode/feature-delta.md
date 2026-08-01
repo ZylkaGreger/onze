@@ -104,12 +104,15 @@ the player's current prestige band.
 state, score and share text are all computed client-side. Persistence is localStorage, keyed to
 the UTC date, exactly like the existing modes.
 
-**C4 — A reload can never re-roll an outcome.** Every stochastic result is derived from the
-seeded RNG streamed over the committed decision path — `mulberry32(hashStr(date + '|career'))`
-advanced deterministically by decision index. Outcomes are therefore *recomputed identically*
-on reload rather than *restored from storage*. This makes re-rolling structurally impossible
-rather than merely discouraged. Do not implement gambles as `Math.random()` results written to
-localStorage.
+**C4 — A reload can never re-roll an outcome.** Every stochastic result — which offers appear,
+how two seasons resolve, and later how a gamble lands — is derived from an RNG seeded by the
+**decision path**, not by a global counter:
+`mulberry32(hashStr(date + '|career|' + decisionPath))`, where `decisionPath` is the sequence of
+choices committed so far. Outcomes are therefore *recomputed identically* on reload rather than
+*restored from storage*, and two players who diverge at decision 3 draw from genuinely
+independent streams from that point on (D-2). This makes re-rolling structurally impossible
+rather than merely discouraged: the only way to see a different outcome is to make a different
+choice. Do not implement gambles as `Math.random()` results written to localStorage.
 
 **C5 — No invented population statistics.** We have no backend and cannot measure what other
 players scored. The results screen and share card may never say "top 3% of players" or anything
@@ -379,18 +382,21 @@ will not read instructions and taps the first thing that looks tappable.
 
 #### Solution
 
-A third segment in the existing mode toggle. Tapping it shows a seeded starting player and one
-academy offer of three clubs drawn from the day's seed. Choosing one resolves two seasons and
-renders the first career row. The run stops there with an honest "more seasons coming soon".
+A third segment in the existing mode toggle. Tapping it shows a seeded starting player **already
+at the day's club — the same club for every player in the world** — and one first decision about
+that player's future. Choosing resolves two seasons and renders the first career row. The run
+stops there with an honest "more seasons coming soon".
 
 #### Domain Examples
 
 1. **Happy path** — Marco taps `🎽 Career` on 1 August, sees `🇧🇷 Ferreira · Age 16 · OVR 50 ·
-   CM`, taps Start, is offered Milan (★★★★★), Sassuolo (★★★☆☆) and Crotone (★★☆☆☆), picks
-   Crotone, and reads `Age 16 → 18 · OVR 50 → 58 (+8) · 68 apps · 9 goals · 4 assists`.
-2. **Same day, different choice** — Aisha Osei opens the same day on her laptop in London and
-   is offered the identical three clubs. She picks Milan and reads `Age 16 → 18 · OVR 50 → 53
-   (+3) · 11 apps · 0 goals · 1 assist`. The two outcomes are visibly, arguably different.
+   CM · AC Milan (★★★★★)`, taps Start, and is asked whether to stay and fight for minutes, go on
+   loan to Sassuolo (★★★☆☆) or drop to Crotone (★★☆☆☆) for guaranteed football. He takes Crotone
+   and reads `Age 16 → 18 · OVR 50 → 58 (+8) · 68 apps · 9 goals · 4 assists`.
+2. **Same start, forked path** — Aisha Osei opens the same day on her laptop in London and starts
+   at the identical club with the identical player. She stays at Milan and reads `Age 16 → 18 ·
+   OVR 50 → 53 (+3) · 11 apps · 0 goals · 1 assist`. Same start, visibly different careers — and
+   from here the two players are offered different clubs entirely.
 3. **Boundary** — Jonas Weber leaves the surname field empty and taps Start. His player is
    called Ferreira, the seeded default, and nothing blocks him.
 4. **Returning-mode boundary** — Aisha's browser has `onze:lastMode` set to `grid`, a mode
@@ -426,7 +432,7 @@ Scenario: The same choices always produce the same career
   And no outcome along the path was re-rolled
 
 Scenario: Different choices produce visibly different outcomes
-  Given the academy offer contains a top-prestige club and a low-prestige club
+  Given the first decision offers a stay-and-fight option and a guaranteed-football option
   When one player picks the top-prestige club and another picks the low-prestige club
   Then the two resulting career rows differ in appearances by at least 30
   And the two resulting OVR gains differ by at least 3
@@ -435,7 +441,7 @@ Scenario: Starting a career needs no input
   Given Marco is on the "Meet your player" screen
   When he taps "Start career" without typing anything
   Then his player carries the seeded default surname
-  And he reaches the academy offer
+  And he reaches the first decision
 
 Scenario: A retired mode in storage does not break the toggle
   Given Aisha's browser has "onze:lastMode" set to a mode that no longer exists
@@ -451,7 +457,7 @@ Scenario: A retired mode in storage does not break the toggle
 - [ ] The starting player's nationality, age (16), rating (50), position and default surname are
       derived from `hashStr(todayStr() + '|career')` and are identical for all players on a
       given UTC date.
-- [ ] The academy offer presents exactly three distinct top-5-league clubs, each labelled with
+- [ ] The first decision presents exactly three distinct options, each labelled with club,
       its club name, its league, and a prestige indicator derived from the fame weight `w`.
 - [ ] No crest image is loaded or referenced anywhere in the offer UI.
 - [ ] Choosing an offer advances the player two seasons and appends exactly one career row
@@ -562,12 +568,12 @@ Scenario: A lazy run produces a visibly worse career
 
 Scenario: The whole run fits a tram journey
   Given Marco is playing on a mid-range phone with no deliberate delays
-  When he plays from the academy offer to retirement without pausing
+  When he plays from the first decision to retirement without pausing
   Then the run completes in under 8 minutes of wall-clock time
 
 Scenario: The whole career is playable by keyboard alone
   Given Aisha is on a desktop browser using only Tab and Enter
-  When she plays from the academy offer to retirement
+  When she plays from the first decision to retirement
   Then every offer, every Continue and the Share control is reachable by keyboard
   And a visible focus indicator is shown on each
   And all text meets a contrast ratio of at least 4.5 to 1
@@ -590,7 +596,7 @@ Scenario: The whole career is playable by keyboard alone
 - [ ] No decision presents fewer than three options or the same club twice.
 - [ ] Two contrasting decision policies produce careers differing by the thresholds stated in the
       UAT scenarios.
-- [ ] A complete run from academy offer to retirement, with UI render pauses and no deliberate
+- [ ] A complete run from the first decision to retirement, with UI render pauses and no deliberate
       delays, measures under 8 minutes of wall-clock time across three independent runs on a
       mid-range phone (baseline device: iPhone SE).
 - [ ] The entire run — every offer, every Continue, the Share control — is operable by keyboard
@@ -694,7 +700,7 @@ Scenario: A new UTC day offers a new career
 
 Scenario: Storage failure degrades quietly
   Given Aisha is browsing in a mode where localStorage cannot be written
-  When she plays a career from the academy offer to retirement in one session
+  When she plays a career from the first decision to retirement in one session
   Then the career plays through without error
   And no message claims her progress has been saved
 ```
