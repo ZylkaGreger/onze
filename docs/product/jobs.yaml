@@ -1,0 +1,140 @@
+# Onze — validated jobs registry
+# Bootstrapped 2026-08-01 by the DISCUSS wave of feature `career-mode`.
+#
+# HONESTY NOTE (read before using these numbers):
+# Onze has ~5 daily players and zero user interviews. Every score below is a FOUNDER ESTIMATE.
+# `validation_strength` records how much weight each job can actually carry:
+#   observed  = we can see it in real behaviour (play/share/return logs or direct reports)
+#   stated    = the founder asserts it; plausible, unevidenced
+#   assumed   = inferred from an adjacent product; the riskiest kind
+# Do not quote opportunity_score externally. It is a ranking device, not a measurement.
+#
+# opportunity_score = importance × satisfaction_gap (both 1–10).
+
+jobs:
+  - id: J1
+    name: Live out the football career I never had
+    job_story: >
+      When I daydream about having been a professional footballer but have no interest in a
+      40-hour Football Manager save, I want to make the career-defining decisions myself and
+      immediately see how they turned out, so I get the whole fantasy in the time it takes to
+      finish a coffee.
+    dimensions:
+      functional: Compress a 22-year playing career into ~11 decisions and ~6 minutes.
+      emotional: Feel the weight of a choice — the pride of a good one, the sting of a lazy one.
+      social: Have a career that is mine, that I can hold up next to someone else's.
+    four_forces:
+      push: >
+        Football-management games demand hours per session. Guessing games (including Onze's
+        own two modes) test recall but never let the player author anything.
+      pull: >
+        Eleven decisions, a career table that fills row by row, an ending you caused.
+      anxiety: >
+        "Is this just a slot machine?" If outcomes look random rather than earned, the fantasy
+        collapses and the player never returns.
+      habit: >
+        Current = scroll football Twitter / play the two existing Onze modes.
+        New = a third toggle on the same page, same daily ritual, same ~5 minutes.
+    importance: 7
+    satisfaction_gap: 9
+    opportunity_score: 63
+    validated_by: >
+      Founder played a full career in the reference game (Copero) end-to-end, 2026-07.
+      Direct observation of ONE player (the founder). No Onze-player evidence exists.
+    validation_strength: assumed   # HIGHEST-RISK JOB IN THIS FILE — career-mode is built on it
+
+  - id: J2
+    name: Have a small daily football ritual
+    job_story: >
+      When I have a few idle minutes and want my football fix without committing to a match,
+      I want one small football challenge that is the same for everyone today, so I can scratch
+      the itch and feel like I did something.
+    dimensions:
+      functional: A bounded, once-a-day thing that ends.
+      emotional: A clean sense of completion in a feed that never completes.
+      social: Knowing everyone else got the identical challenge today.
+    four_forces:
+      push: Infinite scroll never ends; nothing feels finished.
+      pull: One puzzle, one day, done. Wordle's shape.
+      anxiety: "Will I miss a day and lose my streak?"
+      habit: Current = Wordle / NYT games / Onze Squads. New = same slot, one more mode.
+    importance: 8
+    satisfaction_gap: 5
+    opportunity_score: 40
+    validated_by: >
+      Observed: ~5 players return daily to the existing modes without any prompting,
+      notification, or account. Small n, but it is real behaviour.
+    validation_strength: observed
+
+  - id: J3
+    name: Give my football group chat something to react to
+    job_story: >
+      When my football group chat has gone quiet, I want something spoiler-free to drop in that
+      invites a reply, so the group has something to bite on that isn't another transfer rumour.
+    dimensions:
+      functional: Produce a paste-able artifact in one tap.
+      emotional: Be the one who restarted the conversation.
+      social: Provoke a direct comparison — "beat that".
+    four_forces:
+      push: Sharing a puzzle result risks spoiling the answer for people who haven't played.
+      pull: >
+        A career path is NOT a spoiler — it is a record of the sharer's own choices. It can be
+        posted freely and still leaves the day's challenge intact for everyone else.
+      anxiety: "Will this look like spam / a growth-hack ad in my group?"
+      habit: Current = native share sheet on mobile, clipboard on desktop (already built).
+    importance: 7
+    satisfaction_gap: 6
+    opportunity_score: 42
+    validated_by: >
+      Stated: the founder built and iterated the share path (native sheet on touch, clipboard
+      fallback) because desktop users reported share as broken — evidence people tried to share.
+      No data on how often shares are actually sent.
+    validation_strength: stated
+
+  - id: J4
+    name: Settle who actually knows football
+    job_story: >
+      When my friends and I argue about who knows football best, I want a scoreable daily test
+      with a comparable result, so the argument settles itself.
+    dimensions:
+      functional: Produce one number that can be placed next to someone else's number.
+      emotional: Be right, on the record.
+      social: Standing in the group.
+    four_forces:
+      push: The argument never resolves; everyone claims the win.
+      pull: Same seed for everyone → results are genuinely comparable, not just anecdotes.
+      anxiety: "If the game is luck-driven, the comparison proves nothing."
+      habit: Current = Onze Squads score (X/6). New = a career score on the same footing.
+    importance: 6
+    satisfaction_gap: 6
+    opportunity_score: 36
+    validated_by: Stated. Extrapolated from the Wordle-share pattern, not from Onze players.
+    validation_strength: stated
+
+  - id: J5
+    name: Keep the streak alive
+    job_story: >
+      When I have built a run of consecutive days, I want a reason not to break it, so the habit
+      carries itself and I do not have to decide again each morning.
+    dimensions:
+      functional: A visible counter that survives across days.
+      emotional: Loss aversion, comfortably self-inflicted.
+      social: "🔥 41d" in a share is a flex about consistency, not skill.
+    four_forces:
+      push: Habits without a scoreboard quietly die.
+      pull: A streak counter already exists and is already game-wide.
+      anxiety: "I lost it once and now there is no point."
+      habit: Current = bumpStreak on completing any daily mode.
+    importance: 5
+    satisfaction_gap: 4
+    opportunity_score: 20
+    validated_by: >
+      Observed indirectly: streak code is live and the display suppresses itself once broken,
+      a design the founder chose after seeing broken streaks demotivate.
+    validation_strength: stated
+
+# --- Job coverage of shipped and planned features -----------------------------
+coverage:
+  squads_mode: [J2, J3, J4, J5]
+  mystery_player_mode: [J2, J3, J4, J5]
+  career_mode: [J1, J2, J3, J5]      # J1 is primary; career mode exists to test J1

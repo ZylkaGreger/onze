@@ -1,0 +1,377 @@
+schema_version: 1
+
+# Onze — daily seeded career journey
+# Bootstrapped 2026-08-01 by the DISCUSS wave of feature `career-mode`.
+# Research depth: LIGHTWEIGHT (locked decision D3) — happy path, one-line emotional beats,
+# failure modes only where an acceptance criterion needs them. No full Gherkin suite here;
+# testable scenarios live in docs/feature/career-mode/feature-delta.md.
+
+journey:
+  name: Daily seeded career
+  goal: >
+    Author a 22-year football career out of ~11 decisions in under 8 minutes, from the same
+    starting position and the same offers as every other player in the world today, and end
+    with one number worth arguing about.
+  persona: daily-football-fan (Marco Bianchi)
+  jobs: [J1, J2, J3, J5]
+  platform: web — static, mobile-first, no backend, localStorage only
+
+  emotional_arc:
+    start: Curious — "a third mode, what is this?"
+    middle: Invested, then tense — the choices have visibly started to compound
+    end: Proud or rueful, then competitive — "I got 61, what did you get?"
+
+  arc_notes: >
+    The peak-then-decline curve is the emotional spine. The run must feel like it is going
+    well and then stop going well through no new mistake — that is what makes the earlier
+    decisions feel like they mattered. Decline is designed melancholy, not a failure state.
+    Never render it as an error or a warning.
+
+# --- The defining constraint -------------------------------------------------
+daily_seed:
+  rule: >
+    Every player worldwide receives the identical scenario for a given UTC date: same
+    nationality, same starting position, same clubs offered at every step, same events,
+    same gamble odds. The player's decisions are the only variable.
+  why: >
+    Comparability. Without a shared seed, "I got 61" means nothing. With it, two careers
+    are directly comparable and the share card carries real information.
+  derivation: mulberry32(hashStr(todayStr() + '|career')) — the existing pattern
+  one_run_per_day: >
+    A run is locked in. No retry, no re-roll, like Wordle. Reopening the tab resumes the
+    same run at the same point.
+
+steps:
+  - id: 1
+    name: Discover Career mode
+    action: Player taps the third segment of the existing mode toggle
+
+    mockup: |
+      +--------------------------------------------+
+      |  ⚽ Onze                    🔥 12-day streak|
+      |  [ 📋 Squads ][ 🕵️ Mystery ][ 🎽 Career ]  |
+      +--------------------------------------------+
+      |  Make eleven decisions. Live one career.    |
+      |  Everyone gets the same offers today.       |
+      +--------------------------------------------+
+
+    shared_artifacts:
+      - name: mode_toggle
+        source: index.html MODES array
+        displayed_as: "[ 🎽 Career ]"
+        consumers: [mode toggle, localStorage 'onze:lastMode', share URL '?m=career']
+
+    emotional_state:
+      entry: Habitual — here for the usual puzzle
+      exit: Curious — this is not a guessing game
+
+    integration_checkpoint: >
+      Adding a third mode must not break the 'onze:lastMode' fallback, which already handles
+      modes that were removed (grid, link). A player whose lastMode is 'career' before the
+      mode exists must fall back to 'squad', not to a blank screen.
+
+    failure_modes:
+      - Mode toggle overflows on a 360px viewport with three segments
+      - lastMode points at a mode that is not currently in MODES
+
+  - id: 2
+    name: Meet your player
+    action: Player reads the seeded identity, optionally types a surname, taps Start
+
+    mockup: |
+      +--------------------------------------------+
+      |  1 August · everyone starts here today      |
+      +--------------------------------------------+
+      |            🇧🇷  Age 16  ·  OVR 50           |
+      |         CENTRAL MIDFIELDER                  |
+      |                                             |
+      |   Surname   [ Ferreira              ]       |
+      |             (optional — tap Start to keep)  |
+      |                                             |
+      |   Eleven decisions. One run. No retries.    |
+      |                                             |
+      |                  [    Start career    ]     |
+      +--------------------------------------------+
+
+    shared_artifacts:
+      - name: seeded_identity
+        source: buildCareer(date) in game.js — nationality, position, default surname
+        displayed_as: "🇧🇷 / CENTRAL MIDFIELDER / Ferreira"
+        consumers: [creation screen, every decision header, results card, share text]
+      - name: career_surname
+        source: localStorage career state (player input, defaults to seeded value)
+        displayed_as: "${surname}"
+        consumers: [decision header, results card, share text]
+
+    emotional_state:
+      entry: Curious
+      exit: Invested — this is my guy now
+
+    integration_checkpoint: >
+      Nationality and position are SEEDED, not chosen, in v1. If either becomes player-chosen
+      later it must not feed the simulation, or comparability across players breaks.
+
+    failure_modes:
+      - Player pastes a 200-character surname and breaks the share card layout
+      - Player taps Start twice and starts two runs
+
+  - id: 3
+    name: Decide
+    action: Player picks one of three offers
+    repeats: ~11 times, age 16 to ~38
+
+    mockup: |
+      +--------------------------------------------+
+      |  🇧🇷 Ferreira · Age 16 · OVR 50 · CM        |
+      |  Decision 1 of 11                           |
+      +--------------------------------------------+
+      |  ACADEMY OFFER                              |
+      |  Three clubs want you. Pick one.            |
+      |                                             |
+      |  +---------------------------------------+  |
+      |  | MILAN              [SERIE A]  ★★★★★  |  |
+      |  | Enormous stage. You may not play.     |  |
+      |  +---------------------------------------+  |
+      |  | SASSUOLO           [SERIE A]  ★★★☆☆  |  |
+      |  | Real minutes, real coaching.          |  |
+      |  +---------------------------------------+  |
+      |  | CROTONE            [SERIE A]  ★★☆☆☆  |  |
+      |  | You play every week. Nobody watches.  |  |
+      |  +---------------------------------------+  |
+      +--------------------------------------------+
+
+    shared_artifacts:
+      - name: club_prestige
+        source: DATA.rosters[season][cid].w in data/squads.json
+        displayed_as: "★★★☆☆"
+        consumers: [offer cards, offer generation, Best-club component of Career Score]
+      - name: club_league
+        source: DATA.clubs[cid].league
+        displayed_as: "[SERIE A]"
+        consumers: [offer card chip tint, PATH chips on results, share text]
+
+    emotional_state:
+      entry: Weighing — safe minutes or big stage
+      exit: Committed, slightly anxious
+
+    integration_checkpoint: >
+      Offers are drawn from clubs near the player's current prestige band using the existing
+      fame weight `w`. No synthetic lower-league data is created. A low-fame top-5 club
+      (Crotone, Heidenheim, Osasuna) plays the journeyman rung.
+
+    failure_modes:
+      - Prestige band is empty at the extremes, leaving fewer than 3 offers
+      - The same club is offered twice in one decision
+      - A club is offered for a season in which it was not in the top 5
+
+  - id: 4
+    name: Watch two seasons resolve
+    action: Player reads the outcome and taps Continue
+
+    mockup: |
+      +--------------------------------------------+
+      |  TWO SEASONS AT CROTONE                     |
+      |                                             |
+      |    Age 16 → 18       OVR 50 → 58   (+8)     |
+      |    68 apps · 9 goals · 4 assists            |
+      |                                             |
+      |    You played every single week.            |
+      |    Nobody in Milan noticed. Your legs did.  |
+      |                                             |
+      |                         [  Continue →  ]    |
+      +--------------------------------------------+
+
+    shared_artifacts:
+      - name: career_row
+        source: localStorage career state — appended once per resolved decision
+        displayed_as: "AGE | CLUB | OVR | APPS | G | A"
+        consumers: [resolve screen, career table on results, Career Score inputs]
+
+    emotional_state:
+      entry: Anticipating
+      exit: Rewarded or stung — never neutral
+
+    integration_checkpoint: >
+      The resolved outcome must be derived from the seeded RNG streamed over the committed
+      decision path, never from a fresh random draw. This makes a mid-run reload structurally
+      incapable of producing a different result. See constraint C4.
+
+    failure_modes:
+      - OVR growth is invisible at a glance, so the choice feels inconsequential
+      - Two visibly different choices produce near-identical outcomes (kills job J1)
+
+  - id: 5
+    name: Peak, then decline
+    action: Player keeps deciding while the numbers turn against them
+
+    mockup: |
+      +--------------------------------------------+
+      |  TWO SEASONS AT SEVILLA                     |
+      |                                             |
+      |    Age 30 → 32       OVR 78 → 74   (−4)     |
+      |    54 apps · 11 goals · 8 assists           |
+      |                                             |
+      |    Still the first name on the team sheet.  |
+      |    Not for much longer.                     |
+      +--------------------------------------------+
+
+    emotional_state:
+      entry: Confident — the good years
+      exit: Melancholy, and newly aware the early decisions were the whole game
+
+    integration_checkpoint: >
+      Decline is not an error state. No red text, no warning icon, no "you are getting worse"
+      copy. It reads as the shape of a career.
+
+    failure_modes:
+      - Decline is mistaken for a bug ("my rating went down, is it broken?")
+      - Decline is so steep that the last third of the run feels pointless to play
+
+  - id: 6
+    name: Retire and see the verdict
+    action: Player reaches the end of the arc and lands on the results screen
+
+    mockup: |
+      +--------------------------------------------+
+      |  CAREER OVER · retired at 34                |
+      |                                             |
+      |            ┌───────────┐                    |
+      |            │    61     │   CAREER SCORE     |
+      |            └───────────┘                    |
+      |               CULT HERO                     |
+      |                                             |
+      |   Peak rating   78 at 29           31 / 50  |
+      |   Longevity     512 apps           21 / 25  |
+      |   Best club     Sevilla             9 / 25  |
+      |                                             |
+      |   PATH                                      |
+      |   CROTONE › SASSUOLO › SEVILLA › LORIENT    |
+      |   › EMPOLI                                  |
+      |                                             |
+      |   AGE    CLUB       OVR  APPS   G    A      |
+      |   16-18  Crotone     58    68   9    4      |
+      |   18-20  Sassuolo    64    61  14    7      |
+      |   ...                                       |
+      |                                             |
+      |             [  Share your career  ]         |
+      +--------------------------------------------+
+
+    shared_artifacts:
+      - name: career_score
+        source: scoreCareer(state) in game.js — single implementation
+        displayed_as: "61"
+        consumers: [results badge, component breakdown, tier lookup, share text]
+      - name: tier_bands
+        source: CAREER_TIERS constant in game.js — single table
+        displayed_as: "CULT HERO"
+        consumers: [results screen, share text]
+
+    emotional_state:
+      entry: Ready for the verdict
+      exit: Proud or rueful — and immediately wondering what everyone else got
+
+    integration_checkpoint: >
+      The score components must be visible on this screen. A single opaque number reads as
+      arbitrary and is the fastest way to lose trust in the comparison. See constraint C5.
+
+    failure_modes:
+      - The number is shown without its breakdown and feels invented
+      - Tier bands are duplicated between the results renderer and the share builder and drift
+
+  - id: 7
+    name: Share the path
+    action: Player taps Share — native sheet on touch, clipboard on desktop
+
+    mockup: |
+      🎽 Onze Career — 1 Aug
+      61 · CULT HERO
+      Crotone › Sassuolo › Sevilla › Lorient › Empoli
+      Peak 78 · 512 apps · 🔥 12d
+      https://onzedaily.com/?m=career
+
+    shared_artifacts:
+      - name: streak
+        source: localStorage 'onze:streak' via bumpStreak/liveStreak in game.js
+        displayed_as: "🔥 12d"
+        consumers: [header, results screen, share text — shared across ALL three modes]
+
+    emotional_state:
+      entry: Wanting to be seen
+      exit: Competitive — waiting for a reply
+
+    integration_checkpoint: >
+      Career sharing is genuinely spoiler-free and this is a real advantage over the puzzle
+      modes: the path is a record of the sharer's own choices, not the day's answer. Posting
+      it leaves the challenge fully intact for everyone who has not played. Nothing in the
+      share text may reveal which offers existed.
+
+    failure_modes:
+      - A long path overflows a WhatsApp preview and gets truncated mid-club
+      - Streak double-bumps when a player finishes both Squads and Career on the same day
+
+  - id: 8
+    name: Come back tomorrow
+    action: Player reopens the tab, same day or the next
+
+    mockup: |
+      +--------------------------------------------+
+      |  🎽 Career                                  |
+      |                                             |
+      |  You already lived today's career.          |
+      |                                             |
+      |            61 · CULT HERO                   |
+      |                                             |
+      |  Next career in 6h 12m                      |
+      |                                             |
+      |     [ See my career ]   [ Share ]           |
+      +--------------------------------------------+
+
+    emotional_state:
+      entry: Hopeful for a retry
+      exit: Accepting — the lock is what made the decisions matter
+
+    integration_checkpoint: >
+      Same-day reopen shows the completed run, never a fresh one. Mid-run reopen resumes at
+      the exact decision index. Clearing localStorage or switching browser DOES yield a fresh
+      run — we have no backend and cannot prevent it. Do not pretend otherwise in copy.
+
+    failure_modes:
+      - UTC rollover mid-run — player is at decision 6 when the date changes
+      - localStorage full or disabled (Safari private browsing) — state cannot persist
+
+integration_validation:
+  shared_artifact_consistency:
+    - artifact: career_score
+      must_match_across: [6, 7]
+      failure_message: >
+        Results badge and share text disagree. Both must call the same scoreCareer().
+
+    - artifact: tier_bands
+      must_match_across: [6, 7]
+      failure_message: >
+        Tier label differs between screen and share. One CAREER_TIERS table only.
+
+    - artifact: streak
+      must_match_across: [1, 6, 7]
+      failure_message: >
+        Streak is game-wide. Completing a career must bump it at most once per UTC day,
+        even if the player also completed Squads and Mystery player.
+
+    - artifact: club_prestige
+      must_match_across: [3, 6]
+      failure_message: >
+        The ★ rating on an offer card and the Best-club score component must read the same
+        underlying fame weight `w`, or a player who took the "best" club scores badly.
+
+    - artifact: DATA_V
+      must_match_across: [3]
+      failure_message: >
+        DATA_V is the cache-buster in index.html. Career offers are drawn from data/squads.json,
+        so any data change without a DATA_V bump splits players onto DIFFERENT daily careers
+        while the share card claims they were comparable. This already happened once with the
+        mystery-player pool. This is the single highest-consequence integration risk.
+
+changelog:
+  - date: "2026-08-01"
+    feature: career-mode
+    change: Journey bootstrapped. Lightweight depth per locked decision D3.

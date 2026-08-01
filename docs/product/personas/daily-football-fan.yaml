@@ -1,0 +1,82 @@
+# Onze — primary persona
+# Bootstrapped 2026-08-01 by the DISCUSS wave of feature `career-mode`.
+#
+# HONESTY NOTE: this persona is composed from the founder's own play pattern and from the
+# behaviour of ~5 anonymous daily players (return rate, device mix implied by the share bug
+# reports). It is a working hypothesis, not research output. Anything marked `assumed` should
+# be treated as a question to answer, not a fact to design against.
+
+schema_version: 1
+
+persona:
+  id: daily-football-fan
+  name: Marco Bianchi
+  archetype: The commuting football romantic
+  evidence_level: composite   # founder self-observation + inferred from ~5 daily players
+
+  demographics:
+    age: 29
+    location: Milan, Italy
+    device: iPhone, one-handed, on a moving tram
+    session_context: 07:40 commute, between Porta Genova and Cadorna — about 8 minutes
+
+  football_relationship:
+    depth: >
+      Watches Serie A and the Champions League. Can name most of a top-6 Premier League XI
+      from five years ago. Cannot name a 2019/20 Osasuna squad and does not pretend to.
+    history: >
+      Played Football Manager 2014 obsessively at university. Has not opened it since his
+      daughter was born — the session length is impossible now.
+    identity: >
+      Being "the one who knows football" is part of how he is seen in two WhatsApp groups.
+
+  jobs:
+    primary: J1      # live out the football career I never had
+    secondary: [J2, J3, J5]
+
+  behaviours:
+    observed:
+      - Opens onzedaily.com directly, no app, no account, no notification prompt.
+      - Plays on the same commute most weekdays; a missed day is usually a missed commute.
+      - Shares from the native iOS share sheet, not clipboard.
+    assumed:
+      - Will not read instructions. Taps the first thing that looks tappable.
+      - Abandons anything that asks for a name, email, or more than two setup taps.
+      - Tolerates roughly 5–8 minutes; past that the tram arrives and the tab dies.
+
+  constraints_this_imposes:
+    - Any run must survive the tab being closed mid-way. The tram journey is the hard timebox.
+    - Setup must be under 15 seconds. Every extra field is a drop-off.
+    - Touch targets and one-handed reach matter more than desktop layout.
+    - No account, no email, no sync. He would not create one and we could not host one.
+
+  what_makes_him_come_back:
+    - A result he caused, not a result he was dealt.
+    - A number he can put next to his brother-in-law's number.
+    - The streak, quietly.
+
+  what_makes_him_leave:
+    - Outcomes that look random. If two obviously different choices produce the same career,
+      the fantasy dies and so does the session.
+    - A wall of text before the first decision.
+    - Losing progress on a refresh.
+
+# --- Supporting personas used for domain examples in user stories ---------------
+supporting_personas:
+  - id: lunch-break-skimmer
+    name: Aisha Osei
+    location: London, UK
+    context: >
+      Plays on a laptop during lunch, tab open alongside work. Follows the Premier League
+      closely, everything else loosely. Desktop-first — the audience that reported share as
+      broken. Leaves the tab open for hours and comes back to it.
+    jobs: [J2, J3]
+
+  - id: competitive-sibling
+    name: Jonas Weber
+    location: Basel, Switzerland
+    context: >
+      Plays in the evening, explicitly to beat his brother's result and post it in their
+      two-person chat. The only user who cares about the exact number. Will notice and
+      complain if the scoring changes meaning between days.
+    jobs: [J4, J1]
