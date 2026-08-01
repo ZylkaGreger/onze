@@ -84,6 +84,38 @@
     -webkit-appearance:none;appearance:none;
     background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%238b949e' stroke-width='1.5' fill='none'/></svg>");
     background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+
+  /* ── Type scale ────────────────────────────────────────────────────────────────────────
+     The career screen had grown thirteen unrelated sizes (9, 9.5, 10, 11, 11.5, 12, 12.5, 13,
+     15, 15.5, 17, 20, 26). Six steps, and nothing below 11px — 9.5px was under the legibility
+     floor on a 375px phone. Scoped to career selectors so the other two modes are untouched. */
+  :root{
+    --t-hero:26px;   /* the one number that matters      */
+    --t-title:20px;  /* player name, end-screen headline */
+    --t-lg:15px;     /* offer club name, section heads   */
+    --t-md:13px;     /* body, table club names           */
+    --t-sm:12px;     /* secondary, table numbers         */
+    --t-xs:11px;     /* labels, eyebrows                 */
+  }
+
+  /* ── Motion ────────────────────────────────────────────────────────────────────────────
+     Only things caused by a tap animate, and only once: the .nu class is set on the freshly
+     rendered block and never on a resumed or re-rendered career, so reopening a finished run
+     does not replay the whole life. */
+  @keyframes riseIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @keyframes barFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+  @keyframes rowIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .nu .resolve{animation:riseIn .34s cubic-bezier(.2,.7,.3,1) both}
+  .nu .mbar i{transform-origin:left center;animation:barFill .5s .12s cubic-bezier(.2,.7,.3,1) both}
+  .nu .crow.now{animation:rowIn .3s .06s ease-out both}
+  .nu .crow.now:last-of-type{animation-delay:.14s}
+  .offer{will-change:transform}
+  .offer:active{transform:scale(.972)}
+  /* An animation that has already played must not be re-triggered by an unrelated re-render. */
+  @media (prefers-reduced-motion: reduce){
+    .nu .resolve,.nu .mbar i,.nu .crow.now{animation:none}
+    .offer,.offer:active{transition:none;transform:none}
+  }
   .modes{display:inline-flex;background:var(--panel2);border:1px solid var(--line);
     border-radius:11px;padding:3px;gap:3px}
   .mbtn{background:transparent;border:none;color:var(--dim);font:inherit;font-size:14px;font-weight:600;
@@ -99,13 +131,13 @@
      enough to feel, not enough to shout. */
   .resolve.rise{border-left-color:var(--accent);background:linear-gradient(90deg,rgba(63,185,80,.07),transparent),var(--panel2)}
   .resolve.fall{border-left-color:var(--down);background:linear-gradient(90deg,rgba(229,115,74,.06),transparent),var(--panel2)}
-  .resolve .rhead{font-size:12px;color:var(--dim);margin-bottom:6px}
-  .resolve .rrow{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--dim);flex-wrap:wrap}
+  .resolve .rhead{font-size:var(--t-sm);color:var(--dim);margin-bottom:6px}
+  .resolve .rrow{display:flex;justify-content:space-between;gap:8px;font-size:var(--t-md);color:var(--dim);flex-wrap:wrap}
   .resolve .rrow b{font-variant-numeric:tabular-nums}
   .mbar{height:4px;background:var(--bg);border-radius:3px;margin-top:9px;overflow:hidden}
   .mbar i{display:block;height:100%;background:var(--accent);border-radius:3px}
-  .mlab{font-size:10px;color:var(--dim);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
-  .rwin{font-size:12px;color:var(--gold);margin-top:7px}
+  .mlab{font-size:var(--t-xs);color:var(--dim);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+  .rwin{font-size:var(--t-sm);color:var(--gold);margin-top:7px}
   /* A club with no crest still needs a face. A monogram tile — two letters on a hue derived
      from the club's own name — gives every club a stable identity we are allowed to ship,
      and does the job crests do for the reference game. */
@@ -121,10 +153,10 @@
   .offer .obody{flex:1;min-width:0}
   .offer.plain{display:block}                    /* cards with no monogram stack rather than sit in a row */
   .offer.plain .ometa{margin-top:4px}
-  .offer .kind{font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;color:var(--dim);font-weight:700}
-  .offer .oclub{font-weight:700;font-size:15.5px;margin-top:1px;line-height:1.2}
-  .offer .ometa{font-size:11.5px;color:var(--dim);margin-top:3px}
-  .offer .stars{color:var(--gold);font-size:11px;letter-spacing:.5px}
+  .offer .kind{font-size:var(--t-xs);text-transform:uppercase;letter-spacing:.8px;color:var(--dim);font-weight:700}
+  .offer .oclub{font-weight:700;font-size:var(--t-lg);margin-top:1px;line-height:1.2}
+  .offer .ometa{font-size:var(--t-sm);color:var(--dim);margin-top:3px}
+  .offer .stars{color:var(--gold);font-size:var(--t-xs);letter-spacing:.5px}
   .pbar{height:3px;background:var(--bg);border-radius:2px;margin-top:6px;overflow:hidden}
   .pbar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),#f0c040)}
   .crow{display:flex;align-items:center;gap:6px;padding:7px 9px;border-bottom:1px solid var(--line);font-size:13px}
@@ -143,12 +175,12 @@
   .ovr.t3{background:#3fb950}                 /* 70-79  — very good        */
   .ovr.t4{background:#d8a23a}                 /* 80-87  — star             */
   .ovr.t5{background:#e5734a}                 /* 88+    — world class      */
-  .crow .cclub{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:12.5px}
+  .crow .cclub{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:var(--t-md)}
   .crow .cst{color:var(--dim);font-size:12px;flex:0 0 auto;font-variant-numeric:tabular-nums}
   /* Numeric columns are right-aligned and tabular so digits line up down the table — the single
      cheapest thing that makes a data table read as a data table rather than as text. */
   .crow .cnum,.chead .cnum{width:33px;text-align:right;font-variant-numeric:tabular-nums;
-    color:var(--dim);font-size:11.5px;flex:0 0 auto}
+    color:var(--dim);font-size:var(--t-sm);flex:0 0 auto}
   .crow .cval,.chead .cval{width:46px;text-align:right;font-variant-numeric:tabular-nums;
     color:var(--dim);font-size:11.5px;flex:0 0 auto}
 
@@ -169,18 +201,18 @@
   .pid{display:flex;align-items:center;gap:12px}
   .pid .mono{width:48px;height:48px;font-size:18px;border-radius:12px}
   .pwho{flex:1;min-width:0}
-  .pcard .pname{font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
-  .pcard .pmeta{font-size:12px;font-weight:500;color:var(--dim);margin-top:3px;
+  .pcard .pname{font-size:var(--t-title);font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .pcard .pmeta{font-size:var(--t-sm);font-weight:500;color:var(--dim);margin-top:3px;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .strip{display:flex;margin-top:15px;padding-top:12px;border-top:1px solid var(--line)}
   .sitem{flex:1;text-align:center}
   .sitem:first-child{text-align:left}
   .sitem:last-child{text-align:right}
-  .sv{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+  .sv{font-size:var(--t-lg);font-weight:700;font-variant-numeric:tabular-nums}
   /* Green means CHANGE, not state. A rating that has just fallen must not print green at 26px. */
-  .sv.big{font-size:26px;color:var(--txt);line-height:1.1;letter-spacing:-.02em}
-  .sdelta{font-size:12px;font-weight:800;margin-left:5px;vertical-align:.42em}
-  .sl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-top:4px}
+  .sv.big{font-size:var(--t-hero);color:var(--txt);line-height:1.1;letter-spacing:-.02em}
+  .sdelta{font-size:var(--t-sm);font-weight:800;margin-left:5px;vertical-align:.42em}
+  .sl{font-size:var(--t-xs);font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-top:4px}
   .spark{display:block;width:100%;height:34px;margin-top:10px;overflow:visible}
   .cardwrap{margin:16px 0 4px}
   .cardimg{width:100%;height:auto;display:block;border-radius:14px;border:1px solid var(--line)}
@@ -424,6 +456,9 @@ let MODE = 'squad';
 const GRID_GUESSES = 9;
 
 let CAREER_PACE = localStorage.getItem('onze:pace') || 'normal';
+// Set only by a decision tap. A resumed career, a mode switch or a reload must render instantly —
+// replaying twenty years of animation because someone reopened the tab would be maddening.
+let CAREER_ANIMATE = false;
 let DATA, CLUES = [], CLUBS = [], EVENTS = [], STATE, ALL_NAMES = [], PLAYERS = {};
 let STREAK = { last:'', cur:0, best:0 };
 // One-day World Cup Final skin: auto-on for the final (2026-07-19, UTC via todayStr), or forced with ?wc / ?final.
@@ -571,6 +606,7 @@ function renderCareer(){
   // table is built and would otherwise hit the temporal dead zone.
   function appendTable(){ if(window.__careerTable){ document.getElementById('cells').appendChild(window.__careerTable); window.__careerTable=null; } }
   const cells=document.getElementById('cells'); cells.innerHTML='';
+  cells.classList.toggle('nu', CAREER_ANIMATE); CAREER_ANIMATE=false;
   document.getElementById('hint').style.display='none';
   document.getElementById('pips').innerHTML='';
   document.querySelector('.inputrow').style.display='none';   // career is tapped, not typed
@@ -727,7 +763,7 @@ function renderCareer(){
       const b=document.createElement('button'); b.className='offer'; b.type='button';
       b.innerHTML='<div class="oclub" style="font-size:15px">'+o.label+'</div>'+
         '<div class="ometa">'+(o.note||'')+'</div>';
-      b.onclick=()=>{ track('career_event_answered'); STATE.path.push('E'+i); save(); render(); };
+      b.onclick=()=>{ CAREER_ANIMATE=true; track('career_event_answered'); STATE.path.push('E'+i); save(); render(); };
       wrap.appendChild(b);
     });
     cells.appendChild(wrap);
@@ -751,7 +787,7 @@ function renderCareer(){
         '<div class="pbar"><i style="width:'+pct+'%"></i></div>'+
         '<div class="ometa">'+(STATUS_LABEL[o.status]||'')+'</div>'+
       '</div>';
-    b.onclick=()=>{ STATE.path.push(c.rows.length+'ABC'[i]); save(); render(); };
+    b.onclick=()=>{ CAREER_ANIMATE=true; STATE.path.push(c.rows.length+'ABC'[i]); save(); render(); };
     wrap.appendChild(b);
   });
   cells.appendChild(wrap);
