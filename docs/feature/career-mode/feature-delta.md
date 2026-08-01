@@ -1981,3 +1981,45 @@ These are not optional; they are places the DISCUSS text names `w` or `squads.js
 | O-6 | Career rows are 9–11; US-002's AC says 10–12 decisions. | Reconciled by counting the position choice (D-7). Needs confirming rather than assuming. | Confirm with the AC's author; amend US-002 to say "9–11 career rows, 10–12 player decisions". |
 | O-7 | `CAREER_TIERS` bands rest on two hand-simulated careers, not a distribution. | Floor ~5, A = 36, B = 76, estimated ceiling ~88. Three data points is not a calibration. | After Slice 02: run 500 seeded careers under 5 fixed policies, plot the score distribution, re-cut the bands once. Then freeze — D-1's version-marker warning applies. |
 | O-8 | Should the share card name the biggest moment ("played the final on a broken foot")? | Slice 07's own open question. The `tag` effect key already carries the data; the share line is already tight at 60 characters. | Defer to Slice 05. The data exists either way, which is the point. |
+
+
+---
+
+## Wave: DELIVER / [REF] v1 shipped
+
+All of v1 is live on onzedaily.com. Slices 00-07 built, verified in the browser and pushed.
+
+| Slice | State | Notes |
+|---|---|---|
+| 00 Club universe | **shipped** | 916 clubs, 43 countries, 54 leagues, current-season divisions |
+| 01 First decision | **shipped** | Career in the toggle; the day's club; the first fork |
+| 02 A whole career | **shipped** | 9-11 blocks, growth then decline, retirement |
+| 03 Resume | **shipped** | Only the decision path persists; a reload recomputes |
+| 04 The number | **shipped** | Career Score /100 with its three components visible |
+| 05 The share | **shipped** | Spoiler-free card with the club path |
+| 06 Your position | **shipped** | First decision of all; GK table shows clean sheets |
+| 07 Events | **shipped** | 16 events, five families, ~4.4 per career |
+| 08 Honours | not built | v2 — adds a 4th score component, shifts what a number means |
+| 09 Par | not built | v2 — needs evidence about the real score spread first |
+
+### What changed from the design during build
+
+1. **Block 0 exemption.** A 50-rated 16-year-old was instantly "outgrown" by his own academy, so
+   the day's starting club never appeared in the career — breaking the mode's one promise. The
+   squeeze-out and outgrown rules now start at block 1.
+2. **Continuity weighting.** The sampler produced world tours (Israel to Scotland to Argentina to
+   Portugal). Current-country x2.6 and home x1.8; the anti-repetition penalty now bites only after
+   a third straight block in one country.
+3. **EVENT_RATE 0.5**, giving ~4.4 events per career — the design left the rate open.
+4. **TT-001 (analytics) is NOT built.** v1 ships uninstrumented, so the KPIs in this document
+   remain unmeasurable. This is a known, accepted gap, not an oversight: it was gating the v2
+   decision, and the v2 decision was made on product grounds instead.
+
+### Open, carried forward
+
+- **O-1 reputation drag** ships at REP_WEIGHT 0. Chasing minutes remains close to optimal rather
+  than merely different. Trigger to pull the lever: if real careers cluster on one policy.
+- **O-4 prestige source.** `clubs.json.prestige` replaced `squads.json`'s `w`; a few DISCUSS ACs
+  still name the old source. Labels land where D-1 said; point totals moved.
+- Tuning generally. The sim is honest but young; the constants are a first calibration, not a
+  finished one.
