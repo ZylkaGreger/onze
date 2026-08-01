@@ -82,6 +82,25 @@
     padding:9px 18px;border-radius:8px;cursor:pointer;white-space:nowrap;transition:.15s}
   .mbtn.active{background:var(--panel);color:var(--txt);box-shadow:0 1px 3px rgba(0,0,0,.35)}
   body.wc .mbtn.active{color:var(--gold)}
+  .offer{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 13px;
+    cursor:pointer;text-align:left;width:100%;font:inherit;color:var(--txt);display:block;transition:.15s}
+  .offer:hover{border-color:var(--accent)}
+  .offer .kind{font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);font-weight:700}
+  .offer .oclub{font-weight:700;font-size:16px;margin-top:2px}
+  .offer .ometa{font-size:12px;color:var(--dim);margin-top:2px}
+  .offer .stars{color:var(--gold);font-size:12px;letter-spacing:1px}
+  .crow{display:flex;align-items:center;gap:9px;padding:7px 10px;border-bottom:1px solid var(--line);font-size:13px}
+  .crow:last-child{border-bottom:none}
+  .crow .cage{width:26px;color:var(--dim);font-size:12px;flex:0 0 auto}
+  .crow .cclub{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+  .crow .cst{color:var(--dim);font-size:12px;flex:0 0 auto;font-variant-numeric:tabular-nums}
+  .ctable{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow:hidden}
+  .chead{display:flex;gap:9px;padding:6px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.6px;
+    color:var(--dim);background:var(--panel2);border-bottom:1px solid var(--line)}
+  .pcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;margin:12px 0}
+  .pcard .pname{font-size:20px;font-weight:800}
+  .pcard .pmeta{font-size:13px;color:var(--dim);margin-top:3px}
+  .sbreak{display:flex;justify-content:center;gap:14px;font-size:12px;color:var(--dim);margin-top:6px}
   .cells{display:flex;flex-direction:column;gap:8px;margin:14px 0}
   .cell{background:var(--panel);border:1px solid var(--line);border-radius:10px;
     padding:10px 12px;display:flex;align-items:center;gap:12px;transition:.25s}
@@ -283,7 +302,8 @@
 
 <script type="module">
 import { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
-         buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity } from './game.js';
+         buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity,
+         simulateCareer, careerStart, scoreCareer, CAREER } from './game.js';
 
 const MAX_GUESSES = 6;
 // DATA_V: cache-buster for the data files. BUMP THIS whenever data/*.json changes, or players with
@@ -295,6 +315,7 @@ const MODES = [
   // ['link','🔗 Find the link'],   // hidden Jun 2026 (kept in code/data — re-add this line to bring it back)
   // ['grid','▦ Grid'],             // removed Jul 2026 — simplified UI (code/data kept — re-add this line to bring it back)
   ['player','🕵️ Mystery player'],
+  ['career','🎽 Career'],
 ];
 // League and difficulty are no longer player-facing — every squad puzzle is Top-5 mixed, medium.
 // (The per-league / easy / hard code paths stay in game.js, just not exposed.) See onze:lastMode below.
@@ -302,7 +323,7 @@ const FIXED_LEAGUE = 'WORLD', FIXED_DIFF = 'medium';
 let MODE = 'squad';
 const GRID_GUESSES = 9;
 
-let DATA, CLUES = [], STATE, ALL_NAMES = [], PLAYERS = {};
+let DATA, CLUES = [], CLUBS = [], STATE, ALL_NAMES = [], PLAYERS = {};
 let STREAK = { last:'', cur:0, best:0 };
 // One-day World Cup Final skin: auto-on for the final (2026-07-19, UTC via todayStr), or forced with ?wc / ?final.
 // Cosmetic only — no puzzle/logic/share changes. Reverts by itself the next day.
@@ -339,6 +360,10 @@ function loadState(mode, league, diff){
     const puzzle=buildGridPuzzle(DATA, diff);
     st={key, mode, league, diff, puzzle, cells:Array(9).fill(null), rarity:Array(9).fill(null), active:null, guesses:[], done:false};
     if(saved){try{const s=JSON.parse(saved); if(s.sig===puzzle.sig){st.cells=s.cells;st.rarity=s.rarity||Array(9).fill(null);st.guesses=s.guesses;st.done=s.done;}}catch(e){}}
+  } else if(mode==='career'){
+    // A career is a pure function of (date, path) — we persist ONLY the decisions.
+    st={key, mode, league, diff, path:[], done:false};
+    if(saved){try{const s2=JSON.parse(saved); if(s2.sig===careerSig()){st.path=s2.path||[];st.done=!!s2.done;}}catch(e){}}
   } else if(mode==='player'){
     const puzzle=buildPlayerPuzzle(CLUES, WC_FORCE_DATE);
     st={key, mode, league, diff, puzzle, shown:1, guesses:[], done:false, win:false};
@@ -352,13 +377,92 @@ function loadState(mode, league, diff){
 }
 function cellsSig(p){return p.cells.map(c=>c.cid+'@'+c.season).join('|');}
 function save(){
-  const sig = (STATE.mode==='link'||STATE.mode==='grid'||STATE.mode==='player') ? STATE.puzzle.sig : cellsSig(STATE.puzzle);
+  const sig = STATE.mode==='career' ? careerSig()
+    : (STATE.mode==='link'||STATE.mode==='grid'||STATE.mode==='player') ? STATE.puzzle.sig : cellsSig(STATE.puzzle);
   let body;
   if(STATE.mode==='link') body={sig, answer:STATE.answer, guesses:STATE.guesses, done:STATE.done};
   else if(STATE.mode==='grid') body={sig, cells:STATE.cells, rarity:STATE.rarity, guesses:STATE.guesses, done:STATE.done};
+  else if(STATE.mode==='career') body={sig:careerSig(), path:STATE.path, done:STATE.done};
   else if(STATE.mode==='player') body={sig, shown:STATE.shown, guesses:STATE.guesses, done:STATE.done, win:STATE.win};
   else body={sig, solved:STATE.solved, guesses:STATE.guesses, done:STATE.done};
   localStorage.setItem(STATE.key, JSON.stringify(body));
+}
+
+// ── Career mode ──────────────────────────────────────────────────────────────────────────────
+// A career is a pure projection of (date, decision path). We store only the path, so a reload
+// recomputes an identical career and can never re-roll an outcome.
+function careerSig(){ const st=careerStart(CLUBS, todayStr()); return todayStr()+'|'+CLUBS.length+'|'+st.club.name; }
+const stars = p => '★'.repeat(Math.max(1,Math.min(5,Math.ceil((p-34)/13)))) + '☆'.repeat(5-Math.max(1,Math.min(5,Math.ceil((p-34)/13))));
+const KIND_LABEL = { ambition:'AMBITION', minutes:'GAME TIME', balance:'BALANCE' };
+const STATUS_LABEL = { loan:'On loan · guaranteed minutes', guaranteed:'Guaranteed minutes',
+  rotation:'In the rotation', stay:'Stay and fight for your place', prospect:'One for the future — you will wait' };
+
+function renderCareer(){
+  const cells=document.getElementById('cells'); cells.innerHTML='';
+  document.getElementById('hint').style.display='none';
+  document.getElementById('pips').innerHTML='';
+  document.querySelector('.inputrow').style.display='none';   // career is tapped, not typed
+  const c = simulateCareer(CLUBS, todayStr(), STATE.path);
+  const s = c.start;
+
+  // who you are
+  const card=document.createElement('div'); card.className='pcard';
+  card.innerHTML='<div class="pname">'+s.surname+'</div>'+
+    '<div class="pmeta">'+s.pos+' · #'+s.number+' · '+s.foot+' footed</div>'+
+    '<div class="pmeta" style="margin-top:6px">'+(c.rows.length?('Age '+(16+2*c.rows.length)+' · rating '+Math.round(c.rows.length?c.rows[c.rows.length-1].ovr:50)):('Age 16 · '+s.club.name))+'</div>';
+  cells.appendChild(card);
+
+  // the career so far
+  if(c.rows.length){
+    const t=document.createElement('div'); t.className='ctable';
+    t.innerHTML='<div class="chead"><span style="width:26px">Age</span><span style="flex:1">Club</span><span>OVR · Apps · G/A</span></div>'+
+      c.rows.map(r=>'<div class="crow"><span class="cage">'+r.age+'</span>'+
+        '<span class="cclub">'+r.club.name+(r.loan?' <span style="color:var(--dim);font-weight:400">(loan)</span>':'')+'</span>'+
+        '<span class="cst">'+r.ovr+' · '+r.apps+' · '+(s.pos==='GK'? (r.cs+' cs') : (r.goals+'/'+r.assists))+'</span></div>').join('');
+    cells.appendChild(t);
+  }
+
+  if(c.done || STATE.done){ STATE.done=true; showCareerEnd(c); return; }
+  document.getElementById('end').classList.remove('show');
+
+  // the decision
+  const head=document.createElement('div'); head.style.cssText='font-weight:700;margin:14px 0 8px;font-size:15px';
+  head.textContent = c.rows.length ? 'Age '+(16+2*c.rows.length)+' — what next?' : 'You are 16, in the academy at '+s.club.name+'. What now?';
+  cells.appendChild(head);
+  const wrap=document.createElement('div'); wrap.style.cssText='display:flex;flex-direction:column;gap:8px';
+  c.offers.forEach((o,i)=>{
+    const b=document.createElement('button'); b.className='offer'; b.type='button';
+    b.innerHTML='<div class="kind">'+(KIND_LABEL[o.kind]||'')+'</div>'+
+      '<div class="oclub">'+(o.status==='stay'?'Stay at ':'')+o.club.name+(o.loan?' (loan)':'')+'</div>'+
+      '<div class="ometa">'+o.club.league+' · '+(o.club.tier===2?'2nd tier · ':'')+'<span class="stars">'+stars(o.club.prestige)+'</span></div>'+
+      '<div class="ometa">'+(STATUS_LABEL[o.status]||'')+'</div>';
+    b.onclick=()=>{ STATE.path.push(c.rows.length+'ABC'[i]); save(); render(); };
+    wrap.appendChild(b);
+  });
+  cells.appendChild(wrap);
+}
+
+function showCareerEnd(c){
+  const sc = c.score || scoreCareer(c);
+  const e=document.getElementById('end'); e.classList.add('show');
+  recordPlay();
+  const st=liveStreak(STREAK);
+  document.getElementById('endmsg').textContent = sc.total+' · '+sc.tier + (st>1?' · 🔥 '+st+'-day streak':'');
+  const rev=document.getElementById('reveal');
+  rev.innerHTML='Retired at '+c.retireAge+' · peak rating <b>'+sc.peakOvr+'</b> · '+sc.totalApps+' appearances'+
+    '<div class="sbreak"><span>Peak '+sc.peakPts+'/50</span><span>Longevity '+sc.lonPts+'/25</span><span>Best club '+sc.clubPts+'/25</span></div>';
+  rev.style.display='block';
+  document.getElementById('sharetext').textContent = careerShare(c, sc);
+}
+
+function careerShare(c, sc){
+  const d=new Date(); const dd=d.getUTCDate()+' '+d.toLocaleString('en',{month:'short',timeZone:'UTC'});
+  const st=liveStreak(STREAK), stag=st>1?' · 🔥 '+st+'d':'';
+  // Spoiler-free by construction: a career path reveals the sharer's own decisions, never the
+  // day's answer — so unlike the puzzle modes there is nothing to hide.
+  const path=c.rows.map(r=>r.club.name).filter((v,i,a)=>a.indexOf(v)===i).slice(0,5).join(' → ');
+  return '🎽 Onze Career — '+dd+'\n'+c.start.surname+' ('+c.start.pos+') · started at '+c.start.club.name+
+    '\n'+sc.total+'/100 · '+sc.tier+' · peak '+sc.peakOvr+stag+'\n'+path+'\nhttps://onzedaily.com/?m=career';
 }
 
 function renderPips(){
@@ -369,7 +473,7 @@ function renderPips(){
   if(STATE.done) showEnd(); else document.getElementById('end').classList.remove('show');
 }
 
-function render(){ if(STATE.mode==='link') renderLink(); else if(STATE.mode==='grid') renderGrid(); else if(STATE.mode==='player') renderPlayer(); else renderSquad(); }
+function render(){ if(STATE.mode==='link') renderLink(); else if(STATE.mode==='grid') renderGrid(); else if(STATE.mode==='player') renderPlayer(); else if(STATE.mode==='career') renderCareer(); else renderSquad(); }
 
 function renderPlayer(){
   const p=STATE.puzzle, cellsEl=document.getElementById('cells'); cellsEl.innerHTML='';
@@ -588,9 +692,11 @@ function submitLink(raw){
 // deep link back into the mode the player just played (one config now — no difficulty/league to carry).
 // Full https:// so chat apps render a rich preview card instead of dead plain text.
 function shareUrl(){
+  if(STATE.mode==='career') return 'https://onzedaily.com/?m=career';
   return STATE.mode==='player' ? 'https://onzedaily.com/?m=player' : 'https://onzedaily.com';
 }
 function shareText(){
+  if(STATE.mode==='career'){ const c=simulateCareer(CLUBS, todayStr(), STATE.path); return careerShare(c, c.score||scoreCareer(c)); }
   const dmap={easy:'🟢',medium:'🟡',hard:'🔴'};
   const row=STATE.guesses.map(g=>g.hit?'🟩':'🟥').join('');
   const d=new Date(); const dd=d.getUTCDate()+' '+d.toLocaleString('en',{month:'short',timeZone:'UTC'});
@@ -712,7 +818,9 @@ function initModes(){
 function applyModeUI(){
   document.querySelectorAll('#modeToggle .mbtn').forEach(b=>b.classList.toggle('active',b.dataset.mode===MODE));
   const sub={squad:'Name one player from each squad — that exact club, that exact season.',
-    player:'Guess the mystery player — a new clue with every wrong guess.'}[MODE];
+    player:'Guess the mystery player — a new clue with every wrong guess.',
+    career:'One career, eleven decisions. Everyone starts at the same club today.'}[MODE];
+  document.querySelector('.inputrow').style.display = MODE==='career' ? 'none' : '';
   document.querySelector('.sub').textContent=sub;
   document.getElementById('guess').placeholder=
     MODE==='player'?'Name the mystery player…':'Type a player name and press Enter…';
@@ -739,11 +847,12 @@ function start(mode, league, diff){
 }
 
 document.addEventListener('DOMContentLoaded',async()=>{
-  const [sq, cl] = await Promise.all([
+  const [sq, cl, cb] = await Promise.all([
     fetch('data/squads.json?v='+DATA_V).then(r=>r.json()),
     fetch('data/player-clues.json?v='+DATA_V).then(r=>r.json()).catch(()=>[]),   // mystery-player clues (optional)
+    fetch('data/clubs.json?v='+DATA_V).then(r=>r.json()).catch(()=>({clubs:[]})),   // career-mode club universe (96 KB)
   ]);
-  DATA=sq; CLUES=cl||[];
+  DATA=sq; CLUES=cl||[]; CLUBS=(cb&&cb.clubs)||[];
   applyFinalTheme();
   try{ STREAK=JSON.parse(localStorage.getItem('onze:streak'))||STREAK; }catch(e){}
   renderStreak();
