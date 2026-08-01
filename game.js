@@ -242,6 +242,14 @@ export const CAREER = Object.freeze({
   EVENT_RATE: 0.5,
 });
 
+// What each position actually plays like — shown on the picker so the choice is informed, not blind.
+export const CAREER_POSITIONS = Object.freeze([
+  { id:'GK', name:'Goalkeeper', blurb:'One shirt to win. Hardest to break into, longest career.' },
+  { id:'DF', name:'Defender',   blurb:'Steady minutes, slower burn, ages well.' },
+  { id:'MF', name:'Midfielder', blurb:'The balanced route. Goals and assists both count.' },
+  { id:'FW', name:'Forward',    blurb:'Peaks earliest, scores most, judged on goals.' },
+]);
+
 export const POS_MOD = Object.freeze({
   GK: { peakShift: +1, growth: 0.85, ptBonus: -1, g: 0.000, a: 0.004, cs: 0.30 },
   DF: { peakShift: +1, growth: 0.95, ptBonus: 0, g: 0.050, a: 0.045 },
@@ -396,11 +404,17 @@ export function careerStart(CLUBS, date){
 // THE entry point the UI calls. A career is a projection of (date, path) — never stored state.
 export function simulateCareer(CLUBS, date, path, EVENTS){
   const start = careerStart(CLUBS, date);
-  const tokens = (path || []).slice();
+  let tokens = (path || []).slice();
+  // Position is the FIRST decision (Slice 06): it changes how the whole career simulates, so the
+  // player picks it before anything else. Everything downstream indexes off the remaining tokens.
+  let chosenPos = null;
+  if(tokens.length && String(tokens[0]).startsWith('P:')){ chosenPos = String(tokens[0]).slice(2); tokens = tokens.slice(1); }
+  else return { start, rows: [], offers: [], needsPosition: true, positions: CAREER_POSITIONS,
+                st: { ...start }, done: false, peak: start.ovr, score: null, event: null, tags: [], log: [] };
   const sub = (tag, upto) => mulberry32(hashStr(date + '|career|' + tokens.slice(0, upto).join('|') + '|' + tag));
 
   const st = {
-    ovr: start.ovr, k: 0, pos: start.pos, club: start.club, mods: [], tags: [],
+    ovr: start.ovr, k: 0, pos: chosenPos || start.pos, club: start.club, mods: [], tags: [],
     seen: [], seenFamilies: [], lastSeen: {}, blocksAtClub: 0, lastM: 0.5,
     played: [start.club.name], loans: 0, lowBlocks: 0, stuckCountry: null, sameCountry: 1,
     homeCountry: start.club.country,
@@ -414,7 +428,7 @@ export function simulateCareer(CLUBS, date, path, EVENTS){
     // never depend on which option you pick.
     const offers = buildOffers(CLUBS, st, sub('offers', k));
     const tok = tokens[k];
-    if(tok === undefined) return { start, rows, offers, st: { ...st }, done: false, peak, score: null,
+    if(tok === undefined) return { start: { ...start, pos: st.pos }, rows, offers, st: { ...st }, done: false, peak, score: null,
                                    event: null, tags: st.tags.slice(), log };
 
     const slot = { A: 0, B: 1, C: 2 }[String(tok).slice(-1)] ?? 0;
@@ -455,7 +469,7 @@ export function simulateCareer(CLUBS, date, path, EVENTS){
         const etok = tokens[k + 1];
         if(etok === undefined || !String(etok).startsWith('E')){
           // waiting on the player's answer
-          return { start, rows, offers: [], st: { ...st }, done: false, peak, score: null,
+          return { start: { ...start, pos: st.pos }, rows, offers: [], st: { ...st }, done: false, peak, score: null,
                    event: ev, tags: st.tags.slice(), log };
         }
         const optIdx = +String(etok).slice(1) || 0;
@@ -482,7 +496,7 @@ export function simulateCareer(CLUBS, date, path, EVENTS){
       }
     }
   }
-  const career = { start, rows, done, peak, retireAge: retireAge || (16 + 2 * rows.length),
+  const career = { start: { ...start, pos: chosenPos || start.pos }, rows, done, peak, retireAge: retireAge || (16 + 2 * rows.length),
                    tags: st.tags.slice(), log, event: null };
   career.score = done ? scoreCareer(career) : null;
   career.offers = [];

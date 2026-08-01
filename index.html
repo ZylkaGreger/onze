@@ -303,7 +303,7 @@
 <script type="module">
 import { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity,
-         simulateCareer, careerStart, scoreCareer, CAREER } from './game.js';
+         simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS } from './game.js';
 
 const MAX_GUESSES = 6;
 // DATA_V: cache-buster for the data files. BUMP THIS whenever data/*.json changes, or players with
@@ -405,6 +405,27 @@ function renderCareer(){
   const c = simulateCareer(CLUBS, todayStr(), STATE.path, EVENTS);
   const s = c.start;
 
+  // first decision of all: what do you play?
+  if(c.needsPosition){
+    const card=document.createElement('div'); card.className='pcard';
+    card.innerHTML='<div class="pname">'+s.surname+'</div>'+
+      '<div class="pmeta">16 · #'+s.number+' · '+s.foot+' footed · '+s.club.name+'</div>';
+    cells.appendChild(card);
+    const head=document.createElement('div'); head.style.cssText='font-weight:700;margin:14px 0 8px;font-size:15px';
+    head.textContent='What do you play?';
+    cells.appendChild(head);
+    const wrap=document.createElement('div'); wrap.style.cssText='display:flex;flex-direction:column;gap:8px';
+    (c.positions||CAREER_POSITIONS).forEach(pos=>{
+      const b=document.createElement('button'); b.className='offer'; b.type='button';
+      b.innerHTML='<div class="oclub">'+pos.name+'</div><div class="ometa">'+pos.blurb+'</div>';
+      b.onclick=()=>{ STATE.path.push('P:'+pos.id); save(); render(); };
+      wrap.appendChild(b);
+    });
+    cells.appendChild(wrap);
+    document.getElementById('end').classList.remove('show');
+    return;
+  }
+
   // who you are
   const card=document.createElement('div'); card.className='pcard';
   card.innerHTML='<div class="pname">'+s.surname+'</div>'+
@@ -415,7 +436,7 @@ function renderCareer(){
   // the career so far
   if(c.rows.length){
     const t=document.createElement('div'); t.className='ctable';
-    t.innerHTML='<div class="chead"><span style="width:26px">Age</span><span style="flex:1">Club</span><span>OVR · Apps · G/A</span></div>'+
+    t.innerHTML='<div class="chead"><span style="width:26px">Age</span><span style="flex:1">Club</span><span>OVR · Apps · '+(s.pos==='GK'?'CS':'G/A')+'</span></div>'+
       c.rows.map(r=>'<div class="crow"><span class="cage">'+r.age+'</span>'+
         '<span class="cclub">'+r.club.name+(r.loan?' <span style="color:var(--dim);font-weight:400">(loan)</span>':'')+'</span>'+
         '<span class="cst">'+r.ovr+' · '+r.apps+' · '+(s.pos==='GK'? (r.cs+' cs') : (r.goals+'/'+r.assists))+'</span></div>').join('');

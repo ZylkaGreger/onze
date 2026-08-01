@@ -268,10 +268,11 @@ test("shipped builders produce valid puzzles for today (real game.js code)", () 
 
 // ── career mode ─────────────────────────────────────────────────────────────────────────────
 const CLUBS = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/clubs.json'), 'utf8')).clubs;
-const playPolicy = (date, slot) => {
-  const p = [];
+const EVENTS_FOR_POLICY = null;   // policy fixtures run WITHOUT events: divergence must be structural
+const playPolicy = (date, slot, pos = 'MF') => {
+  const p = ['P:' + pos];
   for (let k = 0; k < CAREER.BLOCKS; k++) {
-    const c = simulateCareer(CLUBS, date, p);
+    const c = simulateCareer(CLUBS, date, p, EVENTS_FOR_POLICY);
     if (c.done || !c.offers.length) break;
     p.push(k + slot);
   }
@@ -300,7 +301,7 @@ test('career: everyone starts the same day at the same club, and it is stable', 
 });
 
 test('career: the same choices always reproduce the same career (no re-roll on reload)', () => {
-  const p = ['0A', '1B', '2C', '3A'];
+  const p = ['P:MF', '0A', '1B', '2C', '3A'];
   const a = simulateCareer(CLUBS, '2026-08-02', p);
   const b = simulateCareer(CLUBS, '2026-08-02', p);
   assert.deepEqual(a.rows, b.rows, 'recomputed identically — results are never stored');
@@ -388,7 +389,7 @@ test('events: effects compose, and expire when they should', () => {
 });
 
 test('events: a career with events stays deterministic and reproducible', () => {
-  const p = ['0B', 'E0', '1B', '2A', 'E1', '3B'];
+  const p = ['P:MF', '0B', 'E0', '1B', '2A', 'E1', '3B'];
   const a = simulateCareer(CLUBS, '2026-08-05', p, EVENTS);
   const b = simulateCareer(CLUBS, '2026-08-05', p, EVENTS);
   assert.deepEqual(a.rows, b.rows, 'same path, same career — events included');
@@ -399,7 +400,7 @@ test('events: fire often enough to matter, rarely enough to stay special', () =>
   const counts = [];
   for (let i = 0; i < 12; i++) {
     const date = new Date(Date.UTC(2026, 7, 2 + i)).toISOString().slice(0, 10);
-    const p = []; let n = 0, guard = 0;
+    const p = ['P:MF']; let n = 0, guard = 0;
     while (guard++ < 40) {
       const c = simulateCareer(CLUBS, date, p, EVENTS);
       if (c.done) break;
@@ -411,4 +412,15 @@ test('events: fire often enough to matter, rarely enough to stay special', () =>
   }
   const avg = counts.reduce((a, b) => a + b, 0) / counts.length;
   assert.ok(avg >= 2 && avg <= 7, `average ${avg.toFixed(1)} events per career is outside 2-7`);
+});
+
+test('career: position is the first decision and genuinely changes the game', () => {
+  const c0 = simulateCareer(CLUBS, '2026-08-06', [], EVENTS);
+  assert.ok(c0.needsPosition, 'a career cannot start until a position is chosen');
+  assert.equal(c0.positions.length, 4, 'four positions offered');
+  const gk = playPolicy('2026-08-06', 'B', 'GK'), fw = playPolicy('2026-08-06', 'B', 'FW');
+  // a keeper's output is clean sheets, a forward's is goals — Slice 06's "table of zeroes" worry
+  assert.ok(gk.rows.some(r => r.cs > 0), 'keepers record clean sheets');
+  assert.ok(fw.rows.reduce((s, r) => s + r.goals, 0) > gk.rows.reduce((s, r) => s + r.goals, 0) * 3,
+    'a forward scores far more than a keeper');
 });
