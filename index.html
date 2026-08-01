@@ -303,7 +303,7 @@
 <script type="module">
 import { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity,
-         simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS } from './game.js';
+         simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS, parScore } from './game.js';
 
 const MAX_GUESSES = 6;
 // DATA_V: cache-buster for the data files. BUMP THIS whenever data/*.json changes, or players with
@@ -499,9 +499,18 @@ function showCareerEnd(c){
   recordPlay();
   const st=liveStreak(STREAK);
   document.getElementById('endmsg').textContent = sc.total+' · '+sc.tier + (st>1?' · 🔥 '+st+'-day streak':'');
+  // Par: the only comparison we are allowed to make without a backend — a reproducible bot on the
+  // same start, not an invented population (C5). Computed for YOUR position so it is a fair bar.
+  let par=null; try{ par = parScore(CLUBS, todayStr(), EVENTS, c.start.pos).score; }catch(e){}
   const rev=document.getElementById('reveal');
   const isGK = c.start.pos==='GK';
-  rev.innerHTML='Retired at '+c.retireAge+' · peak rating <b>'+sc.peakOvr+'</b>'+
+  const parLine = par===null ? '' :
+    '<div style="margin-top:6px;font-size:13px">'+
+      (sc.total>par ? '📈 <b style="color:var(--accent)">'+(sc.total-par)+' above par</b>'
+       : sc.total===par ? '➖ <b>level par</b>'
+       : '📉 <b>'+(par-sc.total)+' below par</b>')+
+      ' <span style="color:var(--dim)">· par for a '+c.start.pos+' today is '+par+'</span></div>';
+  rev.innerHTML='Retired at '+c.retireAge+' · peak rating <b>'+sc.peakOvr+'</b>'+parLine+
     '<div class="sbreak" style="margin-top:8px"><span>Peak '+sc.peakPts+'/40</span><span>Longevity '+sc.lonPts+'/20</span>'+
       '<span>Best club '+sc.clubPts+'/20</span><span>Honours '+sc.honPts+'/20</span></div>'+
     // the career in numbers — what Copero gives you at the end, and what people actually compare
@@ -544,8 +553,10 @@ function careerShare(c, sc){
   const isGK=c.start.pos==='GK';
   const line = isGK ? sc.totalApps+' apps · '+sc.cs+' cs' : sc.totalApps+' apps · '+sc.goals+'⚽ '+sc.assists+'🅰';
   const honLine = (sc.trophies?'🏆 '+sc.trophies:'') + (sc.caps?(sc.trophies?' · ':'')+'🌍 '+sc.caps+' caps':'');
+  let parTag=''; try{ const pv=parScore(CLUBS, todayStr(), EVENTS, c.start.pos).score;
+    parTag = sc.total>pv ? ' (+'+(sc.total-pv)+' vs par)' : sc.total<pv ? ' ('+(sc.total-pv)+' vs par)' : ' (par)'; }catch(e){}
   return '🎽 Onze Career — '+dd+'\n'+c.start.surname+' ('+c.start.pos+') · started at '+c.start.club.name+tag+
-    '\n'+sc.total+'/100 · '+sc.tier+' · peak '+sc.peakOvr+stag+
+    '\n'+sc.total+'/100'+parTag+' · '+sc.tier+' · peak '+sc.peakOvr+stag+
     '\n'+line+(honLine?'\n'+honLine:'')+'\n'+path+'\nhttps://onzedaily.com/?m=career';
 }
 

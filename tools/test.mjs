@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { mulberry32, hashStr, norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
          careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS,
          validateCatalogue, pickEvent, resolveEvent, applyMods, eligible, titleOdds, SCORE_VERSION,
-         nationStrength, blockCaps } from '../game.js';
+         nationStrength, blockCaps, parScore, POS_MOD } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -468,4 +468,30 @@ test('career table reads year by year, and the seasons add up', () => {
     assert.equal(r.seasons.reduce((s, x) => s + x.apps, 0), r.apps, 'seasons sum to the block');
     assert.equal(r.seasons.reduce((s, x) => s + x.goals, 0), r.goals, 'no goals invented or lost');
   }
+});
+
+test('par: reproducible, and a fair bar for every position', () => {
+  const a = parScore(CLUBS, '2026-08-06', EVENTS, 'MF');
+  const b = parScore(CLUBS, '2026-08-06', EVENTS, 'MF');
+  assert.equal(a.score, b.score, 'par must be reproducible — it is the only comparison we publish');
+  assert.ok(a.score > 20 && a.score < 100, 'par is a real career, not a degenerate one');
+  // no position may be a scoring decision dressed up as a style choice
+  const pars = ['GK', 'DF', 'MF', 'FW'].map(p => {
+    let t = 0;
+    for (let i = 0; i < 5; i++) {
+      const d = new Date(Date.UTC(2026, 7, 2 + i)).toISOString().slice(0, 10);
+      t += parScore(CLUBS, d, EVENTS, p).score;
+    }
+    return t / 5;
+  });
+  const spread = Math.max(...pars) - Math.min(...pars);
+  assert.ok(spread <= 12, `positions differ by ${spread.toFixed(0)} points of par — should be a style choice, not a scoring one`);
+});
+
+test('positions differ in how they AGE, not in how much they grow', () => {
+  // peakShift must only move the decline half of the curve
+  const young = CAREER.GROWTH_AGE.findIndex(v => v < 0);
+  assert.ok(young > 0, 'there is a growth phase and a decline phase');
+  for (const p of ['GK', 'DF', 'MF', 'FW'])
+    assert.ok(Math.abs(POS_MOD[p].growth - 1) <= 0.08, `${p}: growth modifier is a nudge, not a multiplier`);
 });

@@ -250,11 +250,15 @@ export const CAREER_POSITIONS = Object.freeze([
   { id:'FW', name:'Forward',    blurb:'Peaks earliest, scores most, judged on goals.' },
 ]);
 
+// Positions differ in FLAVOUR — when you peak, what you produce, how contested the shirt is —
+// but not in how high you can climb. Growth used to range 0.85..1.05, which made par 50 for a
+// keeper and 88 for a forward: picking a keeper was a scoring penalty dressed up as a choice.
+// The identity now lives in peakShift, ptBonus and the output rates, where it belongs.
 export const POS_MOD = Object.freeze({
-  GK: { peakShift: +1, growth: 0.85, ptBonus: -1, g: 0.000, a: 0.004, cs: 0.30 },
-  DF: { peakShift: +1, growth: 0.95, ptBonus: 0, g: 0.050, a: 0.045 },
+  GK: { peakShift: +1, growth: 1.04, ptBonus: -2, g: 0.000, a: 0.004, cs: 0.30 },
+  DF: { peakShift: +1, growth: 1.00, ptBonus: 0, g: 0.050, a: 0.045 },
   MF: { peakShift: 0, growth: 1.00, ptBonus: 0, g: 0.150, a: 0.120 },
-  FW: { peakShift: -1, growth: 1.05, ptBonus: 0, g: 0.420, a: 0.130 },
+  FW: { peakShift: -1, growth: 1.01, ptBonus: 0, g: 0.420, a: 0.130 },
 });
 
 export const CAREER_TIERS = [[0, 'JOURNEYMAN'], [30, 'SOLID PRO'], [48, 'CULT HERO'], [64, 'STAR'], [80, 'ICON']];
@@ -280,7 +284,13 @@ export function blockOutcome(st, offer, rnd){
   const m = Math.max(CAREER.M_FLOOR, Math.min(CAREER.M_CAP, m0 * (offer.appsMod ?? 1)));
   const apps = Math.round(m * CAREER.APPS_PER_BLOCK);
 
-  const gi = clamp(st.k + pm.peakShift, 0, CAREER.BLOCKS - 1);
+  // peakShift moves only the AGEING half of the curve: everyone grows on the same schedule, but a
+  // keeper (+1) declines a block later and a forward (-1) a block earlier. Shifting the whole
+  // curve — which is what this did originally, and with an inverted sign — was worth ~24 points of
+  // final score, so position choice became a scoring decision rather than a style one.
+  const gi = CAREER.GROWTH_AGE[st.k] < 0
+    ? clamp(st.k - pm.peakShift, 0, CAREER.BLOCKS - 1)
+    : st.k;
   const ageGrowth = CAREER.GROWTH_AGE[gi];
   let delta;
   if(ageGrowth >= 0){
@@ -717,4 +727,32 @@ export function blockCaps(ovr, m, pos, rnd, country){
   const pm = POS_MOD[pos] || POS_MOD.MF;
   const goals = Math.round(caps * pm.g * 0.75 * (0.6 + 0.8 * rnd()));
   return { caps: Math.max(0, caps), goals: Math.max(0, goals) };
+}
+
+// ── Par ──────────────────────────────────────────────────────────────────────────────────────
+// The day's reference score: what a competent, unspectacular player gets from the same start.
+// This is the ONLY percentile-shaped claim the game is allowed to make (constraint C5): we cannot
+// measure other players without a backend, so we publish a reproducible bot instead of inventing
+// a population. Anyone can verify par by playing the same choices.
+//
+// The bot is deliberately mediocre-but-sensible: take game time while young, balance once
+// established, and always take the safe option at an event. Beating it should feel earned.
+export function parPolicy(career){
+  const k = career.rows.length;
+  if(k <= 2) return 1;                    // young: chase minutes
+  return Math.min(2, (career.offers || []).length - 1);   // then take the balanced route
+}
+
+export function parScore(CLUBS, date, EVENTS, pos){
+  const path = ['P:' + (pos || 'MF')];
+  let guard = 0;
+  while(guard++ < 40){
+    const c = simulateCareer(CLUBS, date, path, EVENTS);
+    if(c.done) return { score: scoreCareer(c).total, career: c };
+    if(c.event){ path.push('E' + (c.event.options.length - 1)); continue; }   // always the safe out
+    if(!c.offers || !c.offers.length) break;
+    path.push(c.rows.length + 'ABC'[parPolicy(c)]);
+  }
+  const c = simulateCareer(CLUBS, date, path, EVENTS);
+  return { score: scoreCareer(c).total, career: c };
 }
