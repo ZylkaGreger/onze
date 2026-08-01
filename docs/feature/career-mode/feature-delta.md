@@ -1999,8 +1999,8 @@ All of v1 is live on onzedaily.com. Slices 00-07 built, verified in the browser 
 | 05 The share | **shipped** | Spoiler-free card with the club path |
 | 06 Your position | **shipped** | First decision of all; GK table shows clean sheets |
 | 07 Events | **shipped** | 16 events, five families, ~4.4 per career |
-| 08 Honours | not built | v2 — adds a 4th score component, shifts what a number means |
-| 09 Par | not built | v2 — needs evidence about the real score spread first |
+| 08 Honours | **shipped** | Trophy cabinet, caps, career totals; 4th score component (SCORE_VERSION 2) |
+| 09 Par | **shipped** | Reproducible reference bot, per position, on the results screen and share |
 
 ### What changed from the design during build
 
@@ -2023,3 +2023,21 @@ All of v1 is live on onzedaily.com. Slices 00-07 built, verified in the browser 
   still name the old source. Labels land where D-1 said; point totals moved.
 - Tuning generally. The sim is honest but young; the constants are a first calibration, not a
   finished one.
+
+
+### Post-launch, on the founder's play-testing
+
+- **National-team difficulty.** Caps now scale with the strength of the country calling: ~76.5 OVR
+  to break into Portugal or Brazil, ~66.5 for Cyprus. Being very good and being one of the best in
+  your own country are different achievements, which is what makes "capped" worth reading.
+- **Year-by-year career table.** The decision cadence is unchanged (a block is still two seasons);
+  only the display is finer, with the rating interpolated and trophies marked on the season won.
+- **Par exposed a position-balance bug.** `peakShift` was added rather than subtracted, inverting
+  it, and shifting the whole growth curve was worth ~24 points of score. Position choice was
+  therefore a scoring decision disguised as a style one — par by position ran GK 50 / FW 88. It now
+  moves only the ageing half of the curve; spread is 4 points. A test fails if any position drifts
+  more than 12 points of par, so it cannot silently regress.
+
+**All nine slices are shipped.** What remains is not features but calibration: the constants are a
+first pass, REP_WEIGHT is still 0, and — the honest gap — the mode is uninstrumented, so none of
+this document's KPIs can be measured yet.
