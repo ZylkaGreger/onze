@@ -182,6 +182,11 @@
   .sdelta{font-size:12px;font-weight:800;margin-left:5px;vertical-align:.42em}
   .sl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-top:4px}
   .spark{display:block;width:100%;height:34px;margin-top:10px;overflow:visible}
+  .cardwrap{margin:16px 0 4px}
+  .cardimg{width:100%;height:auto;display:block;border-radius:14px;border:1px solid var(--line)}
+  .cardbar{display:flex;gap:8px;margin-top:10px}
+  .cardbar .share{flex:1}
+  .ghostbtn{background:var(--panel2);color:var(--txt);border:1px solid var(--line)}
   .sbreak{display:flex;justify-content:center;gap:14px;font-size:12px;color:var(--dim);margin-top:6px}
   .cells{display:flex;flex-direction:column;gap:8px;margin:14px 0}
   .cell{background:var(--panel);border:1px solid var(--line);border-radius:10px;
@@ -516,9 +521,12 @@ const KIND_LABEL = { ambition:'AMBITION', minutes:'GAME TIME', balance:'BALANCE'
 // tiles read as a SET, which is what a wall of real crests does for the reference game.
 const MONO_HUES=[196,208,220,232,244,256,268,280,292,308,324,340];
 function clubHue(name){ let h=0; for(const ch of name) h=(h*31+ch.charCodeAt(0))>>>0; return MONO_HUES[h%MONO_HUES.length]; }
+function monoLetters(name){
+  const words=name.replace(/^(1\.|FC|AC|AS|SC|SS|CF|CD|SV|VfB|VfL|RC|SL|CR|SE)\s+/i,'').split(/[\s.-]+/).filter(Boolean);
+  return (words.length>1 ? words[0][0]+words[1][0] : name.replace(/[^A-Za-zÀ-ÿ]/g,'').slice(0,2)).toUpperCase();
+}
 function monogram(club){
-  const words=club.name.replace(/^(1\.|FC|AC|AS|SC|SS|CF|CD|SV|VfB|VfL|RC|SL|CR|SE)\s+/i,'').split(/[\s.-]+/).filter(Boolean);
-  const letters=(words.length>1 ? words[0][0]+words[1][0] : club.name.replace(/[^A-Za-zÀ-ÿ]/g,'').slice(0,2)).toUpperCase();
+  const letters=monoLetters(club.name);
   const h=clubHue(club.name);
   return '<div class="mono" style="background:linear-gradient(155deg,hsl('+h+' 30% 40%),hsl('+h+' 36% 26%))">'+letters+'</div>';
 }
@@ -775,6 +783,171 @@ function archiveCareer(c, sc){
   }catch(e){ return []; }
 }
 
+// ── The career card ──────────────────────────────────────────────────────────────────────────
+// A drawn 1080x1350 PNG, not a text block. This is the artefact people actually post, and a
+// monospace paragraph loses to a designed card every time.
+//
+// Three rules learned the hard way about canvas text:
+//  • NO EMOJI. Emoji glyphs render at wildly different metrics per platform and silently blow up
+//    any measured layout. Everything on this card is drawn with shapes and letters.
+//  • Long club names must be fitted, not clipped — fitText shrinks until it fits its box.
+//  • letterSpacing is not reliably supported, so tracked text is drawn character by character.
+const CARD_W = 1080, CARD_H = 1350;
+
+function fitText(x, text, maxW, startPx, weight, family){
+  let px = startPx;
+  do { x.font = weight + ' ' + px + 'px ' + family; px -= 2; }
+  while(x.measureText(text).width > maxW && px > 12);
+  return x.measureText(text).width;
+}
+function tracked(x, text, cx, y, spacing, align){
+  const w = [...text].reduce((s,ch)=>s+x.measureText(ch).width,0) + spacing*(text.length-1);
+  let px = align==='center' ? cx - w/2 : cx;
+  for(const ch of text){ x.fillText(ch, px, y); px += x.measureText(ch).width + spacing; }
+  return w;
+}
+
+function careerCard(c, sc, road){
+  const F = '-apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif';
+  const cv = document.createElement('canvas');
+  cv.width = CARD_W; cv.height = CARD_H;
+  const x = cv.getContext('2d');
+  const isGK = c.start.pos === 'GK';
+
+  // background: the same ramp as the app, so the card is recognisably ours
+  const bg = x.createLinearGradient(0, 0, 0, CARD_H);
+  bg.addColorStop(0, '#161b22'); bg.addColorStop(1, '#0d1117');
+  x.fillStyle = bg; x.fillRect(0, 0, CARD_W, CARD_H);
+  x.strokeStyle = '#1F242E'; x.lineWidth = 2;
+  x.strokeRect(1, 1, CARD_W-2, CARD_H-2);
+
+  const M = 72;                                  // margin
+  let y = 96;
+
+  // eyebrow
+  x.fillStyle = '#8b949e'; x.font = '700 26px ' + F; x.textBaseline = 'alphabetic';
+  tracked(x, 'ONZE CAREER', M, y, 5, 'left');
+  const d = new Date();
+  x.textAlign = 'right'; x.fillStyle = '#8b949e'; x.font = '600 26px ' + F;
+  x.fillText(d.getUTCDate() + ' ' + d.toLocaleString('en', { month: 'short', timeZone: 'UTC' }), CARD_W - M, y);
+  x.textAlign = 'left';
+
+  // name + context
+  y += 86;
+  x.fillStyle = '#e6edf3'; fitText(x, c.start.surname, CARD_W - M*2, 92, '800', F);
+  x.fillText(c.start.surname, M, y);
+  y += 44;
+  x.fillStyle = '#8b949e'; x.font = '600 30px ' + F;
+  x.fillText(c.start.pos + '  ·  #' + c.start.number + '  ·  ' + c.start.nat, M, y);
+
+  // score block. The 168px numeral ascends ~120px above its baseline, so this gap must clear the
+  // context line above it — at 108 the two collided.
+  y += 152;
+  const tierCol = sc.total >= 76 ? '#e5734a' : sc.total >= 68 ? '#d8a23a' : sc.total >= 58 ? '#3fb950' : sc.total >= 38 ? '#3f8fb9' : '#5b6570';
+  x.fillStyle = '#e6edf3'; x.font = '800 168px ' + F;
+  const sw = x.measureText(String(sc.total)).width;
+  x.fillText(String(sc.total), M, y);
+  x.fillStyle = '#8b949e'; x.font = '700 34px ' + F;
+  x.fillText('/100', M + sw + 14, y);
+  // tier pill
+  x.font = '800 30px ' + F;
+  const tw = [...sc.tier].reduce((s,ch)=>s+x.measureText(ch).width,0) + 4*(sc.tier.length-1);
+  const pillW = tw + 52, pillX = M + sw + 14, pillY = y - 96;
+  x.fillStyle = tierCol; roundRect(x, pillX, pillY, pillW, 52, 26); x.fill();
+  x.fillStyle = '#0b0f14';
+  tracked(x, sc.tier, pillX + pillW/2, pillY + 36, 4, 'center');
+
+  // rating curve — the shape of the life, drawn large
+  y += 54;
+  const pts = []; c.rows.forEach(r => (r.seasons||[r]).forEach(sn => pts.push(sn.ovr)));
+  if(pts.length > 2){
+    const gw = CARD_W - M*2, gh = 210, gy = y;
+    const lo = Math.min(...pts) - 2, hi = Math.max(...pts) + 2, span = Math.max(1, hi - lo);
+    const px = i => M + (i/(pts.length-1))*gw, py = v => gy + gh - ((v-lo)/span)*gh;
+    const peakI = pts.indexOf(Math.max(...pts));
+    const area = x.createLinearGradient(0, gy, 0, gy+gh);
+    area.addColorStop(0, 'rgba(63,185,80,.26)'); area.addColorStop(1, 'rgba(63,185,80,0)');
+    x.beginPath(); x.moveTo(px(0), py(pts[0]));
+    pts.forEach((v,i)=>x.lineTo(px(i), py(v)));
+    x.lineTo(px(pts.length-1), gy+gh); x.lineTo(M, gy+gh); x.closePath();
+    x.fillStyle = area; x.fill();
+    // rise in green, decline in orange — the same grammar as the app
+    const seg = (from, to, col) => { x.beginPath(); x.moveTo(px(from), py(pts[from]));
+      for(let i=from+1;i<=to;i++) x.lineTo(px(i), py(pts[i]));
+      x.strokeStyle = col; x.lineWidth = 6; x.lineJoin = 'round'; x.lineCap = 'round'; x.stroke(); };
+    if(peakI < pts.length-2){ seg(0, peakI, '#3fb950'); seg(peakI, pts.length-1, '#e5734a'); }
+    else seg(0, pts.length-1, '#3fb950');
+    x.beginPath(); x.arc(px(peakI), py(pts[peakI]), 11, 0, 7); x.fillStyle = '#e6edf3'; x.fill();
+    x.fillStyle = '#8b949e'; x.font = '700 24px ' + F;
+    x.fillText('PEAK ' + sc.peakOvr, px(peakI) - 40, py(pts[peakI]) - 26);
+    y += gh + 66;
+  } else y += 40;
+
+  // stat strip
+  const stats = [['APPS', sc.totalApps], [isGK?'CLEAN SHEETS':'GOALS', isGK?sc.cs:sc.goals],
+                 ['CAPS', sc.caps], ['TROPHIES', sc.trophies]];
+  const colW = (CARD_W - M*2) / stats.length;
+  stats.forEach(([lbl, v], i) => {
+    const cx = M + colW*i;
+    x.fillStyle = '#e6edf3'; x.font = '800 58px ' + F; x.fillText(String(v), cx, y);
+    x.fillStyle = '#8b949e'; x.font = '700 21px ' + F; tracked(x, lbl, cx, y + 32, 3, 'left');
+  });
+  y += 96;
+
+  // the PATH — proportional career band, each club a hue-hashed segment with its monogram.
+  // This is our answer to their crest row, and it carries information theirs does not: how LONG
+  // you were somewhere, drawn to scale.
+  const clubs = [];
+  c.rows.forEach(r => { const last = clubs[clubs.length-1];
+    if(last && last.club.name === r.club.name) last.n++; else clubs.push({ club: r.club, n: 1 }); });
+  const totalN = clubs.reduce((t,k)=>t+k.n, 0) || 1;
+  const bandY = y, bandH = 96, bandW = CARD_W - M*2;
+  let bx = M;
+  clubs.forEach((k, i) => {
+    const w = Math.max(46, (k.n/totalN) * bandW);
+    const h = clubHue(k.club.name);
+    const g = x.createLinearGradient(bx, bandY, bx, bandY+bandH);
+    g.addColorStop(0, 'hsl(' + h + ' 30% 40%)'); g.addColorStop(1, 'hsl(' + h + ' 36% 26%)');
+    x.fillStyle = g;
+    roundRect(x, bx, bandY, w - 6, bandH, 14); x.fill();
+    x.fillStyle = 'rgba(255,255,255,.94)'; x.font = '800 30px ' + F;
+    const mono = monoLetters(k.club.name);
+    const mw = x.measureText(mono).width;
+    if(w > 56) x.fillText(mono, bx + (w-6)/2 - mw/2, bandY + bandH/2 + 11);
+    bx += w;
+  });
+  x.fillStyle = '#8b949e'; x.font = '700 21px ' + F;
+  tracked(x, clubs.length + ' CLUBS  ·  RETIRED AT ' + c.retireAge, M, bandY + bandH + 40, 3, 'left');
+  y = bandY + bandH + 96;
+
+  // the hook — the road not taken, which nothing else in this genre can print
+  if(road && road.instead && road.instead !== '?'){
+    x.fillStyle = '#1C222C'; roundRect(x, M, y, CARD_W - M*2, 132, 18); x.fill();
+    x.fillStyle = road.delta > 0 ? '#3fb950' : '#8b949e';
+    x.fillRect(M, y, 5, 132);
+    x.fillStyle = '#8b949e'; x.font = '700 21px ' + F;
+    tracked(x, 'THE ROAD NOT TAKEN', M + 34, y + 42, 3, 'left');
+    x.fillStyle = '#e6edf3'; x.font = '600 29px ' + F;
+    const line = 'At ' + road.age + ', ' + road.instead + ' instead: ' + road.altScore + ' · ' + road.altTier;
+    fitText(x, line, CARD_W - M*2 - 68, 29, '600', F);
+    x.fillText(line, M + 34, y + 92);
+    y += 168;
+  }
+
+  // footer
+  x.fillStyle = '#8b949e'; x.font = '700 26px ' + F;
+  tracked(x, 'ONZEDAILY.COM', M, CARD_H - 62, 5, 'left');
+  x.textAlign = 'right'; x.fillStyle = '#3fb950'; x.font = '800 26px ' + F;
+  x.fillText('one club. one life. every day.', CARD_W - M, CARD_H - 62);
+  x.textAlign = 'left';
+  return cv;
+}
+function roundRect(x, X, Y, W, H, R){
+  x.beginPath();
+  x.moveTo(X+R, Y); x.arcTo(X+W, Y, X+W, Y+H, R); x.arcTo(X+W, Y+H, X, Y+H, R);
+  x.arcTo(X, Y+H, X, Y, R); x.arcTo(X, Y, X+W, Y, R); x.closePath();
+}
+
 function showCareerEnd(c){
   track('career_finished');
   const sc = c.score || scoreCareer(c);
@@ -841,6 +1014,43 @@ function showCareerEnd(c){
     }
   }catch(e){}
   document.getElementById('sharetext').textContent = careerShare(c, sc);
+
+  // Render the card, show it scaled, and pre-bake the PNG so the share tap is instant. Safari
+  // will not accept a file created inside an async gap after a user gesture, so the Blob must
+  // exist BEFORE the button is pressed.
+  try{
+    const rd2 = (typeof roadNotTaken==='function')
+      ? roadNotTaken(CLUBS, todayStr(), STATE.path, EVENTS, CAREER_PACE) : null;
+    const cv = careerCard(c, sc, rd2);
+    const host = document.createElement('div'); host.className='cardwrap';
+    cv.className='cardimg'; host.appendChild(cv);
+    const bar = document.createElement('div'); bar.className='cardbar';
+    const shareBtn = document.createElement('button'); shareBtn.className='share'; shareBtn.textContent='Share card';
+    const dlBtn = document.createElement('button'); dlBtn.className='share ghostbtn'; dlBtn.textContent='Save image';
+    bar.appendChild(shareBtn); bar.appendChild(dlBtn); host.appendChild(bar);
+    rev.parentNode.insertBefore(host, rev.nextSibling);
+
+    let blob=null;
+    cv.toBlob(b=>{ blob=b; }, 'image/png');
+    const filename = 'onze-career-' + todayStr() + '.png';
+    shareBtn.onclick = async () => {
+      track('share_card');
+      const file = blob ? new File([blob], filename, { type:'image/png' }) : null;
+      if(file && navigator.canShare && navigator.canShare({ files:[file] })){
+        try{ await navigator.share({ files:[file], text: careerShare(c, sc) }); return; }
+        catch(e){ if(e && e.name==='AbortError') return; }
+      }
+      dlBtn.click();                                  // no file sharing: fall back to a download
+    };
+    dlBtn.onclick = () => {
+      if(!blob){ toast('Card still rendering…'); return; }
+      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=filename;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(()=>URL.revokeObjectURL(a.href), 4000);
+      toast('Card saved');
+    };
+  }catch(e){}
+
   // past careers
   const past = archiveCareer(c, sc).slice(1, 6);
   if(past.length){
