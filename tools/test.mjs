@@ -564,3 +564,35 @@ test('offers follow FORM, not just rating — a bench-warmer is not called by gi
   // and with no history at all (the very first decision) nothing is penalised
   assert.equal(reachBand(50, 0, undefined, undefined).hi, reachBand(50, 0).hi);
 });
+
+test('a paused turn is still the same career — caps and honours survive an event', () => {
+  // simulateCareer returns early in two places: waiting on a club decision, and waiting on an
+  // event answer. The event return used to omit honours and caps, so the national row printed
+  // "uncapped" on every event turn and recovered on the next tap. The invariant is not that the
+  // totals are unchanged since the last turn — a block IS played before the event fires, so they
+  // legitimately grow — but that what the pause reports still equals the sum of the rows behind it.
+  let checked = 0;
+  for(const date of ['2026-08-02', '2026-08-05', '2026-08-09', '2026-08-14']){
+    const route = ['P:MF'];
+    for(let guard = 0; guard < 40; guard++){
+      const c = simulateCareer(CLUBS, date, route, EVENTS, 'story');
+      if(c.done) break;
+      if(c.event){
+        assert.ok(c.caps, `caps must survive the event turn on ${date}`);
+        assert.ok(Array.isArray(c.honours), `honours must survive the event turn on ${date}`);
+        const rowCaps = c.rows.reduce((n, r) => n + (r.caps || 0), 0);
+        const rowHon  = c.rows.reduce((n, r) => n + ((r.honours || []).length), 0);
+        assert.equal(c.caps.total, rowCaps,
+          `a paused turn must report the caps its own rows earned on ${date}`);
+        assert.equal(c.honours.length, rowHon,
+          `a paused turn must report the honours its own rows earned on ${date}`);
+        checked++;
+        route.push('E' + (c.event.options.length - 1));
+        continue;
+      }
+      if(!c.offers.length) break;
+      route.push(c.rows.length + 'B');
+    }
+  }
+  assert.ok(checked >= 4, `expected several event pauses to inspect, saw ${checked}`);
+});

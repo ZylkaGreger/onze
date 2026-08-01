@@ -580,9 +580,13 @@ export function simulateCareer(CLUBS, date, path, EVENTS, pace){
       if(ev){
         const etok = tokens[k + 1];
         if(etok === undefined || !String(etok).startsWith('E')){
-          // waiting on the player's answer
+          // waiting on the player's answer. `honours` and `caps` must ride along exactly as they do
+          // on the ordinary return above: this is the same career, merely paused mid-turn. Omitting
+          // them made the national row print "uncapped" on every single event turn and recover on
+          // the next tap, so at Story pace a player watched a 95-cap international career blink out
+          // and back every other decision.
           return { start: { ...start, pos: st.pos }, rows, offers: [], st: { ...st }, done: false, peak, score: null,
-                   event: ev, tags: st.tags.slice(), log };
+                   event: ev, tags: st.tags.slice(), log, honours, caps };
         }
         const optIdx = +String(etok).slice(1) || 0;
         const res = resolveEvent(ev, optIdx, sub('event.roll', k + 1));

@@ -458,7 +458,7 @@
 // game.js is versioned like the data files. Without this a browser can run a CACHED module
 // against fresh data after a deploy — which during development produced a NaN rating, and in
 // production would silently give some players a different career. Bump APP_V with game.js.
-const APP_V = '2026-08-01';
+const APP_V = '2026-08-01c';
 const { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity,
          simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS, parScore, roadNotTaken } = await import('./game.js?v=' + APP_V);
@@ -592,9 +592,21 @@ const KIND_LABEL = { ambition:'AMBITION', minutes:'GAME TIME', balance:'BALANCE'
 // tiles read as a SET, which is what a wall of real crests does for the reference game.
 const MONO_HUES=[196,208,220,232,244,256,268,280,292,308,324,340];
 function clubHue(name){ let h=0; for(const ch of name) h=(h*31+ch.charCodeAt(0))>>>0; return MONO_HUES[h%MONO_HUES.length]; }
+// Under the no-crests rule the monogram IS the crest, so the two letters have to be the ones a fan
+// would pick. Three things were wrong here. The prefix was stripped into `words` but the single-word
+// fallback re-read the ORIGINAL name, so every club left with one word after stripping printed the
+// prefix back: FC Barcelona → "FC", AC Milan → "AC", CR Flamengo → "CR". A founding year taken as
+// the second token gave "B0" for Bayer 04 Leverkusen and "C1" for Como 1907. And a strip that ran
+// once left "1. FC Nürnberg" as "FN". \p{L} rather than [A-Za-zÀ-ÿ] because the latter stops before
+// Latin Extended-A and would mangle Śląsk Wrocław, Widzew Łódź and İstanbul Başakşehir.
+const MONO_PREFIX=/^(1\.|FC|AC|AS|SC|SS|CF|CD|SV|VfB|VfL|RC|SL|CR|SE)\s+/i;
 function monoLetters(name){
-  const words=name.replace(/^(1\.|FC|AC|AS|SC|SS|CF|CD|SV|VfB|VfL|RC|SL|CR|SE)\s+/i,'').split(/[\s.-]+/).filter(Boolean);
-  return (words.length>1 ? words[0][0]+words[1][0] : name.replace(/[^A-Za-zÀ-ÿ]/g,'').slice(0,2)).toUpperCase();
+  let stripped=name;
+  for(let i=0;i<3&&MONO_PREFIX.test(stripped);i++) stripped=stripped.replace(MONO_PREFIX,'');
+  const words=stripped.split(/[\s.\-_&]+/).filter(Boolean);
+  const second=words.slice(1).find(w=>/^\p{L}/u.test(w));
+  return (second ? words[0][0]+second[0]
+                 : stripped.replace(/[^\p{L}]/gu,'').slice(0,2)).toUpperCase();
 }
 function monogram(club){
   const letters=monoLetters(club.name);
@@ -736,8 +748,12 @@ function renderCareer(){
           '<span class="cval">'+(i===0 ? money(r.value) : '')+'</span></div>').join('')).join('');
     // The years still ahead, faint. The reference game pre-lists them and it is the reason the
     // table reads as a LIFE rather than as a log: you can see how much is left to play for.
+    // ...but only while there IS something left to play for. Retirement can trigger from block 8,
+    // and 70% of careers end before block 11, so gating on years-played alone printed empty rows for
+    // ages the player will never see — under the row that ended his career, on the end screen he
+    // screenshots and shares.
     const playedYears=c.rows.length*2, totalYears=CAREER.BLOCKS*2;
-    if(playedYears<totalYears){
+    if(playedYears<totalYears && !c.done){
       const ahead=[];
       for(let a=16+playedYears; a<16+totalYears; a+=1) ahead.push(a);
       t.innerHTML += ahead.slice(0,Math.min(ahead.length,6)).map(a=>
