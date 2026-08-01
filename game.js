@@ -506,12 +506,15 @@ export function simulateCareer(CLUBS, date, path, EVENTS, pace){
     const [s1, s2] = half(out.assists, w1), [c1, c2] = half(out.cs, w1);
     const ovrMid = st.ovr + (out.ovrNext - st.ovr) * 0.5;
     const seasons = [
-      { age: 16 + 2 * k,     ovr: Math.round(st.ovr),  apps: a1, goals: g1, assists: s1, cs: c1 },
-      { age: 16 + 2 * k + 1, ovr: Math.round(ovrMid),  apps: a2, goals: g2, assists: s2, cs: c2 },
+      // A season row reports the rating REACHED in that season, not the one carried into it —
+      // otherwise the newest row shows a two-year-old number and the header looks broken.
+      { age: 16 + 2 * k,     ovr: Math.round(ovrMid),        apps: a1, goals: g1, assists: s1, cs: c1 },
+      { age: 16 + 2 * k + 1, ovr: Math.round(out.ovrNext),   apps: a2, goals: g2, assists: s2, cs: c2 },
     ];
     rows.push({
       age: 16 + 2 * k, club: pick.club, loan: !!pick.loan, honours: hon, caps: cap.caps,
-      ovr: Math.round(st.ovr), apps: out.apps, goals: out.goals, assists: out.assists,
+      ovr: Math.round(st.ovr), ovrEnd: Math.round(out.ovrNext),
+      apps: out.apps, goals: out.goals, assists: out.assists,
       cs: out.cs, value: out.value, m: out.m, seasons,
     });
     // advance

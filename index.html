@@ -93,7 +93,12 @@
     vertical-align:2px;margin-left:5px;animation:pulse 2s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
   body.wc .mbtn.active{color:var(--gold)}
-  .resolve{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 12px;margin:14px 0 4px}
+  .resolve{background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--line);
+    border-radius:11px;padding:11px 12px;margin:14px 0 4px}
+  /* A season that went well and one that went badly must not look identical. Left edge only —
+     enough to feel, not enough to shout. */
+  .resolve.rise{border-left-color:var(--accent);background:linear-gradient(90deg,rgba(63,185,80,.07),transparent),var(--panel2)}
+  .resolve.fall{border-left-color:var(--down);background:linear-gradient(90deg,rgba(229,115,74,.06),transparent),var(--panel2)}
   .resolve .rhead{font-size:12px;color:var(--dim);margin-bottom:6px}
   .resolve .rrow{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--dim);flex-wrap:wrap}
   .resolve .rrow b{font-variant-numeric:tabular-nums}
@@ -104,9 +109,10 @@
   /* A club with no crest still needs a face. A monogram tile — two letters on a hue derived
      from the club's own name — gives every club a stable identity we are allowed to ship,
      and does the job crests do for the reference game. */
-  .mono{width:38px;height:38px;border-radius:9px;flex:0 0 auto;display:flex;align-items:center;
-    justify-content:center;font-weight:800;font-size:13px;letter-spacing:.5px;
-    color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)}
+  .mono{width:40px;height:40px;border-radius:10px;flex:0 0 auto;display:flex;align-items:center;
+    justify-content:center;font-weight:800;font-size:15px;letter-spacing:-.01em;
+    color:rgba(255,255,255,.95);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1px rgba(0,0,0,.30)}
   .offer{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;
     cursor:pointer;text-align:left;width:100%;font:inherit;color:var(--txt);display:flex;gap:11px;
     align-items:center;transition:background .15s,border-color .15s,transform .06s}
@@ -123,29 +129,58 @@
   .pbar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),#f0c040)}
   .crow{display:flex;align-items:center;gap:6px;padding:7px 9px;border-bottom:1px solid var(--line);font-size:13px}
   .crow:last-child{border-bottom:none}
-  .crow .cage{width:22px;color:var(--dim);font-size:11.5px;flex:0 0 auto}
+  /* Age as a chip and the rating as a colour-coded badge. The reference game proved both read
+     faster than plain text; ours goes further by banding the badge colour to the rating, so the
+     arc of a career is legible from the column alone. */
+  .crow .cage{width:26px;flex:0 0 auto;text-align:center;font-size:11px;font-weight:700;
+    color:var(--dim);background:var(--bg);border-radius:6px;padding:3px 0}
+  .crow.now .cage{background:var(--accent);color:#06210e}
+  .crow.now{background:linear-gradient(90deg,rgba(63,185,80,.10),transparent)}
+  .ovr{display:inline-block;min-width:30px;text-align:center;font-size:11.5px;font-weight:800;
+    border-radius:6px;padding:2px 5px;font-variant-numeric:tabular-nums;color:#0b0f14}
+  .ovr.t1{background:#5b6570;color:#e6edf3}   /* under 60 — squad player   */
+  .ovr.t2{background:#3f8fb9}                 /* 60-69  — solid pro        */
+  .ovr.t3{background:#3fb950}                 /* 70-79  — very good        */
+  .ovr.t4{background:#d8a23a}                 /* 80-87  — star             */
+  .ovr.t5{background:#e5734a}                 /* 88+    — world class      */
   .crow .cclub{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:12.5px}
   .crow .cst{color:var(--dim);font-size:12px;flex:0 0 auto;font-variant-numeric:tabular-nums}
   /* Numeric columns are right-aligned and tabular so digits line up down the table — the single
      cheapest thing that makes a data table read as a data table rather than as text. */
-  .crow .cnum,.chead .cnum{width:29px;text-align:right;font-variant-numeric:tabular-nums;
+  .crow .cnum,.chead .cnum{width:33px;text-align:right;font-variant-numeric:tabular-nums;
     color:var(--dim);font-size:11.5px;flex:0 0 auto}
   .crow .cval,.chead .cval{width:46px;text-align:right;font-variant-numeric:tabular-nums;
     color:var(--dim);font-size:11.5px;flex:0 0 auto}
-  .crow .cnum:first-of-type{color:var(--txt);font-weight:600}
+
+  .crow.natrow{background:var(--bg);border-top:1px solid var(--line)}
+  .crow.natrow .cclub{font-weight:600}
+  .crow.natrow .cage{background:transparent;font-size:12px}
   .crow.ghost{opacity:.26}
   .crow.ghost .cclub{color:var(--dim);font-weight:400}
   .ctable{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow:hidden}
   .chead{display:flex;gap:6px;padding:6px 9px;font-size:10px;text-transform:uppercase;letter-spacing:.6px;
     color:var(--dim);background:var(--panel2);border-bottom:1px solid var(--line)}
-  .pcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;margin:12px 0}
-  .pcard .pname{font-size:20px;font-weight:800}
-  .pcard .pmeta{font-size:13px;color:var(--dim);margin-top:3px}
-  .strip{display:flex;justify-content:center;gap:0;margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}
+  /* The identity card is the only element on screen for the whole run. A lit top edge over a
+     vertical gradient and a left-aligned reading order (emblem > name > context > numbers) is what
+     turns the crest-free constraint into a signature instead of a substitution. */
+  .pcard{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);
+    border-radius:14px;padding:16px;text-align:left;margin:12px 0;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.055)}
+  .pid{display:flex;align-items:center;gap:12px}
+  .pid .mono{width:48px;height:48px;font-size:18px;border-radius:12px}
+  .pwho{flex:1;min-width:0}
+  .pcard .pname{font-size:20px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+  .pcard .pmeta{font-size:12px;font-weight:500;color:var(--dim);margin-top:3px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .strip{display:flex;margin-top:15px;padding-top:12px;border-top:1px solid var(--line)}
   .sitem{flex:1;text-align:center}
-  .sv{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
-  .sv.big{font-size:26px;color:var(--accent);line-height:1.1}
-  .sl{font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);margin-top:2px}
+  .sitem:first-child{text-align:left}
+  .sitem:last-child{text-align:right}
+  .sv{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+  /* Green means CHANGE, not state. A rating that has just fallen must not print green at 26px. */
+  .sv.big{font-size:26px;color:var(--txt);line-height:1.1;letter-spacing:-.02em}
+  .sdelta{font-size:12px;font-weight:800;margin-left:5px;vertical-align:.42em}
+  .sl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-top:4px}
   .spark{display:block;width:100%;height:34px;margin-top:10px;overflow:visible}
   .sbreak{display:flex;justify-content:center;gap:14px;font-size:12px;color:var(--dim);margin-top:6px}
   .cells{display:flex;flex-direction:column;gap:8px;margin:14px 0}
@@ -357,9 +392,13 @@
 <div class="toast" id="toast"></div>
 
 <script type="module">
-import { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
+// game.js is versioned like the data files. Without this a browser can run a CACHED module
+// against fresh data after a deploy — which during development produced a NaN rating, and in
+// production would silently give some players a different career. Bump APP_V with game.js.
+const APP_V = '2026-08-01';
+const { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity,
-         simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS, parScore, roadNotTaken } from './game.js';
+         simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS, parScore, roadNotTaken } = await import('./game.js?v=' + APP_V);
 
 const MAX_GUESSES = 6;
 // DATA_V: cache-buster for the data files. BUMP THIS whenever data/*.json changes, or players with
@@ -467,16 +506,21 @@ function track(name){
 // A career is a pure projection of (date, decision path). We store only the path, so a reload
 // recomputes an identical career and can never re-roll an outcome.
 function careerSig(){ const st=careerStart(CLUBS, todayStr()); return todayStr()+'|'+CLUBS.length+'|'+st.club.name+'|'+CAREER_PACE; }
+const ovrTier = v => v>=88?'t5' : v>=80?'t4' : v>=70?'t3' : v>=60?'t2' : 't1';
 const stars = p => '★'.repeat(Math.max(1,Math.min(5,Math.ceil((p-34)/13)))) + '☆'.repeat(5-Math.max(1,Math.min(5,Math.ceil((p-34)/13))));
 const KIND_LABEL = { ambition:'AMBITION', minutes:'GAME TIME', balance:'BALANCE' };
 // Stable colour per club, derived from its own name — no lookup table to maintain, and two clubs
 // never collide visually within one career because the career only ever shows a handful at once.
-function clubHue(name){ let h=0; for(const ch of name) h=(h*31+ch.charCodeAt(0))>>>0; return h%360; }
+// Twelve stops, cyan → magenta, deliberately skipping the green band (95-165) and the gold/orange
+// band (15-60) so a club colour can never collide with a semantic colour. Quantising also makes the
+// tiles read as a SET, which is what a wall of real crests does for the reference game.
+const MONO_HUES=[196,208,220,232,244,256,268,280,292,308,324,340];
+function clubHue(name){ let h=0; for(const ch of name) h=(h*31+ch.charCodeAt(0))>>>0; return MONO_HUES[h%MONO_HUES.length]; }
 function monogram(club){
   const words=club.name.replace(/^(1\.|FC|AC|AS|SC|SS|CF|CD|SV|VfB|VfL|RC|SL|CR|SE)\s+/i,'').split(/[\s.-]+/).filter(Boolean);
   const letters=(words.length>1 ? words[0][0]+words[1][0] : club.name.replace(/[^A-Za-zÀ-ÿ]/g,'').slice(0,2)).toUpperCase();
   const h=clubHue(club.name);
-  return '<div class="mono" style="background:linear-gradient(145deg,hsl('+h+' 42% 34%),hsl('+((h+22)%360)+' 46% 24%))">'+letters+'</div>';
+  return '<div class="mono" style="background:linear-gradient(155deg,hsl('+h+' 30% 40%),hsl('+h+' 36% 26%))">'+letters+'</div>';
 }
 const STATUS_LABEL = { loan:'On loan · guaranteed minutes', guaranteed:'Guaranteed minutes',
   rotation:'In the rotation', stay:'Stay and fight for your place', prospect:'One for the future — you will wait' };
@@ -502,10 +546,22 @@ function sparkline(c){
     '</svg>';
 }
 
+// The delta rides beside the rating, so green/orange encodes movement while the number itself
+// stays neutral — a fallen rating no longer renders in the colour that means "good".
+function ratingDelta(c){
+  if(c.rows.length<1) return '';
+  const cur=c.rows[c.rows.length-1].ovrEnd, prev=c.rows.length>1? c.rows[c.rows.length-2].ovrEnd : 50;
+  const d=Math.round(cur-prev); if(!d) return '';
+  return '<span class="sdelta" style="color:'+(d>0?'var(--accent)':'var(--down)')+'">'+(d>0?'+':'')+d+'</span>';
+}
+
 const stat = (label, v, big) => '<div class="sitem"><div class="sv'+(big?' big':'')+'">'+v+'</div>'+
   '<div class="sl">'+label+'</div></div>';
 
 function renderCareer(){
+  // Declared as a hoisted function, not a const: the position-picker branch returns before the
+  // table is built and would otherwise hit the temporal dead zone.
+  function appendTable(){ if(window.__careerTable){ document.getElementById('cells').appendChild(window.__careerTable); window.__careerTable=null; } }
   const cells=document.getElementById('cells'); cells.innerHTML='';
   document.getElementById('hint').style.display='none';
   document.getElementById('pips').innerHTML='';
@@ -555,18 +611,23 @@ function renderCareer(){
     });
     cells.appendChild(wrap);
     document.getElementById('end').classList.remove('show');
+    appendTable();
     return;
   }
 
-  // who you are
+  // who you are — emblem, then name, then context, then the numbers
   const card=document.createElement('div'); card.className='pcard';
-  card.innerHTML='<div class="pname">'+s.surname+'</div>'+
-    '<div class="pmeta">'+s.pos+' · #'+s.number+' · '+s.foot+' footed</div>'+
-    '<div class="pmeta">'+(c.rows.length? (c.rows[c.rows.length-1].club.name) : s.club.name)+'</div>'+
+  const curClub = c.rows.length ? c.rows[c.rows.length-1].club : s.club;
+  const tot = c.rows.reduce((t,r)=>({apps:t.apps+r.apps,g:t.g+r.goals,a:t.a+r.assists,cs:t.cs+(r.cs||0)}),
+                            {apps:0,g:0,a:0,cs:0});
+  card.innerHTML='<div class="pid">'+monogram(curClub)+
+    '<div class="pwho"><div class="pname">'+s.surname+'</div>'+
+    '<div class="pmeta">'+s.pos+' · #'+s.number+' · '+curClub.name+'</div></div></div>'+
     // The live strip: the three numbers a player actually watches, always visible, always current.
     '<div class="strip">'+
       stat('Age', c.rows.length? (16+2*c.rows.length) : 16)+
-      stat('Rating', Math.round(c.rows.length? c.rows[c.rows.length-1].ovr : 50), 'big')+
+      stat('Rating', Math.round(c.rows.length? c.rows[c.rows.length-1].ovrEnd : 50)+ratingDelta(c), 'big')+
+      stat(s.pos==='GK'?'Clean sheets':'Goals', s.pos==='GK'? tot.cs : tot.g)+
       stat('Value', money(c.rows.length? c.rows[c.rows.length-1].value : 0.1))+
     '</div>'+ sparkline(c);
   cells.appendChild(card);
@@ -578,13 +639,13 @@ function renderCareer(){
         '<span class="cnum">OVR</span><span class="cnum">Apps</span><span class="cnum">'+(s.pos==='GK'?'CS':'G/A')+'</span>'+
         '<span class="cval">Value</span></div>'+
       c.rows.map(r=>(r.seasons||[{age:r.age,ovr:r.ovr,apps:r.apps,goals:r.goals,assists:r.assists,cs:r.cs}])
-        .map((sn,i)=>'<div class="crow"'+(i===0?'':' style="border-top:none"')+'>'+
+        .map((sn,i)=>'<div class="crow'+(r===c.rows[c.rows.length-1]?' now':'')+'"'+(i===0?'':' style="border-top:none"')+'>'+
           '<span class="cage">'+sn.age+'</span>'+
           '<span class="cclub">'+(i===0
              ? r.club.name+(r.loan?' <span style="color:var(--dim);font-weight:400">(loan)</span>':'')
              : '<span style="color:var(--dim);font-weight:400">↳</span>')+
             (i===0&&r.honours&&r.honours.length?' <span style="color:var(--gold)">'+'🏆'.repeat(r.honours.length)+'</span>':'')+'</span>'+
-          '<span class="cnum">'+sn.ovr+'</span>'+
+          '<span class="cnum"><i class="ovr '+ovrTier(sn.ovr)+'">'+sn.ovr+'</i></span>'+
           '<span class="cnum">'+sn.apps+'</span>'+
           '<span class="cnum">'+(s.pos==='GK'? sn.cs : (sn.goals+'/'+sn.assists))+'</span>'+
           '<span class="cval">'+(i===0 ? money(r.value) : '')+'</span></div>').join('')).join('');
@@ -598,33 +659,46 @@ function renderCareer(){
         '<div class="crow ghost"><span class="cage">'+a+'</span><span class="cclub">·</span>'+
         '<span class="cnum"></span><span class="cnum"></span><span class="cnum"></span><span class="cval"></span></div>').join('');
     }
-    cells.appendChild(t);
+    // Your country, pinned under the club rows exactly as a real career page would show it.
+    // Caps are the one stat that belongs outside the club table, and keeping it visible from
+    // move one makes "never capped" land as a real outcome rather than an absence.
+    const capsTotal=(c.caps&&c.caps.total)||0, capGoals=(c.caps&&c.caps.goals)||0;
+    t.innerHTML += '<div class="crow natrow"><span class="cage">🌍</span>'+
+      '<span class="cclub">'+s.nat+'</span>'+
+      '<span class="cnum"></span>'+
+      '<span class="cnum">'+(capsTotal||'–')+'</span>'+
+      '<span class="cnum">'+(capsTotal? (s.pos==='GK'? '–' : capGoals) : '–')+'</span>'+
+      '<span class="cval">'+(capsTotal? 'caps' : 'uncapped')+'</span></div>';
+
+    window.__careerTable = t;
   }
 
-  if(c.done || STATE.done){ STATE.done=true; showCareerEnd(c); return; }
+  if(c.done || STATE.done){ appendTable(); STATE.done=true; showCareerEnd(c); return; }
   document.getElementById('end').classList.remove('show');
 
   // WHAT YOUR LAST DECISION DID. Previously a choice silently appended a table row and the
   // consequence had to be inferred by comparing numbers. Now the block that just resolved is
   // stated: rating moved this much, value moved this much, you played this share of the minutes.
-  if(c.rows.length && !c.event){
+  if(c.rows.length){
     const r=c.rows[c.rows.length-1], prev=c.rows[c.rows.length-2];
-    const dOvr=Math.round((prev? r.ovr-prev.ovr : r.ovr-50));
+    const dOvr=Math.round(r.ovrEnd-(prev? prev.ovrEnd : 50));
     const nowV=r.value, prevV=prev? prev.value : 0.1;
     const dVal=nowV-prevV;
     const up=v=>v>0, arrow=v=>v>0?'▲':v<0?'▼':'–';
     const col=v=>v>0?'var(--accent)':v<0?'var(--down)':'var(--dim)';
     const box=document.createElement('div');
-    box.className='resolve';
+    const good = dOvr>=4 || (r.honours&&r.honours.length);
+    const bad  = dOvr<=-3 || r.m<0.20;
+    box.className='resolve'+(good?' rise':bad?' fall':'');
     box.innerHTML=
       '<div class="rhead">'+r.club.name+(r.loan?' (loan)':'')+' · age '+r.age+'–'+(r.age+1)+'</div>'+
       '<div class="rrow">'+
         '<span>Rating <b style="color:'+col(dOvr)+'">'+arrow(dOvr)+' '+(dOvr>0?'+':'')+dOvr+'</b></span>'+
-        '<span>Value <b style="color:'+col(dVal)+'">'+arrow(dVal)+' '+money(nowV)+'</b></span>'+
+        '<span>Value <b style="color:'+col(dVal)+'">'+arrow(dVal)+' '+(dVal>=0?'+':'−')+money(Math.abs(dVal))+'</b></span>'+
         '<span>'+r.apps+' apps'+(s.pos==='GK'? ' · '+r.cs+' cs' : ' · '+r.goals+'⚽')+'</span>'+
       '</div>'+
       // minutes share — the number the sim actually turns on, and the reason a choice worked or did not
-      '<div class="mbar"><i style="width:'+Math.round(r.m*100)+'%"></i></div>'+
+      '<div class="mbar"><i style="width:'+Math.round(r.m*100)+'%;background:'+(r.m<0.25?'var(--down)':'var(--accent)')+'"></i></div>'+
       '<div class="mlab">'+Math.round(r.m*100)+'% of available minutes</div>'+
       (r.honours&&r.honours.length? '<div class="rwin">🏆 '+r.honours.map(h=>h.comp).join(' · ')+'</div>':'');
     cells.appendChild(box);
@@ -649,6 +723,7 @@ function renderCareer(){
       wrap.appendChild(b);
     });
     cells.appendChild(wrap);
+    appendTable();
     return;
   }
 
@@ -672,6 +747,9 @@ function renderCareer(){
     wrap.appendChild(b);
   });
   cells.appendChild(wrap);
+  // The table goes LAST: it grows by two rows every turn, so keeping it above the decision
+  // pushed the thing you actually have to tap further off-screen with every choice.
+  appendTable();
 }
 
 // Transfermarkt's own convention: a market value is never written in full digits — it is
@@ -1178,7 +1256,10 @@ function start(mode, league, diff){
   document.getElementById('guess').focus();
 }
 
-document.addEventListener('DOMContentLoaded',async()=>{
+// Boot must not depend on DOMContentLoaded. A module with a TOP-LEVEL AWAIT (the versioned
+// game.js import above) finishes evaluating AFTER that event has already fired, so a listener
+// registered here would never run and the page would render nothing at all.
+const boot = async()=>{
   const [sq, cl, cb, evs] = await Promise.all([
     fetch('data/squads.json?v='+DATA_V).then(r=>r.json()),
     fetch('data/player-clues.json?v='+DATA_V).then(r=>r.json()).catch(()=>[]),   // mystery-player clues (optional)
@@ -1215,7 +1296,9 @@ document.addEventListener('DOMContentLoaded',async()=>{
       location.reload();
   });
   start(MODE, FIXED_LEAGUE, FIXED_DIFF);
-});
+};
+if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+else boot();
 </script>
 </body>
 </html>
