@@ -13,8 +13,9 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 // The shipped game logic — the SAME module the browser imports (index.html). No more
 // regex-slicing functions out of the HTML; tests track behaviour by importing it directly.
-import { norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
-         careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS } from '../game.js';
+import { mulberry32, hashStr, norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
+         careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS,
+         validateCatalogue, pickEvent, resolveEvent, applyMods, eligible } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -341,4 +342,73 @@ test('career: score is the three locked components and never exceeds 100', () =>
       assert.ok(CAREER_TIERS.some(([, label]) => label === s.tier), 'tier from the constant table');
     }
   }
+});
+
+// ── career events ───────────────────────────────────────────────────────────────────────────
+const EVENTS = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/career-events.json'), 'utf8')).events;
+
+test('events: the catalogue is well-formed and every gamble has a safe way out', () => {
+  const v = validateCatalogue(EVENTS);
+  assert.ok(v.ok, 'catalogue errors:\n' + v.errors.join('\n'));
+  assert.ok(EVENTS.length >= 12, 'enough events that two careers tell different stories');
+  const fams = new Set(EVENTS.map(e => e.family));
+  for (const f of ['gamble', 'offpitch', 'setback', 'peak'])
+    assert.ok(fams.has(f), `family "${f}" missing — variety is the point of this slice`);
+});
+
+test('events: every event changes at least one number (no decoration)', () => {
+  for (const ev of EVENTS) {
+    const touches = ev.options.some(o =>
+      Object.values(o.outcomes || {}).some(x => (x.effects || []).length > 0));
+    assert.ok(touches, `${ev.id}: changes nothing — cut it or give it an effect`);
+  }
+});
+
+test('events: stated odds are the odds actually rolled', () => {
+  const ev = EVENTS.find(e => e.options.some(o => (o.odds || []).length > 1));
+  const opt = ev.options.findIndex(o => (o.odds || []).length > 1);
+  const target = ev.options[opt].odds[0];
+  let hits = 0, N = 4000;
+  for (let i = 0; i < N; i++) {
+    const r = resolveEvent(ev, opt, mulberry32(hashStr('odds' + i)));
+    if (r.key === target[0]) hits++;
+  }
+  const observed = hits / N;
+  assert.ok(Math.abs(observed - target[1]) < 0.04,
+    `${ev.id}: stated ${target[1]}, observed ${observed.toFixed(3)} — the card must not lie`);
+});
+
+test('events: effects compose, and expire when they should', () => {
+  const mods = [{ k: 'ptBonus', v: 5, until: 3 }, { k: 'ptBonus', v: -2, until: 0 }];
+  assert.equal(applyMods(0, 'ptBonus', mods, 2), 3, 'additive keys sum while active');
+  assert.equal(applyMods(0, 'ptBonus', mods, 9), -2, 'expired mods drop out, permanent ones stay');
+  assert.equal(applyMods(1, 'growthMult', [{ k: 'growthMult', v: 1.2, until: 0 },
+                                           { k: 'growthMult', v: 0.5, until: 0 }], 1), 0.6,
+    'multiplicative keys multiply');
+});
+
+test('events: a career with events stays deterministic and reproducible', () => {
+  const p = ['0B', 'E0', '1B', '2A', 'E1', '3B'];
+  const a = simulateCareer(CLUBS, '2026-08-05', p, EVENTS);
+  const b = simulateCareer(CLUBS, '2026-08-05', p, EVENTS);
+  assert.deepEqual(a.rows, b.rows, 'same path, same career — events included');
+  assert.deepEqual(a.tags, b.tags);
+});
+
+test('events: fire often enough to matter, rarely enough to stay special', () => {
+  const counts = [];
+  for (let i = 0; i < 12; i++) {
+    const date = new Date(Date.UTC(2026, 7, 2 + i)).toISOString().slice(0, 10);
+    const p = []; let n = 0, guard = 0;
+    while (guard++ < 40) {
+      const c = simulateCareer(CLUBS, date, p, EVENTS);
+      if (c.done) break;
+      if (c.event) { p.push('E1'); n++; continue; }
+      if (!c.offers.length) break;
+      p.push(c.rows.length + 'B');
+    }
+    counts.push(n);
+  }
+  const avg = counts.reduce((a, b) => a + b, 0) / counts.length;
+  assert.ok(avg >= 2 && avg <= 7, `average ${avg.toFixed(1)} events per career is outside 2-7`);
 });

@@ -1,0 +1,218 @@
+{
+"version": 1,
+"note": "Career-mode events. DATA, not code — adding an event means adding an object here. Every option's odds must sum to 1.0, and at least one option per event must be certain (a safe out). Tone: situations that are funny or painful because they are plausible, never winks at the player.",
+"events": [
+
+{ "id":"newboss","family":"offpitch","weight":10,"repeat":"cooldown:3",
+  "when":{"blockMin":2,"blockMax":8,"blocksAtClubMin":1},
+  "title":"A new manager","body":"{club} have sacked the coach who signed you. The new one has his own ideas.",
+  "options":[
+    {"label":"Fight for your place","note":"55% he comes round · 45% frozen out",
+     "odds":[["win",0.55],["lose",0.45]],
+     "outcomes":{
+       "win":{"copy":"You won him over in pre-season.","effects":[{"k":"ptBonus","v":5,"for":2}]},
+       "lose":{"copy":"He never picked you again.","effects":[{"k":"ptBonus","v":-9,"for":2},{"k":"appsMult","v":0.5,"for":1}]}}},
+    {"label":"Ask to leave now","note":"Certain — you force a move",
+     "odds":[["go",1.0]],
+     "outcomes":{"go":{"copy":"You handed in a transfer request.","effects":[{"k":"forceOffer","v":"minutes","for":1},{"k":"valueMult","v":0.85,"for":0}]}}}
+  ]},
+
+{ "id":"armband","family":"offpitch","weight":8,"repeat":"once",
+  "when":{"ageMin":26,"ovrMin":66,"blocksAtClubMin":1},
+  "title":"The armband","body":"The dressing room at {club} wants you as captain.",
+  "options":[
+    {"label":"Take the armband","note":"Certain — leadership, and the weight of it",
+     "odds":[["yes",1.0]],
+     "outcomes":{"yes":{"copy":"You led them out.","effects":[{"k":"ptBonus","v":4,"for":0},{"k":"growthMult","v":0.9,"for":2},{"k":"tag","v":"Captain","for":0}]}}},
+    {"label":"Stay one of the lads","note":"Certain — keep your own game clean",
+     "odds":[["no",1.0]],
+     "outcomes":{"no":{"copy":"You let someone else carry it.","effects":[{"k":"growthMult","v":1.08,"for":2}]}}}
+  ]},
+
+{ "id":"agent","family":"offpitch","weight":9,"repeat":"once",
+  "when":{"ageMin":20,"ageMax":30,"ovrMin":60},
+  "title":"An offer that is too good","body":"Your agent has found a club willing to triple your wages. He is vague about who owns them.",
+  "options":[
+    {"label":"Take the money","note":"40% it is fine · 60% the wages stop",
+     "odds":[["fine",0.40],["unpaid",0.60]],
+     "outcomes":{
+       "fine":{"copy":"It was fine. You have never been richer.","effects":[{"k":"valueMult","v":1.35,"for":0}]},
+       "unpaid":{"copy":"Three months without wages, and a season lost to it.","effects":[{"k":"appsMult","v":0.45,"for":1},{"k":"growthMult","v":0.7,"for":1},{"k":"bandDown","v":10,"for":2}]}}},
+    {"label":"Stay where the football is","note":"Certain — no windfall, no mess",
+     "odds":[["stay",1.0]],
+     "outcomes":{"stay":{"copy":"You told him to find you a pitch, not a payday.","effects":[{"k":"growthMult","v":1.05,"for":1}]}}}
+  ]},
+
+{ "id":"interview","family":"offpitch","weight":8,"repeat":"once",
+  "when":{"ageMin":20,"ageMax":32},
+  "title":"It came out wrong","body":"A tired answer after a bad defeat is on every back page by morning.",
+  "options":[
+    {"label":"Apologise publicly","note":"Certain — it blows over",
+     "odds":[["sorry",1.0]],
+     "outcomes":{"sorry":{"copy":"You fronted up. It blew over in a week.","effects":[{"k":"ptBonus","v":1,"for":1}]}}},
+    {"label":"Say nothing","note":"60% forgotten · 40% it follows you",
+     "odds":[["quiet",0.60],["follows",0.40]],
+     "outcomes":{
+       "quiet":{"copy":"You said nothing and it died on its own.","effects":[]},
+       "follows":{"copy":"It followed you to every away ground for a year.","effects":[{"k":"ptBonus","v":-4,"for":1},{"k":"valueMult","v":0.9,"for":0}]}}}
+  ]},
+
+{ "id":"homesick","family":"offpitch","weight":7,"repeat":"once",
+  "when":{"ageMin":20,"ageMax":28},
+  "title":"A long way from home","body":"Second winter abroad. The football is fine. Everything else is not.",
+  "options":[
+    {"label":"Push through it","note":"65% you settle · 35% it wears you down",
+     "odds":[["settle",0.65],["worn",0.35]],
+     "outcomes":{
+       "settle":{"copy":"You learned the language and stopped counting the days.","effects":[{"k":"growthMult","v":1.12,"for":2}]},
+       "worn":{"copy":"You never really settled.","effects":[{"k":"growthMult","v":0.82,"for":2},{"k":"ptBonus","v":-3,"for":1}]}}},
+    {"label":"Engineer a move home","note":"Certain — go back, take the step down",
+     "odds":[["home",1.0]],
+     "outcomes":{"home":{"copy":"You went home. Smaller stage, happier.","effects":[{"k":"forceOffer","v":"minutes","for":1},{"k":"bandUp","v":-6,"for":1}]}}}
+  ]},
+
+{ "id":"mentor","family":"offpitch","weight":7,"repeat":"once",
+  "when":{"ageMin":18,"ageMax":24,"prestigeMin":60},
+  "title":"The old pro","body":"A veteran at {club} has taken an interest in you.",
+  "options":[
+    {"label":"Listen to him","note":"Certain — his habits become yours",
+     "odds":[["listen",1.0]],
+     "outcomes":{"listen":{"copy":"He taught you how to train.","effects":[{"k":"growthMult","v":1.18,"for":3}]}}},
+    {"label":"Go your own way","note":"Certain — trust your own instincts",
+     "odds":[["own",1.0]],
+     "outcomes":{"own":{"copy":"You did it your way.","effects":[{"k":"ptBonus","v":2,"for":2}]}}}
+  ]},
+
+{ "id":"cupfinal","family":"gamble","weight":11,"repeat":"once",
+  "when":{"ageMin":22,"prestigeMin":58,"minutesMin":0.35},
+  "title":"The final, and a bad ankle","body":"{club} are in a final. The scan says you should not play.",
+  "options":[
+    {"label":"Play through it","note":"45% hero · 55% out for months",
+     "odds":[["hero",0.45],["broken",0.55]],
+     "outcomes":{
+       "hero":{"copy":"You played, and you won it.","effects":[{"k":"tag","v":"Played the final injured","for":0},{"k":"valueMult","v":1.25,"for":0},{"k":"ptBonus","v":3,"for":1}]},
+       "broken":{"copy":"You lasted twenty minutes. Then six months.","effects":[{"k":"appsMult","v":0.3,"for":1},{"k":"ovrDelta","v":-3,"for":0},{"k":"growthMult","v":0.7,"for":1}]}}},
+    {"label":"Sit it out","note":"Certain — watch from the bench, stay fit",
+     "odds":[["rest",1.0]],
+     "outcomes":{"rest":{"copy":"You watched it in a suit.","effects":[{"k":"growthMult","v":1.05,"for":1}]}}}
+  ]},
+
+{ "id":"abroad","family":"gamble","weight":10,"repeat":"once",
+  "when":{"ageMin":22,"ageMax":30,"ovrMin":64},
+  "title":"A league you do not know","body":"An offer from a country whose football is nothing like yours.",
+  "options":[
+    {"label":"Go","note":"50% you adapt and thrive · 50% you never settle",
+     "odds":[["adapt",0.50],["flop",0.50]],
+     "outcomes":{
+       "adapt":{"copy":"It suited you completely.","effects":[{"k":"growthMult","v":1.3,"for":2},{"k":"bandUp","v":8,"for":2}]},
+       "flop":{"copy":"You never worked it out.","effects":[{"k":"appsMult","v":0.5,"for":1},{"k":"growthMult","v":0.72,"for":2}]}}},
+    {"label":"Stay in familiar football","note":"Certain — no upside, no risk",
+     "odds":[["stay",1.0]],
+     "outcomes":{"stay":{"copy":"You stayed where you knew the game.","effects":[]}}}
+  ]},
+
+{ "id":"reinvent","family":"gamble","weight":9,"repeat":"once",
+  "when":{"ageMin":29,"ageMax":34},
+  "title":"Drop deeper","body":"The legs are going. A coach thinks you could play a different role for another five years.",
+  "options":[
+    {"label":"Reinvent yourself","note":"60% a second career · 40% you lose your edge",
+     "odds":[["renew",0.60],["lost",0.40]],
+     "outcomes":{
+       "renew":{"copy":"You learned a new position at 30.","effects":[{"k":"declineMult","v":0.6,"for":0},{"k":"tag","v":"Reinvented","for":0}]},
+       "lost":{"copy":"You were neither one thing nor the other.","effects":[{"k":"declineMult","v":1.25,"for":0},{"k":"ptBonus","v":-3,"for":2}]}}},
+    {"label":"Play your game while it lasts","note":"Certain — no change",
+     "odds":[["same",1.0]],
+     "outcomes":{"same":{"copy":"You played the only way you knew.","effects":[]}}}
+  ]},
+
+{ "id":"payday","family":"gamble","weight":9,"repeat":"once",
+  "when":{"ageMin":28,"ovrMin":68},
+  "title":"The money move","body":"A rich league, a smaller stage, and more money than you will ever be offered again.",
+  "options":[
+    {"label":"Take it","note":"Certain — paid, and out of the shop window",
+     "odds":[["gone",1.0]],
+     "outcomes":{"gone":{"copy":"You took the money.","effects":[{"k":"valueMult","v":1.5,"for":0},{"k":"bandUp","v":-12,"for":0},{"k":"appsMult","v":1.0,"for":0},{"k":"tag","v":"Chased the money","for":0}]}}},
+    {"label":"Stay relevant","note":"Certain — less money, still watched",
+     "odds":[["stay",1.0]],
+     "outcomes":{"stay":{"copy":"You stayed where people were watching.","effects":[{"k":"ptBonus","v":2,"for":2}]}}}
+  ]},
+
+{ "id":"injury","family":"setback","weight":9,"repeat":"once",
+  "when":{"ageMin":22,"ageMax":32,"minutesMin":0.3},
+  "title":"The knee","body":"It went in training, without contact. Those are the bad ones.",
+  "options":[
+    {"label":"Rush the rehab","note":"40% back early · 60% you break down again",
+     "odds":[["early",0.40],["again",0.60]],
+     "outcomes":{
+       "early":{"copy":"You were back inside four months.","effects":[{"k":"appsMult","v":0.7,"for":1}]},
+       "again":{"copy":"You came back twice and broke down twice.","effects":[{"k":"appsMult","v":0.35,"for":2},{"k":"ovrDelta","v":-4,"for":0}]}}},
+    {"label":"Take the full year","note":"Certain — a season gone, knee intact",
+     "odds":[["full",1.0]],
+     "outcomes":{"full":{"copy":"You gave it a full year.","effects":[{"k":"appsMult","v":0.4,"for":1},{"k":"declineMult","v":0.9,"for":0}]}}}
+  ]},
+
+{ "id":"relegation","family":"setback","weight":9,"repeat":"cooldown:4",
+  "when":{"blockMin":2,"prestigeMax":72,"minutesMin":0.4},
+  "title":"Going down","body":"{club} are relegated. You were their best player.",
+  "options":[
+    {"label":"Go down with them","note":"Certain — loyalty, and a smaller stage",
+     "odds":[["loyal",1.0]],
+     "outcomes":{"loyal":{"copy":"You stayed and carried them.","effects":[{"k":"ptBonus","v":6,"for":2},{"k":"bandUp","v":-8,"for":1},{"k":"tag","v":"Stayed after relegation","for":0}]}}},
+    {"label":"Jump","note":"Certain — someone always calls",
+     "odds":[["jump",1.0]],
+     "outcomes":{"jump":{"copy":"You were gone within a fortnight.","effects":[{"k":"forceOffer","v":"ambition","for":1}]}}}
+  ]},
+
+{ "id":"sold","family":"setback","weight":7,"repeat":"once",
+  "when":{"ageMin":20,"ageMax":30,"prestigeMin":55},
+  "title":"Nobody asked you","body":"{club} have accepted a bid. You found out from your phone.",
+  "options":[
+    {"label":"Refuse to go","note":"35% they back down · 65% you rot in the reserves",
+     "odds":[["stay",0.35],["rot",0.65]],
+     "outcomes":{
+       "stay":{"copy":"You dug in and they backed down.","effects":[{"k":"ptBonus","v":3,"for":1}]},
+       "rot":{"copy":"You trained with the kids until January.","effects":[{"k":"appsMult","v":0.3,"for":1},{"k":"growthMult","v":0.75,"for":1}]}}},
+    {"label":"Go, and go well","note":"Certain — take the move on your terms",
+     "odds":[["go",1.0]],
+     "outcomes":{"go":{"copy":"You left with a straight back.","effects":[{"k":"ptBonus","v":2,"for":1}]}}}
+  ]},
+
+{ "id":"callup","family":"peak","weight":11,"repeat":"once",
+  "when":{"ageMin":20,"ovrMin":70,"minutesMin":0.45},
+  "title":"Your country calls","body":"A first senior call-up. The manager wants you in the squad.",
+  "options":[
+    {"label":"Go, and play everything","note":"Certain — caps, and tired legs",
+     "odds":[["yes",1.0]],
+     "outcomes":{"yes":{"copy":"You won your first cap.","effects":[{"k":"tag","v":"International","for":0},{"k":"valueMult","v":1.2,"for":0},{"k":"growthMult","v":0.95,"for":1},{"k":"bandUp","v":6,"for":2}]}}},
+    {"label":"Focus on your club","note":"Certain — no caps, fresher legs",
+     "odds":[["club",1.0]],
+     "outcomes":{"club":{"copy":"You put the club first.","effects":[{"k":"growthMult","v":1.1,"for":1},{"k":"ptBonus","v":2,"for":2}]}}}
+  ]},
+
+{ "id":"derby","family":"peak","weight":8,"repeat":"cooldown:4",
+  "when":{"blockMin":2,"minutesMin":0.5,"prestigeMin":55},
+  "title":"The derby","body":"One game decides how this city remembers your season.",
+  "options":[
+    {"label":"Demand the ball","note":"55% you decide it · 45% you are the one who missed",
+     "odds":[["hero",0.55],["villain",0.45]],
+     "outcomes":{
+       "hero":{"copy":"You scored the winner. They still sing about it.","effects":[{"k":"tag","v":"Derby winner","for":0},{"k":"ptBonus","v":4,"for":2},{"k":"valueMult","v":1.15,"for":0}]},
+       "villain":{"copy":"You missed the chance. They remember that too.","effects":[{"k":"ptBonus","v":-3,"for":1}]}}},
+    {"label":"Play it simple","note":"Certain — no hero, no villain",
+     "odds":[["safe",1.0]],
+     "outcomes":{"safe":{"copy":"You did your job quietly.","effects":[]}}}
+  ]},
+
+{ "id":"testimonial","family":"peak","weight":6,"repeat":"once",
+  "when":{"ageMin":32,"blocksAtClubMin":3},
+  "title":"A full house","body":"{club} want to give you a testimonial. Ten years is a long time anywhere.",
+  "options":[
+    {"label":"Take the night","note":"Certain — a full house, and a decision to make",
+     "odds":[["yes",1.0]],
+     "outcomes":{"yes":{"copy":"They filled the ground for you.","effects":[{"k":"tag","v":"One-club loyalty","for":0},{"k":"ptBonus","v":3,"for":1}]}}},
+    {"label":"Not yet","note":"Certain — you are not finished",
+     "odds":[["no",1.0]],
+     "outcomes":{"no":{"copy":"You told them you were not done.","effects":[{"k":"declineMult","v":0.92,"for":0}]}}}
+  ]}
+
+]}

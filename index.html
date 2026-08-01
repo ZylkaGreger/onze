@@ -323,7 +323,7 @@ const FIXED_LEAGUE = 'WORLD', FIXED_DIFF = 'medium';
 let MODE = 'squad';
 const GRID_GUESSES = 9;
 
-let DATA, CLUES = [], CLUBS = [], STATE, ALL_NAMES = [], PLAYERS = {};
+let DATA, CLUES = [], CLUBS = [], EVENTS = [], STATE, ALL_NAMES = [], PLAYERS = {};
 let STREAK = { last:'', cur:0, best:0 };
 // One-day World Cup Final skin: auto-on for the final (2026-07-19, UTC via todayStr), or forced with ?wc / ?final.
 // Cosmetic only — no puzzle/logic/share changes. Reverts by itself the next day.
@@ -402,7 +402,7 @@ function renderCareer(){
   document.getElementById('hint').style.display='none';
   document.getElementById('pips').innerHTML='';
   document.querySelector('.inputrow').style.display='none';   // career is tapped, not typed
-  const c = simulateCareer(CLUBS, todayStr(), STATE.path);
+  const c = simulateCareer(CLUBS, todayStr(), STATE.path, EVENTS);
   const s = c.start;
 
   // who you are
@@ -424,6 +424,28 @@ function renderCareer(){
 
   if(c.done || STATE.done){ STATE.done=true; showCareerEnd(c); return; }
   document.getElementById('end').classList.remove('show');
+
+  // an event interrupts the club decision and must be answered first
+  if(c.event){
+    const ev=c.event;
+    const box=document.createElement('div');
+    box.style.cssText='background:rgba(216,162,58,.08);border:1px solid rgba(216,162,58,.35);border-radius:12px;padding:13px;margin:14px 0';
+    box.innerHTML='<div style="font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--gold);font-weight:700">'+ev.family+'</div>'+
+      '<div style="font-weight:800;font-size:16px;margin-top:3px">'+ev.title+'</div>'+
+      '<div style="font-size:13px;color:var(--dim);margin-top:4px;line-height:1.45">'+
+        ev.body.replace('{club}', (c.rows.length?c.rows[c.rows.length-1].club.name:s.club.name)).replace('{name}', s.surname)+'</div>';
+    cells.appendChild(box);
+    const wrap=document.createElement('div'); wrap.style.cssText='display:flex;flex-direction:column;gap:8px';
+    ev.options.forEach((o,i)=>{
+      const b=document.createElement('button'); b.className='offer'; b.type='button';
+      b.innerHTML='<div class="oclub" style="font-size:15px">'+o.label+'</div>'+
+        '<div class="ometa">'+(o.note||'')+'</div>';
+      b.onclick=()=>{ STATE.path.push('E'+i); save(); render(); };
+      wrap.appendChild(b);
+    });
+    cells.appendChild(wrap);
+    return;
+  }
 
   // the decision
   const head=document.createElement('div'); head.style.cssText='font-weight:700;margin:14px 0 8px;font-size:15px';
@@ -451,6 +473,13 @@ function showCareerEnd(c){
   const rev=document.getElementById('reveal');
   rev.innerHTML='Retired at '+c.retireAge+' · peak rating <b>'+sc.peakOvr+'</b> · '+sc.totalApps+' appearances'+
     '<div class="sbreak"><span>Peak '+sc.peakPts+'/50</span><span>Longevity '+sc.lonPts+'/25</span><span>Best club '+sc.clubPts+'/25</span></div>';
+  if(c.tags && c.tags.length){
+    rev.innerHTML += '<div style="margin-top:8px">'+c.tags.map(t=>'<span class="badge" style="margin:0 3px">'+t+'</span>').join('')+'</div>';
+  }
+  if(c.log && c.log.length){
+    rev.innerHTML += '<div style="margin-top:12px;text-align:left;font-size:12px;line-height:1.55">'+
+      c.log.map(l=>'<div style="padding:4px 0;border-top:1px solid var(--line)"><b style="color:var(--txt)">'+(18+2*l.k)+'</b> '+l.copy+'</div>').join('')+'</div>';
+  }
   rev.style.display='block';
   document.getElementById('sharetext').textContent = careerShare(c, sc);
 }
@@ -461,7 +490,8 @@ function careerShare(c, sc){
   // Spoiler-free by construction: a career path reveals the sharer's own decisions, never the
   // day's answer — so unlike the puzzle modes there is nothing to hide.
   const path=c.rows.map(r=>r.club.name).filter((v,i,a)=>a.indexOf(v)===i).slice(0,5).join(' → ');
-  return '🎽 Onze Career — '+dd+'\n'+c.start.surname+' ('+c.start.pos+') · started at '+c.start.club.name+
+  const tag = (c.tags&&c.tags.length) ? '\n'+c.tags.slice(0,2).join(' · ') : '';
+  return '🎽 Onze Career — '+dd+'\n'+c.start.surname+' ('+c.start.pos+') · started at '+c.start.club.name+tag+
     '\n'+sc.total+'/100 · '+sc.tier+' · peak '+sc.peakOvr+stag+'\n'+path+'\nhttps://onzedaily.com/?m=career';
 }
 
@@ -696,7 +726,7 @@ function shareUrl(){
   return STATE.mode==='player' ? 'https://onzedaily.com/?m=player' : 'https://onzedaily.com';
 }
 function shareText(){
-  if(STATE.mode==='career'){ const c=simulateCareer(CLUBS, todayStr(), STATE.path); return careerShare(c, c.score||scoreCareer(c)); }
+  if(STATE.mode==='career'){ const c=simulateCareer(CLUBS, todayStr(), STATE.path, EVENTS); return careerShare(c, c.score||scoreCareer(c)); }
   const dmap={easy:'🟢',medium:'🟡',hard:'🔴'};
   const row=STATE.guesses.map(g=>g.hit?'🟩':'🟥').join('');
   const d=new Date(); const dd=d.getUTCDate()+' '+d.toLocaleString('en',{month:'short',timeZone:'UTC'});
@@ -847,12 +877,13 @@ function start(mode, league, diff){
 }
 
 document.addEventListener('DOMContentLoaded',async()=>{
-  const [sq, cl, cb] = await Promise.all([
+  const [sq, cl, cb, evs] = await Promise.all([
     fetch('data/squads.json?v='+DATA_V).then(r=>r.json()),
     fetch('data/player-clues.json?v='+DATA_V).then(r=>r.json()).catch(()=>[]),   // mystery-player clues (optional)
     fetch('data/clubs.json?v='+DATA_V).then(r=>r.json()).catch(()=>({clubs:[]})),   // career-mode club universe (96 KB)
+    fetch('data/career-events.json?v='+DATA_V).then(r=>r.json()).catch(()=>({events:[]})),  // career events
   ]);
-  DATA=sq; CLUES=cl||[]; CLUBS=(cb&&cb.clubs)||[];
+  DATA=sq; CLUES=cl||[]; CLUBS=(cb&&cb.clubs)||[]; EVENTS=(evs&&evs.events)||[];
   applyFinalTheme();
   try{ STREAK=JSON.parse(localStorage.getItem('onze:streak'))||STREAK; }catch(e){}
   renderStreak();
