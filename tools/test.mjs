@@ -495,3 +495,34 @@ test('positions differ in how they AGE, not in how much they grow', () => {
   for (const p of ['GK', 'DF', 'MF', 'FW'])
     assert.ok(Math.abs(POS_MOD[p].growth - 1) <= 0.08, `${p}: growth modifier is a nudge, not a multiplier`);
 });
+
+test('strategy depth: well-timed ambition beats simply chasing minutes', () => {
+  // The mode's whole premise is that decisions matter and no single rule is optimal. This test
+  // fails if the sim ever collapses into "always take the minutes" — the R2/O-1 failure mode.
+  const timed = (date, pos) => {
+    const p = ['P:' + pos];
+    let guard = 0;
+    while (guard++ < 40) {
+      const c = simulateCareer(CLUBS, date, p, EVENTS);
+      if (c.done) break;
+      if (c.event) { p.push('E' + (c.event.options.length - 1)); continue; }
+      if (!c.offers.length) break;
+      const band = reachBand(c.st.ovr, c.st.k);
+      const amb = c.offers[0];
+      const slot = amb && amb.club.prestige <= band.fit + 6 ? 0 : 1;   // step up only when playable
+      p.push(c.rows.length + 'ABC'[Math.min(slot, c.offers.length - 1)]);
+    }
+    return scoreCareer(simulateCareer(CLUBS, date, p, EVENTS)).total;
+  };
+  let smart = 0, mins = 0, n = 0;
+  for (let i = 0; i < 8; i++) {
+    const date = new Date(Date.UTC(2026, 7, 2 + i)).toISOString().slice(0, 10);
+    for (const pos of ['MF', 'FW']) {
+      smart += timed(date, pos);
+      mins += scoreCareer(playPolicy(date, 'B', pos)).total;
+      n++;
+    }
+  }
+  assert.ok(smart / n > mins / n,
+    `timed ambition (${(smart/n).toFixed(1)}) must beat pure minutes (${(mins/n).toFixed(1)}) — otherwise the mode has one right answer`);
+});

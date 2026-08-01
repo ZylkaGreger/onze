@@ -210,7 +210,7 @@ export const CAREER = Object.freeze({
   // playing time
   DEMAND_A: 30, DEMAND_B: 0.55,          // demand(P) = 30 + 0.55*P
   AGE_ALLOW: [+12, +8, +6, +4, +2, 0, 0, -2, -5, -9, -14],
-  PT_BONUS: { loan: +8, guaranteed: +6, rotation: +2, stay: 0, prospect: -4 },
+  PT_BONUS: { loan: +8, guaranteed: +6, rotation: +2, stay: 0, prospect: -3 },
   PT_NOISE: 2.5,                         // small on purpose: divergence must be STRUCTURAL, not lucky
   K_POS: 5.0, K_NEG: 9.0,                // asymmetric logistic — the bench is a slope, not a cliff
   M_FLOOR: 0.06, M_CAP: 0.92,
@@ -231,12 +231,22 @@ export const CAREER = Object.freeze({
   AGE_VAL: [1.15, 1.15, 1.30, 1.25, 1.25, 1.05, 0.85, 0.60, 0.38, 0.20, 0.08],
   // offers
   PROMISE: [+8, +8, +7, +5, +3, +1, 0, -3, -6, -10, -10],
-  BAND_UP: [+18, +18, +18, +15, +15, +11, +11, +8, +8, +8, +8],
+  // Narrowed from [18,18,18,15,15,11,11,8,8,8,8]. The ambition slot targets the top of this band,
+  // and at +18 that club was so far above the player that no playing-time tweak could rescue it —
+  // slot A was a decoy that never once won. Narrower makes stepping up genuinely playable.
+  BAND_UP: [+12, +12, +12, +11, +11, +9, +9, +7, +7, +7, +7],
   BAND_DOWN: 30,
   P_MIN: 34, P_MAX: 99,                  // the REAL range in clubs.json (not 5..99)
   MAX_LOANS: 2,
   SQUEEZE_M: 0.15,                       // two blocks under this and your club drops you
-  REP_WEIGHT: 0,                         // reputation drag: designed, shipped OFF (see O-1)
+  // Reputation drag stays at 0 — it was designed to stop "chase minutes" dominating, but measuring
+  // the thing it was meant to fix showed the premise was wrong. Over 100 careers per strategy:
+  // pure prestige-chasing 28 (never wins), pure minutes 68, pure balance 63 — but ambition taken
+  // ONLY when you would actually play there scores 74 and beats pure minutes 46 times in 60.
+  // Chasing minutes is a good simple heuristic; knowing when to step up beats it. That is the
+  // skill the mode is about, so the depth is already there. Raising REP_WEIGHT only depressed
+  // every strategy without changing their order.
+  REP_WEIGHT: 0,
   // Events are the texture, not the substance. Fire on roughly half of blocks so a run averages
   // 3-5 of them: enough that two careers tell different stories, few enough that each one lands.
   EVENT_RATE: 0.5,
@@ -322,8 +332,15 @@ export function blockOutcome(st, offer, rnd){
 }
 
 // The prestige band a player of this rating and age can plausibly reach.
-export function reachBand(ovr, k){
-  const fit = (ovr + CAREER.PROMISE[k] - CAREER.DEMAND_A) / CAREER.DEMAND_B;
+export function reachBand(ovr, k, rep){
+  const ratingFit = (ovr + CAREER.PROMISE[k] - CAREER.DEMAND_A) / CAREER.DEMAND_B;
+  // Reputation drag: who calls you depends partly on where you have actually PLAYED, not only on
+  // how good you are. Without it, "always chase minutes" is not merely different but close to
+  // optimal — you can grind a rating at small clubs and still be offered giants. With it, a career
+  // spent two divisions down keeps the giants away a little longer.
+  const fit = (rep === undefined || !CAREER.REP_WEIGHT)
+    ? ratingFit
+    : (1 - CAREER.REP_WEIGHT) * ratingFit + CAREER.REP_WEIGHT * rep;
   return {
     fit,
     hi: clamp(fit + CAREER.BAND_UP[k], CAREER.P_MIN, CAREER.P_MAX),
@@ -359,7 +376,7 @@ export function sampleClub(CLUBS, target, rnd, ctx){
 
 // Three differentiated offers: ambition / minutes / balance.
 export function buildOffers(CLUBS, st, rnd){
-  const band = reachBand(st.ovr, st.k);
+  const band = reachBand(st.ovr, st.k, st.rep);
   const cur = st.club;
   const played = new Set(st.played || []);
   const ctx = { played, stuckCountry: st.stuckCountry, homeCountry: st.homeCountry,
@@ -435,6 +452,7 @@ export function simulateCareer(CLUBS, date, path, EVENTS){
     ovr: start.ovr, k: 0, pos: chosenPos || start.pos, club: start.club, mods: [], tags: [],
     seen: [], seenFamilies: [], lastSeen: {}, blocksAtClub: 0, lastM: 0.5,
     played: [start.club.name], loans: 0, lowBlocks: 0, stuckCountry: null, sameCountry: 1,
+    rep: start.club.prestige,
     homeCountry: start.club.country,
   };
   const rows = [], log = [], honours = [];
@@ -487,6 +505,7 @@ export function simulateCareer(CLUBS, date, path, EVENTS){
     st.lowBlocks = out.m < CAREER.SQUEEZE_M ? st.lowBlocks + 1 : 0;
     st.sameCountry = st.club && st.club.country === pick.club.country ? (st.sameCountry || 1) + 1 : 1;
     st.stuckCountry = st.sameCountry >= 3 ? pick.club.country : null;
+    st.rep = 0.65 * st.rep + 0.35 * pick.club.prestige;
     st.blocksAtClub = st.club && st.club.name === pick.club.name ? st.blocksAtClub + 1 : 1;
     st.lastM = out.m;
     st.club = pick.loan ? pick.parent : pick.club;          // a loan returns you to the parent
