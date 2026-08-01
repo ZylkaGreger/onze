@@ -61,9 +61,13 @@
 <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "31334058083a4b378fd80062bcd872f1"}'></script>
 <style>
   :root{
-    --bg:#0d1117; --panel:#161b22; --panel2:#1c2230; --line:#2a3140;
+    /* One ramp: hue 218 held flat, only lightness moves. The old palette varied hue
+       (216/215/222/221) AND saturation (28/21/26/21%) alongside lightness, and --line sat
+       +9.8 HSL points above --panel where a consumer surface wants ~+5 — which made a box
+       outline the brightest non-text pixel on the page. See research-ui-benchmark.md. */
+    --bg:#0d1117; --panel:#161b22; --panel2:#1C222C; --raised:#242B38; --line:#1F242E;
     --txt:#e6edf3; --dim:#8b949e; --green:#2ea043; --green-d:#196c2e;
-    --red:#6e3030; --accent:#3fb950; --gold:#d8a23a;
+    --red:#6e3030; --accent:#3fb950; --gold:#d8a23a; --down:#e5734a;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--txt);
@@ -89,6 +93,14 @@
     vertical-align:2px;margin-left:5px;animation:pulse 2s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
   body.wc .mbtn.active{color:var(--gold)}
+  .resolve{background:var(--panel2);border:1px solid var(--line);border-radius:11px;padding:11px 12px;margin:14px 0 4px}
+  .resolve .rhead{font-size:12px;color:var(--dim);margin-bottom:6px}
+  .resolve .rrow{display:flex;justify-content:space-between;gap:8px;font-size:12.5px;color:var(--dim);flex-wrap:wrap}
+  .resolve .rrow b{font-variant-numeric:tabular-nums}
+  .mbar{height:4px;background:var(--bg);border-radius:3px;margin-top:9px;overflow:hidden}
+  .mbar i{display:block;height:100%;background:var(--accent);border-radius:3px}
+  .mlab{font-size:10px;color:var(--dim);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
+  .rwin{font-size:12px;color:var(--gold);margin-top:7px}
   .offer{background:var(--panel);border:1px solid var(--line);border-radius:11px;padding:12px 13px;
     cursor:pointer;text-align:left;width:100%;font:inherit;color:var(--txt);display:block;transition:.15s}
   .offer:hover{border-color:var(--accent)}
@@ -96,17 +108,29 @@
   .offer .oclub{font-weight:700;font-size:16px;margin-top:2px}
   .offer .ometa{font-size:12px;color:var(--dim);margin-top:2px}
   .offer .stars{color:var(--gold);font-size:12px;letter-spacing:1px}
-  .crow{display:flex;align-items:center;gap:9px;padding:7px 10px;border-bottom:1px solid var(--line);font-size:13px}
+  .crow{display:flex;align-items:center;gap:6px;padding:7px 9px;border-bottom:1px solid var(--line);font-size:13px}
   .crow:last-child{border-bottom:none}
-  .crow .cage{width:26px;color:var(--dim);font-size:12px;flex:0 0 auto}
-  .crow .cclub{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}
+  .crow .cage{width:22px;color:var(--dim);font-size:11.5px;flex:0 0 auto}
+  .crow .cclub{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:12.5px}
   .crow .cst{color:var(--dim);font-size:12px;flex:0 0 auto;font-variant-numeric:tabular-nums}
+  /* Numeric columns are right-aligned and tabular so digits line up down the table — the single
+     cheapest thing that makes a data table read as a data table rather than as text. */
+  .crow .cnum,.chead .cnum{width:29px;text-align:right;font-variant-numeric:tabular-nums;
+    color:var(--dim);font-size:11.5px;flex:0 0 auto}
+  .crow .cval,.chead .cval{width:46px;text-align:right;font-variant-numeric:tabular-nums;
+    color:var(--dim);font-size:11.5px;flex:0 0 auto}
+  .crow .cnum:first-of-type{color:var(--txt);font-weight:600}
   .ctable{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow:hidden}
-  .chead{display:flex;gap:9px;padding:6px 10px;font-size:10px;text-transform:uppercase;letter-spacing:.6px;
+  .chead{display:flex;gap:6px;padding:6px 9px;font-size:10px;text-transform:uppercase;letter-spacing:.6px;
     color:var(--dim);background:var(--panel2);border-bottom:1px solid var(--line)}
   .pcard{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;text-align:center;margin:12px 0}
   .pcard .pname{font-size:20px;font-weight:800}
   .pcard .pmeta{font-size:13px;color:var(--dim);margin-top:3px}
+  .strip{display:flex;justify-content:center;gap:0;margin-top:12px;padding-top:11px;border-top:1px solid var(--line)}
+  .sitem{flex:1;text-align:center}
+  .sv{font-size:17px;font-weight:700;font-variant-numeric:tabular-nums}
+  .sv.big{font-size:26px;color:var(--accent);line-height:1.1}
+  .sl{font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:var(--dim);margin-top:2px}
   .sbreak{display:flex;justify-content:center;gap:14px;font-size:12px;color:var(--dim);margin-top:6px}
   .cells{display:flex;flex-direction:column;gap:8px;margin:14px 0}
   .cell{background:var(--panel);border:1px solid var(--line);border-radius:10px;
@@ -432,6 +456,9 @@ const KIND_LABEL = { ambition:'AMBITION', minutes:'GAME TIME', balance:'BALANCE'
 const STATUS_LABEL = { loan:'On loan · guaranteed minutes', guaranteed:'Guaranteed minutes',
   rotation:'In the rotation', stay:'Stay and fight for your place', prospect:'One for the future — you will wait' };
 
+const stat = (label, v, big) => '<div class="sitem"><div class="sv'+(big?' big':'')+'">'+v+'</div>'+
+  '<div class="sl">'+label+'</div></div>';
+
 function renderCareer(){
   const cells=document.getElementById('cells'); cells.innerHTML='';
   document.getElementById('hint').style.display='none';
@@ -487,13 +514,21 @@ function renderCareer(){
   const card=document.createElement('div'); card.className='pcard';
   card.innerHTML='<div class="pname">'+s.surname+'</div>'+
     '<div class="pmeta">'+s.pos+' · #'+s.number+' · '+s.foot+' footed</div>'+
-    '<div class="pmeta" style="margin-top:6px">'+(c.rows.length?('Age '+(16+2*c.rows.length)+' · rating '+Math.round(c.rows.length?c.rows[c.rows.length-1].ovr:50)):('Age 16 · '+s.club.name))+'</div>';
+    '<div class="pmeta">'+(c.rows.length? (c.rows[c.rows.length-1].club.name) : s.club.name)+'</div>'+
+    // The live strip: the three numbers a player actually watches, always visible, always current.
+    '<div class="strip">'+
+      stat('Age', c.rows.length? (16+2*c.rows.length) : 16)+
+      stat('Rating', Math.round(c.rows.length? c.rows[c.rows.length-1].ovr : 50), 'big')+
+      stat('Value', money(c.rows.length? c.rows[c.rows.length-1].value : 0.1))+
+    '</div>';
   cells.appendChild(card);
 
   // the career so far
   if(c.rows.length){
     const t=document.createElement('div'); t.className='ctable';
-    t.innerHTML='<div class="chead"><span style="width:26px">Age</span><span style="flex:1">Club</span><span>OVR · Apps · '+(s.pos==='GK'?'CS':'G/A')+'</span></div>'+
+    t.innerHTML='<div class="chead"><span style="width:24px">Age</span><span style="flex:1">Club</span>'+
+        '<span class="cnum">OVR</span><span class="cnum">Apps</span><span class="cnum">'+(s.pos==='GK'?'CS':'G/A')+'</span>'+
+        '<span class="cval">Value</span></div>'+
       c.rows.map(r=>(r.seasons||[{age:r.age,ovr:r.ovr,apps:r.apps,goals:r.goals,assists:r.assists,cs:r.cs}])
         .map((sn,i)=>'<div class="crow"'+(i===0?'':' style="border-top:none"')+'>'+
           '<span class="cage">'+sn.age+'</span>'+
@@ -501,12 +536,41 @@ function renderCareer(){
              ? r.club.name+(r.loan?' <span style="color:var(--dim);font-weight:400">(loan)</span>':'')
              : '<span style="color:var(--dim);font-weight:400">↳</span>')+
             (i===0&&r.honours&&r.honours.length?' <span style="color:var(--gold)">'+'🏆'.repeat(r.honours.length)+'</span>':'')+'</span>'+
-          '<span class="cst">'+sn.ovr+' · '+sn.apps+' · '+(s.pos==='GK'? sn.cs : (sn.goals+'/'+sn.assists))+'</span></div>').join('')).join('');
+          '<span class="cnum">'+sn.ovr+'</span>'+
+          '<span class="cnum">'+sn.apps+'</span>'+
+          '<span class="cnum">'+(s.pos==='GK'? sn.cs : (sn.goals+'/'+sn.assists))+'</span>'+
+          '<span class="cval">'+(i===0 ? money(r.value) : '')+'</span></div>').join('')).join('');
     cells.appendChild(t);
   }
 
   if(c.done || STATE.done){ STATE.done=true; showCareerEnd(c); return; }
   document.getElementById('end').classList.remove('show');
+
+  // WHAT YOUR LAST DECISION DID. Previously a choice silently appended a table row and the
+  // consequence had to be inferred by comparing numbers. Now the block that just resolved is
+  // stated: rating moved this much, value moved this much, you played this share of the minutes.
+  if(c.rows.length && !c.event){
+    const r=c.rows[c.rows.length-1], prev=c.rows[c.rows.length-2];
+    const dOvr=Math.round((prev? r.ovr-prev.ovr : r.ovr-50));
+    const nowV=r.value, prevV=prev? prev.value : 0.1;
+    const dVal=nowV-prevV;
+    const up=v=>v>0, arrow=v=>v>0?'▲':v<0?'▼':'–';
+    const col=v=>v>0?'var(--accent)':v<0?'var(--down)':'var(--dim)';
+    const box=document.createElement('div');
+    box.className='resolve';
+    box.innerHTML=
+      '<div class="rhead">'+r.club.name+(r.loan?' (loan)':'')+' · age '+r.age+'–'+(r.age+1)+'</div>'+
+      '<div class="rrow">'+
+        '<span>Rating <b style="color:'+col(dOvr)+'">'+arrow(dOvr)+' '+(dOvr>0?'+':'')+dOvr+'</b></span>'+
+        '<span>Value <b style="color:'+col(dVal)+'">'+arrow(dVal)+' '+money(nowV)+'</b></span>'+
+        '<span>'+r.apps+' apps'+(s.pos==='GK'? ' · '+r.cs+' cs' : ' · '+r.goals+'⚽')+'</span>'+
+      '</div>'+
+      // minutes share — the number the sim actually turns on, and the reason a choice worked or did not
+      '<div class="mbar"><i style="width:'+Math.round(r.m*100)+'%"></i></div>'+
+      '<div class="mlab">'+Math.round(r.m*100)+'% of available minutes</div>'+
+      (r.honours&&r.honours.length? '<div class="rwin">🏆 '+r.honours.map(h=>h.comp).join(' · ')+'</div>':'');
+    cells.appendChild(box);
+  }
 
   // an event interrupts the club decision and must be answered first
   if(c.event){
@@ -546,6 +610,11 @@ function renderCareer(){
   });
   cells.appendChild(wrap);
 }
+
+// Transfermarkt's own convention: a market value is never written in full digits — it is
+// €14.20m or €450k, symbol first, no thousands separators. Scale below €1m switches to k.
+const money = m => m >= 1 ? '€' + (m >= 100 ? m.toFixed(0) : m.toFixed(1)) + 'm'
+                          : '€' + Math.max(1, Math.round(m * 1000)) + 'k';
 
 const statBox = (label, v) => '<div style="min-width:74px;padding:0 8px"><div style="font-size:20px;font-weight:800">'+v+
   '</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim)">'+label+'</div></div>';
