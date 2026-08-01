@@ -1,10 +1,10 @@
 # Slice 06 — Your position
 
-**Release:** v2 (NOT committed — gated on v1 evidence) · **Effort:** ~1 day ·
-**Stories:** US-006 (draft, not DoR-validated) · **job_id:** J1
+**Release:** v1 (committed — owner call, 2026-08-01) · **Effort:** ~1 day ·
+**Stories:** US-006 · **job_id:** J1
 
-> Draft. Written to keep the option open, deliberately not taken through Definition of Ready.
-> Do not build until the Slice 05 gate passes.
+> Promoted to v1 by the owner: Copero gets strong feedback on position choice, and picking
+> where you play is the moment a run becomes *yours* rather than the day's.
 
 ## Goal
 

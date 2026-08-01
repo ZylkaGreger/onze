@@ -70,18 +70,25 @@ Three signals fire. **Scope assessment: FLAGGED — oversized as a single delive
 Not two feature directories — the narrative is one thing and splitting the docs would fragment
 it. Instead the slice list is cut at a hard line.
 
-- **v1 — Slices 01–05. Committed.** ~5 days. A playable, resumable, shareable daily career.
-  Six stories, one technical task. This is the release.
-- **v2 — Slices 06–09. Not committed.** ~4 days. Position choice, the gamble, honours, par.
-  Every one of these is a good idea. None of them ship until v1 produces evidence that anyone
-  finishes a career at all.
+**Owner decision, 2026-08-01.** The original cut was 01–05, with position choice and the gamble
+held back for evidence. The owner moved both into v1 and widened the gamble, on the grounds that
+they are not polish — they are what makes the thing fun, and Copero gets its strongest feedback
+on exactly these two. Slice 00 was added ahead of everything, because the loan-and-climb arc has
+nowhere to happen while the club universe is 192 top-flight sides.
 
-**This split needs Peter's confirmation before DESIGN begins.** The v2 slice briefs are written
-so the option stays open, but they are drafts and are deliberately not DoR-validated.
+- **Slice 00 — Club universe. Done.** 916 clubs, 43 countries, 54 leagues, first and second
+  divisions, prestige 5–99. Scraped from the current season, so promotions are real.
+- **v1 — Slices 01–07. Committed.** ~7.5 days. A playable, resumable, shareable daily career
+  with a chosen position and an event system with genuine variety.
+- **v2 — Slices 08–09. Not committed.** ~1.25 days. Honours, and par. Both are score-model
+  changes and both are cheaper once v1 shows how careers actually distribute.
 
-Rationale: at ~5 daily players, the cost of building the wrong four days of polish is much
-higher than the cost of shipping a thin thing and watching it. The reference game's own
-richness is not evidence that Onze's five players want it.
+Rationale for the remaining hold: honours adds a fourth score component and would silently
+change what a given number means, and par is meaningless until there is evidence about the
+spread of real scores. Neither is a fun problem; both are calibration.
+
+Trade accepted: v1 grew from ~5 days to ~7.5. The counterweight is that Copero is a live trend
+right now, and shipping a thin-but-dull version into that window would waste the window.
 
 ---
 
