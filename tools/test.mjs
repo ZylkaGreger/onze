@@ -13,7 +13,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 // The shipped game logic — the SAME module the browser imports (index.html). No more
 // regex-slicing functions out of the HTML; tests track behaviour by importing it directly.
-import { norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER } from '../game.js';
+import { norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
+         careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -261,5 +262,83 @@ test("shipped builders produce valid puzzles for today (real game.js code)", () 
     const l = buildLinkPuzzle(D, diff);
     assert.equal(l.reqIds.length, 3, `link ${diff}: expected 3 clubs`);
     assert.ok(oneConnects(...l.reqIds), `link ${diff}: ${l.reqIds.map(nameOf).join('–')} has no common player`);
+  }
+});
+
+// ── career mode ─────────────────────────────────────────────────────────────────────────────
+const CLUBS = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/clubs.json'), 'utf8')).clubs;
+const playPolicy = (date, slot) => {
+  const p = [];
+  for (let k = 0; k < CAREER.BLOCKS; k++) {
+    const c = simulateCareer(CLUBS, date, p);
+    if (c.done || !c.offers.length) break;
+    p.push(k + slot);
+  }
+  return simulateCareer(CLUBS, date, p);
+};
+
+test('career: club universe is usable as a prestige ladder', () => {
+  assert.ok(CLUBS.length > 800, 'enough clubs for a whole career');
+  assert.ok(CLUBS.every(c => c.prestige >= 5 && c.prestige <= 99), 'prestige in range');
+  assert.ok(new Set(CLUBS.map(c => c.country)).size >= 30, 'genuinely international');
+  // second divisions must exist — the loan/climb arc depends on somewhere to drop TO
+  assert.ok(CLUBS.filter(c => c.tier === 2).length > 100, 'second divisions present');
+  // the canary that caught stale training data: promotions must be current
+  const schalke = CLUBS.find(c => /Schalke/.test(c.name));
+  assert.ok(schalke, 'Schalke present');
+  assert.equal(schalke.tier, 1, 'Schalke is a top-flight side this season');
+});
+
+test('career: everyone starts the same day at the same club, and it is stable', () => {
+  const a = careerStart(CLUBS, '2026-08-02'), b = careerStart(CLUBS, '2026-08-02');
+  assert.equal(a.club.name, b.club.name, 'same club for every player worldwide');
+  assert.equal(a.pos, b.pos);
+  assert.equal(a.ovr, 50); assert.equal(a.age, 16);
+  const other = careerStart(CLUBS, '2026-09-15');
+  assert.ok(a.club.name !== other.club.name || a.pos !== other.pos, 'different days differ');
+});
+
+test('career: the same choices always reproduce the same career (no re-roll on reload)', () => {
+  const p = ['0A', '1B', '2C', '3A'];
+  const a = simulateCareer(CLUBS, '2026-08-02', p);
+  const b = simulateCareer(CLUBS, '2026-08-02', p);
+  assert.deepEqual(a.rows, b.rows, 'recomputed identically — results are never stored');
+});
+
+test('career: different policies produce visibly different careers (R2, the core risk)', () => {
+  for (const date of ['2026-08-02', '2026-08-03', '2026-08-04']) {
+    const big = playPolicy(date, 'A'), mins = playPolicy(date, 'B');
+    const sb = big.score || scoreCareer(big), sm = mins.score || scoreCareer(mins);
+    assert.ok(Math.abs(sb.total - sm.total) >= 10,
+      `${date}: policies must diverge, got ${sb.total} vs ${sm.total}`);
+    assert.ok(Math.abs(sb.totalApps - sm.totalApps) >= 100, `${date}: appearances must diverge`);
+  }
+});
+
+test('career: ratings grow, peak, then decline — the emotional spine', () => {
+  const c = playPolicy('2026-08-03', 'B');
+  const ovrs = c.rows.map(r => r.ovr);
+  const peakAt = ovrs.indexOf(Math.max(...ovrs));
+  assert.ok(peakAt >= 3, 'peak is not at the very start');
+  assert.ok(ovrs[ovrs.length - 1] < Math.max(...ovrs), 'decline is inevitable on every path');
+  assert.ok(c.rows.length >= 9 && c.rows.length <= 11, 'career runs 9-11 blocks');
+});
+
+test('career: a 16-year-old is never offered a club far beyond him', () => {
+  const band = reachBand(50, 0);
+  assert.ok(band.hi < 95, 'Real Madrid is unreachable at 16 — structurally, not as a special case');
+  assert.ok(demand(99) > demand(50), 'bigger clubs demand more');
+  // and the band opens up as he grows
+  assert.ok(reachBand(78, 6).hi > band.hi, 'a good 28-year-old can reach further');
+});
+
+test('career: score is the three locked components and never exceeds 100', () => {
+  for (const date of ['2026-08-02', '2026-08-05', '2026-08-09']) {
+    for (const slot of ['A', 'B', 'C']) {
+      const s = scoreCareer(playPolicy(date, slot));
+      assert.equal(s.total, s.peakPts + s.lonPts + s.clubPts, 'total is the sum of its parts');
+      assert.ok(s.total >= 0 && s.total <= 100);
+      assert.ok(CAREER_TIERS.some(([, label]) => label === s.tier), 'tier from the constant table');
+    }
   }
 });

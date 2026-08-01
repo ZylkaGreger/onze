@@ -191,3 +191,276 @@ export function cellRarity(DATA, PLAYERS, rowId, colId, pick){
   const share = sum>0 ? Math.pow(fameOf(pick),E)/sum : 1/Math.max(n,1);
   return Math.max(1, Math.min(99, Math.round((1-share)*100)));
 }
+
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+// CAREER MODE — a daily seeded football career.
+//
+// Everyone starts the same 16-year-old at the same club on a given UTC date; the careers then
+// FORK on decisions alone. Nothing here is stored: a career is a pure function of
+// (date, decision path, clubs, events), so the same choices always reproduce the same career and
+// a reload can never re-roll an outcome. See feature-delta.md "Wave: DESIGN".
+//
+// Uses data/clubs.json (96 KB) ONLY — never data/squads.json (4 MB).
+// ═══════════════════════════════════════════════════════════════════════════════════════════
+
+// All tables indexed by BLOCK INDEX k (0..10) = start ages 16,18,…,36.
+export const CAREER = Object.freeze({
+  BLOCKS: 11,
+  APPS_PER_BLOCK: 82,                    // ~41 games/season incl. cups, over two seasons
+  // playing time
+  DEMAND_A: 30, DEMAND_B: 0.55,          // demand(P) = 30 + 0.55*P
+  AGE_ALLOW: [+12, +8, +6, +4, +2, 0, 0, -2, -5, -9, -14],
+  PT_BONUS: { loan: +8, guaranteed: +6, rotation: +2, stay: 0, prospect: -4 },
+  PT_NOISE: 2.5,                         // small on purpose: divergence must be STRUCTURAL, not lucky
+  K_POS: 5.0, K_NEG: 9.0,                // asymmetric logistic — the bench is a slope, not a cliff
+  M_FLOOR: 0.06, M_CAP: 0.92,
+  // growth
+  GROWTH_AGE: [5.5, 5.0, 4.2, 3.2, 2.2, 1.3, 0.5, -1.5, -3.5, -5.5, -7.5],
+  GAIN_A: 0.12, GAIN_B: 1.25, GAIN_E: 0.9,
+  ENV_A: 0.92, ENV_B: 0.0025,
+  CHALLENGE_DIV: 12, CHALLENGE_LO: -0.35, CHALLENGE_HI: +0.25,
+  GROWTH_CAP: 1.55,
+  DECLINE_A: 1.15, DECLINE_B: 0.30,
+  GROWTH_JITTER: 0.8,
+  OVR_MIN: 40, OVR_MAX: 94,
+  // retirement
+  RETIRE_DROP: 10, RETIRE_MIN_MINUTES: 0.20,
+  RETIRE_P: { 8: 0.20, 9: 0.45, 10: 1.0 },
+  // market value — display only, never scored
+  VAL_A: 0.045, VAL_E: 11.5,
+  AGE_VAL: [1.15, 1.15, 1.30, 1.25, 1.25, 1.05, 0.85, 0.60, 0.38, 0.20, 0.08],
+  // offers
+  PROMISE: [+8, +8, +7, +5, +3, +1, 0, -3, -6, -10, -10],
+  BAND_UP: [+18, +18, +18, +15, +15, +11, +11, +8, +8, +8, +8],
+  BAND_DOWN: 30,
+  P_MIN: 34, P_MAX: 99,                  // the REAL range in clubs.json (not 5..99)
+  MAX_LOANS: 2,
+  SQUEEZE_M: 0.15,                       // two blocks under this and your club drops you
+  REP_WEIGHT: 0,                         // reputation drag: designed, shipped OFF (see O-1)
+});
+
+export const POS_MOD = Object.freeze({
+  GK: { peakShift: +1, growth: 0.85, ptBonus: -1, g: 0.000, a: 0.004, cs: 0.30 },
+  DF: { peakShift: +1, growth: 0.95, ptBonus: 0, g: 0.050, a: 0.045 },
+  MF: { peakShift: 0, growth: 1.00, ptBonus: 0, g: 0.150, a: 0.120 },
+  FW: { peakShift: -1, growth: 1.05, ptBonus: 0, g: 0.420, a: 0.130 },
+});
+
+export const CAREER_TIERS = [[0, 'JOURNEYMAN'], [30, 'SOLID PRO'], [48, 'CULT HERO'], [64, 'STAR'], [80, 'ICON']];
+
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+export function demand(prestige){ return CAREER.DEMAND_A + CAREER.DEMAND_B * prestige; }
+
+// Share of available minutes, 0.06..0.92. The one number the whole sim turns on.
+export function minutesShare(ovr, k, prestige, status, pos, rnd){
+  const pm = POS_MOD[pos] || POS_MOD.MF;
+  const s = ovr + CAREER.AGE_ALLOW[k] + (CAREER.PT_BONUS[status] || 0) + pm.ptBonus
+          - demand(prestige) + ((rnd ? rnd() : 0.5) * 2 - 1) * CAREER.PT_NOISE;
+  const K = s >= 0 ? CAREER.K_POS : CAREER.K_NEG;
+  return clamp(1 / (1 + Math.exp(-s / K)), CAREER.M_FLOOR, CAREER.M_CAP);
+}
+
+// Resolve one 2-season block. st={ovr,k,pos}, offer={prestige,status}.
+export function blockOutcome(st, offer, rnd){
+  const pm = POS_MOD[st.pos] || POS_MOD.MF;
+  const P = offer.prestige;
+  const m = minutesShare(st.ovr, st.k, P, offer.status, st.pos, rnd);
+  const apps = Math.round(m * CAREER.APPS_PER_BLOCK);
+
+  const gi = clamp(st.k + pm.peakShift, 0, CAREER.BLOCKS - 1);
+  const ageGrowth = CAREER.GROWTH_AGE[gi];
+  let delta;
+  if(ageGrowth >= 0){
+    const gain = CAREER.GAIN_A + CAREER.GAIN_B * Math.pow(m, CAREER.GAIN_E);
+    const env = CAREER.ENV_A + CAREER.ENV_B * P;
+    const challenge = clamp((demand(P) - st.ovr) / CAREER.CHALLENGE_DIV, CAREER.CHALLENGE_LO, CAREER.CHALLENGE_HI);
+    const stretch = 1 + challenge * Math.min(1, m / 0.45);   // a stretch move only pays if you PLAY
+    delta = ageGrowth * Math.min(CAREER.GROWTH_CAP, gain * env * stretch) * pm.growth;
+  } else {
+    // Decline deliberately ignores growthMult: playing a lot slows it, nothing stops it.
+    delta = ageGrowth * (CAREER.DECLINE_A - CAREER.DECLINE_B * m);
+  }
+  delta += ((rnd ? rnd() : 0.5) * 2 - 1) * CAREER.GROWTH_JITTER;
+  const ovrNext = clamp(st.ovr + delta, CAREER.OVR_MIN, CAREER.OVR_MAX);
+
+  const q = clamp((st.ovr - 50) / 35, 0, 1.2);
+  const gr = pm.g * (0.55 + 0.85 * q), ar = pm.a * (0.60 + 0.75 * q);
+  const goals = Math.round(apps * gr * (0.85 + 0.30 * (rnd ? rnd() : 0.5)));
+  const assists = Math.round(apps * ar * (0.85 + 0.30 * (rnd ? rnd() : 0.5)));
+  const cs = st.pos === 'GK' ? Math.round(apps * (pm.cs || 0) * (0.50 + 0.70 * q)) : 0;
+  const value = CAREER.VAL_A * Math.exp(st.ovr / CAREER.VAL_E) * CAREER.AGE_VAL[st.k];
+  return { m, apps, goals, assists, cs, ovrNext, value };
+}
+
+// The prestige band a player of this rating and age can plausibly reach.
+export function reachBand(ovr, k){
+  const fit = (ovr + CAREER.PROMISE[k] - CAREER.DEMAND_A) / CAREER.DEMAND_B;
+  return {
+    fit,
+    hi: clamp(fit + CAREER.BAND_UP[k], CAREER.P_MIN, CAREER.P_MAX),
+    lo: clamp(fit - CAREER.BAND_DOWN, CAREER.P_MIN, CAREER.P_MAX),
+  };
+}
+
+// Triangular weight around a target prestige — the band filters, the weight adds realism.
+export function sampleClub(CLUBS, target, rnd, ctx){
+  ctx = ctx || {};
+  const played = ctx.played || new Set();
+  let tau = 5, pool = [];
+  while(pool.length < 8 && tau <= 25){
+    pool = CLUBS.filter(c => c.prestige >= target - tau && c.prestige <= target + tau && !played.has(c.name));
+    tau += 4;
+  }
+  if(!pool.length) pool = CLUBS.filter(c => !played.has(c.name));
+  if(!pool.length) return null;
+  // Continuity matters more than variety. Without a same-country pull the sampler produces a
+  // world tour — Israel → Scotland → Argentina → Portugal — which reads as noise, not a career.
+  // A mild home bias keeps paths believable; the stuck penalty only bites after a third straight
+  // block in one country, which is where "ten Italian clubs" would actually start to show.
+  const w = c => (1 / (1 + Math.abs(c.prestige - target)))
+               * (ctx.loanCountry && c.country === ctx.loanCountry ? 3 : 1)
+               * (ctx.curCountry && c.country === ctx.curCountry ? 2.6 : 1)
+               * (ctx.homeCountry && c.country === ctx.homeCountry ? 1.8 : 1)
+               * (ctx.stuckCountry === c.country ? 0.65 : 1);
+  let tot = 0; for(const c of pool) tot += w(c);
+  let x = rnd() * tot;
+  for(const c of pool){ x -= w(c); if(x <= 0) return c; }
+  return pool[pool.length - 1];
+}
+
+// Three differentiated offers: ambition / minutes / balance.
+export function buildOffers(CLUBS, st, rnd){
+  const band = reachBand(st.ovr, st.k);
+  const cur = st.club;
+  const played = new Set(st.played || []);
+  const ctx = { played, stuckCountry: st.stuckCountry, homeCountry: st.homeCountry,
+                curCountry: st.club ? st.club.country : null };
+
+  // Does the current club still want you?
+  // Block 0 is exempt: you are AT the day's club as a 16-year-old academy player, and the first
+  // decision is about your future FROM there. Without the exemption a 50-rated kid is instantly
+  // "outgrown" by his own academy, so the day's starting club never appears in the career at all
+  // — which breaks the one promise this mode makes ("we all started at X").
+  const squeezed = st.k > 0 && (st.lowBlocks || 0) >= 2;
+  const outgrown = st.k > 0 && cur && cur.prestige > band.hi + 8;
+  const keepCur = cur && !squeezed && !outgrown;
+
+  const offers = [];
+  // A — ambition: the biggest thing available
+  const aTarget = Math.max(cur ? cur.prestige : 0, band.hi);
+  if(keepCur && (st.k === 0 || cur.prestige >= band.hi - 2)){
+    offers.push({ club: cur, status: 'stay', kind: 'ambition' });
+  } else {
+    const c = sampleClub(CLUBS, aTarget, rnd, ctx);
+    if(c){ played.add(c.name); offers.push({ club: c, status: c.prestige > band.fit + 10 ? 'prospect' : 'rotation', kind: 'ambition' }); }
+  }
+  // B — minutes: guaranteed football, or a loan while young and stuck at a giant
+  const canLoan = st.k <= 2 && cur && cur.prestige >= band.fit + 10 && (st.loans || 0) < CAREER.MAX_LOANS;
+  const bTarget = canLoan ? band.fit - 6 : Math.max(band.lo, band.fit - 12);
+  const bClub = sampleClub(CLUBS, bTarget, rnd, canLoan ? { ...ctx, loanCountry: cur.country } : ctx);
+  if(bClub){ played.add(bClub.name); offers.push({ club: bClub, status: canLoan ? 'loan' : 'guaranteed', kind: 'minutes', loan: canLoan, parent: canLoan ? cur : null }); }
+  // C — balance: your level; the current club is pinned here when it fits
+  if(keepCur && Math.abs(cur.prestige - band.fit) <= 12 && !offers.some(o => o.club.name === cur.name)){
+    offers.push({ club: cur, status: 'stay', kind: 'balance' });
+  } else {
+    const c = sampleClub(CLUBS, band.fit, rnd, ctx);
+    if(c) offers.push({ club: c, status: 'rotation', kind: 'balance' });
+  }
+  return offers.filter(Boolean).slice(0, 3);
+}
+
+// The day's seeded 16-year-old. Identical for every player worldwide (D-2).
+export function careerStart(CLUBS, date){
+  const d = date || todayStr();
+  const rnd = mulberry32(hashStr(d + '|career|flavour'));
+  // Start club: a recognisable side, so "we all began at X" means something.
+  const pool = CLUBS.filter(c => c.tier === 1 && c.prestige >= 70 && c.prestige <= 92);
+  const club = pool.length ? pool[Math.floor(rnd() * pool.length)] : CLUBS[0];
+  const POS = ['GK', 'DF', 'MF', 'FW'];
+  const pos = POS[Math.floor(rnd() * POS.length)];
+  const NAMES = ['Ferreira','Novak','Lindqvist','Adeyemi','Costa','Moreau','Halbert','Vasquez','Okafor','Dimitrov','Rossi','Keane'];
+  return {
+    date: d, club, pos,
+    surname: NAMES[Math.floor(rnd() * NAMES.length)],
+    number: 2 + Math.floor(rnd() * 28),
+    foot: rnd() < 0.78 ? 'Right' : 'Left',
+    ovr: 50, age: 16,
+  };
+}
+
+// THE entry point the UI calls. A career is a projection of (date, path) — never stored state.
+export function simulateCareer(CLUBS, date, path){
+  const start = careerStart(CLUBS, date);
+  const tokens = (path || []).slice();
+  const sub = (tag, upto) => mulberry32(hashStr(date + '|career|' + tokens.slice(0, upto).join('|') + '|' + tag));
+
+  const st = {
+    ovr: start.ovr, k: 0, pos: start.pos, club: start.club,
+    played: [start.club.name], loans: 0, lowBlocks: 0, stuckCountry: null, sameCountry: 1,
+    homeCountry: start.club.country,
+  };
+  const rows = [];
+  let peak = start.ovr, done = false, retireAge = null;
+
+  for(let k = 0; k < CAREER.BLOCKS; k++){
+    st.k = k;
+    // Offers are drawn over the path WITHOUT the choice about to be made, so the option set can
+    // never depend on which option you pick.
+    const offers = buildOffers(CLUBS, st, sub('offers', k));
+    const tok = tokens[k];
+    if(tok === undefined) return { start, rows, offers, st: { ...st }, done: false, peak, score: null };
+
+    const slot = { A: 0, B: 1, C: 2 }[String(tok).slice(-1)] ?? 0;
+    const pick = offers[Math.min(slot, offers.length - 1)];
+    if(!pick) break;
+
+    const r = sub('sim', k + 1);
+    const out = blockOutcome(st, { prestige: pick.club.prestige, status: pick.status }, r);
+    rows.push({
+      age: 16 + 2 * k, club: pick.club, loan: !!pick.loan,
+      ovr: Math.round(st.ovr), apps: out.apps, goals: out.goals, assists: out.assists,
+      cs: out.cs, value: out.value, m: out.m,
+    });
+    // advance
+    st.ovr = out.ovrNext;
+    peak = Math.max(peak, st.ovr);
+    st.lowBlocks = out.m < CAREER.SQUEEZE_M ? st.lowBlocks + 1 : 0;
+    st.sameCountry = st.club && st.club.country === pick.club.country ? (st.sameCountry || 1) + 1 : 1;
+    st.stuckCountry = st.sameCountry >= 3 ? pick.club.country : null;
+    st.club = pick.loan ? pick.parent : pick.club;          // a loan returns you to the parent
+    if(pick.loan) st.loans++;
+    if(!st.played.includes(pick.club.name)) st.played.push(pick.club.name);
+
+    // retirement — from block 8, on rating drop / low minutes / a seeded coin
+    if(k >= 8){
+      const p = CAREER.RETIRE_P[k] ?? 1;
+      const worn = (peak - st.ovr) >= CAREER.RETIRE_DROP || out.m < CAREER.RETIRE_MIN_MINUTES;
+      if(k >= 10 || (worn && r() < p + 0.35) || r() < p){
+        done = true; retireAge = 18 + 2 * k - (r() < 0.5 ? 1 : 0); break;
+      }
+    }
+  }
+  const career = { start, rows, done, peak, retireAge: retireAge || (16 + 2 * rows.length) };
+  career.score = done ? scoreCareer(career) : null;
+  career.offers = [];
+  return career;
+}
+
+export function scoreCareer(career){
+  const rows = career.rows || [];
+  const peakOvr = career.peak || 50;
+  const totalApps = rows.reduce((s, r) => s + r.apps, 0);
+  const bestPrestige = rows.reduce((s, r) => Math.max(s, r.club.prestige), 0);
+  const peakPts = clamp(Math.round(50 * (peakOvr - 50) / 45), 0, 50);
+  const lonPts = clamp(Math.round(25 * totalApps / 720), 0, 25);
+  const clubPts = clamp(Math.round(25 * Math.pow((bestPrestige - 40) / 55, 2)), 0, 25);
+  const total = peakPts + lonPts + clubPts;
+  let tier = CAREER_TIERS[0][1];
+  for(const [min, label] of CAREER_TIERS) if(total >= min) tier = label;
+  return { total, peakPts, lonPts, clubPts, tier, peakOvr: Math.round(peakOvr), totalApps, bestPrestige };
+}
+
+// Reference policies — regression fixtures, and the basis for "par" (Slice 09).
+export const POLICY_BIGGEST = (offers) => 0;
+export const POLICY_MINUTES = (offers) => Math.min(1, offers.length - 1);
