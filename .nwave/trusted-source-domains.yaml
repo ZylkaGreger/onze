@@ -1,0 +1,25 @@
+# Trusted Source Domains for Evidence-Driven Research (Onze)
+academic:
+  domains: ["*.edu","*.ac.uk","arxiv.org","acm.org","ieee.org","springer.com","sciencedirect.com","nature.com"]
+  reputation: high
+official:
+  domains: ["*.gov","w3.org","ietf.org","iso.org","nist.gov","learn.microsoft.com","docs.python.org"]
+  reputation: high
+industry_leaders:
+  domains: ["github.com","stackoverflow.com","martinfowler.com","refactoring.guru","nngroup.com","infoq.com","thoughtworks.com/insights"]
+  reputation: medium-high
+technical_documentation:
+  domains: ["developer.mozilla.org","developers.google.com","web.dev","learn.microsoft.com","readthedocs.org","material.io","carbondesignsystem.com","primer.style","atlassian.design"]
+  reputation: high
+open_source:
+  domains: ["apache.org","eclipse.org","cncf.io","opensource.org","linuxfoundation.org"]
+  reputation: high
+medium_trust:
+  domains: ["medium.com","dev.to","smashingmagazine.com","css-tricks.com","transfermarkt.com","transfermarkt.de"]
+  reputation: medium
+  verification_requirements: ["author_verification_required","minimum_3_source_cross_reference"]
+excluded:
+  domains: ["*.blogspot.com","tumblr.com","pastebin.com","quora.com"]
+validation_rules:
+  minimum_sources_per_claim: 3
+  cross_reference_required: true
