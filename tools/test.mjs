@@ -550,3 +550,17 @@ test('road not taken: an exact counterfactual, not a guess', () => {
   assert.equal(again.altScore, rd.altScore);
   assert.equal(again.age, rd.age);
 });
+
+test('offers follow FORM, not just rating — a bench-warmer is not called by giants', () => {
+  // The owner's case: "if I barely played at Juventus, why would Barcelona offer me a contract?"
+  const starter = reachBand(78, 5, undefined, 0.85);
+  const benched = reachBand(78, 5, undefined, 0.12);
+  assert.ok(starter.hi > benched.hi + 10,
+    `playing must open doors that benching closes (${starter.hi.toFixed(0)} vs ${benched.hi.toFixed(0)})`);
+  assert.ok(starter.hi >= 95, 'an ever-present 78 at 26 can reach the very top');
+  assert.ok(benched.hi < 90, 'a benched 78 cannot');
+  // but you can ALWAYS drop a rung — form must never trap a player with no way down
+  assert.ok(benched.lo <= starter.lo + 1, 'the floor is not raised by poor form');
+  // and with no history at all (the very first decision) nothing is penalised
+  assert.equal(reachBand(50, 0, undefined, undefined).hi, reachBand(50, 0).hi);
+});

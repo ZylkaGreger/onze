@@ -116,6 +116,32 @@
     .nu .resolve,.nu .mbar i,.nu .crow.now{animation:none}
     .offer,.offer:active{transition:none;transform:none}
   }
+
+  /* ── Dense identity band ───────────────────────────────────────────────────────────────
+     Replaces a 200px stacked card. Vertical budget is the currency in this screen: every px
+     spent here is a px the career table does not get, and the table is the picture of the life.
+     Anchor left (rating), identity in the middle, age/value right — one row, ~86px. */
+  .band{display:flex;align-items:center;gap:11px;background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border:1px solid var(--line);border-radius:14px;padding:11px 12px;margin:10px 0 8px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.055)}
+  .bovr{flex:0 0 auto;width:58px;height:58px;border-radius:12px;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;color:#0b0f14;font-variant-numeric:tabular-nums}
+  .bovr .bl{font-size:9px;font-weight:800;letter-spacing:.08em;opacity:.72;line-height:1}
+  .bovr .bn{font-size:25px;font-weight:800;line-height:1.05;letter-spacing:-.02em}
+  .bmid{flex:1;min-width:0}
+  .bname{font-size:var(--t-lg);font-weight:800;letter-spacing:-.01em;line-height:1.15;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bchips{display:flex;align-items:center;gap:5px;margin-top:5px}
+  .chip{font-size:10px;font-weight:800;letter-spacing:.04em;padding:3px 6px;border-radius:5px;
+    background:var(--bg);color:var(--dim);white-space:nowrap}
+  .chip.pos{background:#2b2038;color:#d9b8f0}
+  .bclub{font-size:var(--t-xs);color:var(--dim);white-space:nowrap;overflow:hidden;
+    text-overflow:ellipsis;min-width:0}
+  .bright{flex:0 0 auto;text-align:right}
+  .bkv{display:flex;align-items:baseline;justify-content:flex-end;gap:6px;line-height:1.25}
+  .bkv .k{font-size:9px;font-weight:800;letter-spacing:.07em;color:var(--dim)}
+  .bkv .v{font-size:var(--t-md);font-weight:800;font-variant-numeric:tabular-nums}
+  .bspark{display:block;width:100%;height:22px;margin:-2px 0 8px;overflow:visible}
   .modes{display:inline-flex;background:var(--panel2);border:1px solid var(--line);
     border-radius:11px;padding:3px;gap:3px}
   .mbtn{background:transparent;border:none;color:var(--dim);font:inherit;font-size:14px;font-weight:600;
@@ -546,6 +572,16 @@ function track(name){
 // A career is a pure projection of (date, decision path). We store only the path, so a reload
 // recomputes an identical career and can never re-roll an outcome.
 function careerSig(){ const st=careerStart(CLUBS, todayStr()); return todayStr()+'|'+CLUBS.length+'|'+st.club.name+'|'+CAREER_PACE; }
+// Three-letter country code, the way a squad list writes it. Falls back to the first three
+// letters so an unmapped country still renders as a chip rather than a gap.
+const NAT3={Germany:'GER',England:'ENG',Spain:'ESP',Italy:'ITA',France:'FRA',Netherlands:'NED',
+ Portugal:'POR',Belgium:'BEL',Brazil:'BRA',Argentina:'ARG',Turkey:'TUR',Scotland:'SCO',Austria:'AUT',
+ Switzerland:'SUI',Greece:'GRE',Denmark:'DEN',Czechia:'CZE',Croatia:'CRO',Ukraine:'UKR',Serbia:'SRB',
+ Poland:'POL',Norway:'NOR',Sweden:'SWE',Russia:'RUS',Romania:'ROU',Hungary:'HUN',Bulgaria:'BUL',
+ Israel:'ISR',Cyprus:'CYP',Mexico:'MEX',USA:'USA','Saudi Arabia':'KSA',Japan:'JPN','South Korea':'KOR',
+ Uruguay:'URU',Colombia:'COL',Chile:'CHI',Australia:'AUS',Qatar:'QAT',UAE:'UAE',Egypt:'EGY',
+ Morocco:'MAR','South Africa':'RSA'};
+const natCode = c => NAT3[c] || (c||'').slice(0,3).toUpperCase();
 const ovrTier = v => v>=88?'t5' : v>=80?'t4' : v>=70?'t3' : v>=60?'t2' : 't1';
 const stars = p => '★'.repeat(Math.max(1,Math.min(5,Math.ceil((p-34)/13)))) + '☆'.repeat(5-Math.max(1,Math.min(5,Math.ceil((p-34)/13))));
 const KIND_LABEL = { ambition:'AMBITION', minutes:'GAME TIME', balance:'BALANCE' };
@@ -573,13 +609,13 @@ const STATUS_LABEL = { loan:'On loan · guaranteed minutes', guaranteed:'Guarant
 function sparkline(c){
   const pts=[]; c.rows.forEach(r=>(r.seasons||[r]).forEach(sn=>pts.push(sn.ovr)));
   if(pts.length<3) return '';
-  const W=280,H=34,lo=Math.min(...pts)-2,hi=Math.max(...pts)+2,span=Math.max(1,hi-lo);
+  const W=280,H=22,lo=Math.min(...pts)-2,hi=Math.max(...pts)+2,span=Math.max(1,hi-lo);
   const total=CAREER.BLOCKS*2;                       // full life, so the drawn part shows progress
   const x=i=>(i/(total-1))*W, y=v=>H-((v-lo)/span)*H;
   const d=pts.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
   const area=d+' L'+x(pts.length-1).toFixed(1)+' '+H+' L0 '+H+' Z';
   const peakI=pts.indexOf(Math.max(...pts));
-  return '<svg class="spark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true">'+
+  return '<svg class="bspark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true">'+
     '<defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">'+
       '<stop offset="0%" stop-color="var(--accent)" stop-opacity=".28"/>'+
       '<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>'+
@@ -659,22 +695,27 @@ function renderCareer(){
     return;
   }
 
-  // who you are — emblem, then name, then context, then the numbers
-  const card=document.createElement('div'); card.className='pcard';
+  // who you are — one dense band: rating anchors left, identity centre, age/value right
+  const card=document.createElement('div'); card.className='band';
   const curClub = c.rows.length ? c.rows[c.rows.length-1].club : s.club;
-  const tot = c.rows.reduce((t,r)=>({apps:t.apps+r.apps,g:t.g+r.goals,a:t.a+r.assists,cs:t.cs+(r.cs||0)}),
-                            {apps:0,g:0,a:0,cs:0});
-  card.innerHTML='<div class="pid">'+monogram(curClub)+
-    '<div class="pwho"><div class="pname">'+s.surname+'</div>'+
-    '<div class="pmeta">'+s.pos+' · #'+s.number+' · '+curClub.name+'</div></div></div>'+
-    // The live strip: the three numbers a player actually watches, always visible, always current.
-    '<div class="strip">'+
-      stat('Age', c.rows.length? (16+2*c.rows.length) : 16)+
-      stat('Rating', Math.round(c.rows.length? c.rows[c.rows.length-1].ovrEnd : 50)+ratingDelta(c), 'big')+
-      stat(s.pos==='GK'?'Clean sheets':'Goals', s.pos==='GK'? tot.cs : tot.g)+
-      stat('Value', money(c.rows.length? c.rows[c.rows.length-1].value : 0.1))+
-    '</div>'+ sparkline(c);
+  const curOvr  = Math.round(c.rows.length ? c.rows[c.rows.length-1].ovrEnd : 50);
+  const curVal  = c.rows.length ? c.rows[c.rows.length-1].value : 0.1;
+  const tierBg  = { t1:'#5b6570', t2:'#3f8fb9', t3:'#3fb950', t4:'#d8a23a', t5:'#e5734a' }[ovrTier(curOvr)];
+  card.innerHTML =
+    '<div class="bovr" style="background:'+tierBg+(ovrTier(curOvr)==='t1'?';color:#e6edf3':'')+'">'+
+      '<span class="bl">OVR</span><span class="bn">'+curOvr+'</span></div>'+
+    '<div class="bmid">'+
+      '<div class="bname">'+s.surname+ratingDelta(c)+'</div>'+
+      '<div class="bchips"><span class="chip">'+natCode(s.nat)+'</span>'+
+        '<span class="chip pos">#'+s.number+' '+s.pos+'</span>'+
+        '<span class="bclub">'+curClub.name+'</span></div>'+
+    '</div>'+
+    '<div class="bright">'+
+      '<div class="bkv"><span class="k">AGE</span><span class="v">'+(c.rows.length? (16+2*c.rows.length) : 16)+'</span></div>'+
+      '<div class="bkv"><span class="k">VALUE</span><span class="v">'+money(curVal)+'</span></div>'+
+    '</div>';
   cells.appendChild(card);
+  const sp = sparkline(c); if(sp){ const sw=document.createElement('div'); sw.innerHTML=sp; cells.appendChild(sw.firstChild); }
 
   // the career so far
   if(c.rows.length){

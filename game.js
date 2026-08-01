@@ -236,6 +236,9 @@ export const CAREER = Object.freeze({
   // slot A was a decoy that never once won. Narrower makes stepping up genuinely playable.
   BAND_UP: [+12, +12, +12, +11, +11, +9, +9, +7, +7, +7, +7],
   BAND_DOWN: 30,
+  // Form gate on the band's stretch. At FORM_FULL minutes or above you get the full reach; with no
+  // minutes at all you keep only FORM_FLOOR of it, so the giants stop calling until you play again.
+  FORM_FULL: 0.55, FORM_FLOOR: 0.30, FORM_DROP: 9,
   P_MIN: 34, P_MAX: 99,                  // the REAL range in clubs.json (not 5..99)
   MAX_LOANS: 2,
   SQUEEZE_M: 0.15,                       // two blocks under this and your club drops you
@@ -334,8 +337,20 @@ export function blockOutcome(st, offer, rnd){
 }
 
 // The prestige band a player of this rating and age can plausibly reach.
-export function reachBand(ovr, k, rep){
-  const ratingFit = (ovr + CAREER.PROMISE[k] - CAREER.DEMAND_A) / CAREER.DEMAND_B;
+// form = share of available minutes in the last block (0..1), or undefined at the very start.
+// Interest from clubs ABOVE your level follows what scouts can actually see you do. A player who
+// sat on the bench at Juventus does not get a call from Barcelona, however good his rating says he
+// is — which was true of this model until now: the band was f(ovr, age) only, so a bench-warmer
+// and an ever-present received identical offers. Worse, from the mid-twenties on, benching barely
+// dents the rating (35% vs 92% minutes at 26 differ by 0.1), so nothing corrected it downstream.
+// Form gates the STRETCH above your level, never your level itself: you can always drop a rung.
+export function reachBand(ovr, k, rep, form){
+  // Form discounts the rating the MARKET sees, not the rating you have. A player nobody watched
+  // is valued as a lesser player, which is the honest version of "if I barely played at Juventus,
+  // why would Barcelona call" — the answer is that they never saw you play.
+  const reach01 = form === undefined ? 1 : Math.min(1, form / CAREER.FORM_FULL);
+  const seen = ovr - (1 - reach01) * CAREER.FORM_DROP;
+  const ratingFit = (seen + CAREER.PROMISE[k] - CAREER.DEMAND_A) / CAREER.DEMAND_B;
   // Reputation drag: who calls you depends partly on where you have actually PLAYED, not only on
   // how good you are. Without it, "always chase minutes" is not merely different but close to
   // optimal — you can grind a rating at small clubs and still be offered giants. With it, a career
@@ -343,10 +358,12 @@ export function reachBand(ovr, k, rep){
   const fit = (rep === undefined || !CAREER.REP_WEIGHT)
     ? ratingFit
     : (1 - CAREER.REP_WEIGHT) * ratingFit + CAREER.REP_WEIGHT * rep;
+  const reach = CAREER.FORM_FLOOR + (1 - CAREER.FORM_FLOOR) * reach01;
   return {
     fit,
-    hi: clamp(fit + CAREER.BAND_UP[k], CAREER.P_MIN, CAREER.P_MAX),
+    hi: clamp(fit + CAREER.BAND_UP[k] * reach, CAREER.P_MIN, CAREER.P_MAX),
     lo: clamp(fit - CAREER.BAND_DOWN, CAREER.P_MIN, CAREER.P_MAX),
+    reach,
   };
 }
 
@@ -391,7 +408,7 @@ export function sampleClub(CLUBS, target, rnd, ctx){
 
 // Three differentiated offers: ambition / minutes / balance.
 export function buildOffers(CLUBS, st, rnd){
-  const band = reachBand(st.ovr, st.k, st.rep);
+  const band = reachBand(st.ovr, st.k, st.rep, st.lastM);
   const cur = st.club;
   const played = new Set(st.played || []);
   const ctx = { played, stuckCountry: st.stuckCountry, homeCountry: st.homeCountry,
@@ -467,7 +484,7 @@ export function simulateCareer(CLUBS, date, path, EVENTS, pace){
     ovr: start.ovr, k: 0, pos: chosenPos || start.pos, club: start.club, mods: [], tags: [],
     seen: [], seenFamilies: [], lastSeen: {}, blocksAtClub: 0, lastM: 0.5,
     played: [start.club.name], loans: 0, lowBlocks: 0, stuckCountry: null, sameCountry: 1,
-    rep: start.club.prestige,
+    rep: start.club.prestige, lastM: undefined,
     homeCountry: start.club.country,
   };
   const rows = [], log = [], honours = [];
