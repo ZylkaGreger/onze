@@ -1121,3 +1121,863 @@ point, a concrete observable output, and a decision the player makes with it. TT
 3. **Tuning constants are undefined.** The rating curve shape, prestige-band width and score
    component caps are named but not numbered. That is deliberate — they need a working
    simulation to tune against — but DESIGN should expect them to be the bulk of the work.
+
+---
+
+## Wave: DESIGN / [REF] Simulation Model
+
+Lean density, Tier-1. Scope: application design only. No C4, no container/context diagrams, no
+infrastructure, no technology selection — the stack is settled (vanilla ES module, no build,
+static site). Those success criteria are explicitly out of scope and are not attempted.
+
+### Block structure
+
+A career is a sequence of **blocks**. Block `k` (k = 0…10) spans ages `16+2k → 18+2k`. Every
+resolution advances exactly two seasons and appends exactly one career row.
+
+| k | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+|---|---|---|---|---|---|---|---|---|---|---|----|
+| ages | 16–18 | 18–20 | 20–22 | 22–24 | 24–26 | 26–28 | 28–30 | 30–32 | 32–34 | 34–36 | 36–38 |
+
+Retirement fires at the end of block 8, 9 or 10 → **9, 10 or 11 career rows**.
+
+> **Reconciliation with US-002 ("10–12 decisions").** Rows are 9–11. *Player decisions* are
+> 1 (position, Slice 06) + 9–11 (club) = **10–12**, which is what the AC counts. Event decisions
+> (Slice 07) are additional taps, not career rows. See O-6.
+
+Reported retirement age = end age − (seeded coin) → **33–38**, satisfying US-002.
+
+### Constants — `CAREER` in `game.js`
+
+One frozen object, one place to tune, `MEDIUM_BIAS` comment convention (a named value with a
+written rationale, retuned when real data exists).
+
+```js
+// All tables indexed by BLOCK INDEX k (0..10) = start ages 16,18,…,36.
+export const CAREER = Object.freeze({
+  BLOCKS: 11,
+  APPS_PER_BLOCK: 82,          // ~41 games/season incl. cups over two seasons
+
+  // --- playing time ---------------------------------------------------------
+  DEMAND_A: 30, DEMAND_B: 0.55,          // demand(P) = 30 + 0.55*P  → P34→48.7, P50→57.5, P99→84.5
+  AGE_ALLOW:  [ +12, +8, +6, +4, +2,  0,  0, -2, -5, -9, -14 ],
+  PT_BONUS: { loan:+8, guaranteed:+6, rotation:+2, stay:0, prospect:-4 },
+  PT_NOISE: 2.5,               // deliberately small: divergence must be STRUCTURAL, not lucky
+  K_POS: 5.0, K_NEG: 9.0,      // logistic width; asymmetric so the bench is a slope, not a cliff
+  M_FLOOR: 0.06, M_CAP: 0.92,
+
+  // --- growth ---------------------------------------------------------------
+  GROWTH_AGE: [ 5.5, 5.0, 4.2, 3.2, 2.2, 1.3, 0.5, -1.5, -3.5, -5.5, -7.5 ],
+  GAIN_A: 0.12, GAIN_B: 1.25, GAIN_E: 0.9,     // gainMult(m) = 0.12 + 1.25*m^0.9
+  ENV_A: 0.92, ENV_B: 0.0025,                  // envMult(P) = 0.92 + 0.0025*P
+  CHALLENGE_DIV: 12, CHALLENGE_LO: -0.35, CHALLENGE_HI: +0.25,
+  GROWTH_CAP: 1.55,            // caps the positive-growth product; 5.5*1.55 = +8.5 max at 16→18
+  DECLINE_A: 1.15, DECLINE_B: 0.30,            // declineMult(m) = 1.15 - 0.30*m
+  GROWTH_JITTER: 0.8,
+  OVR_MIN: 40, OVR_MAX: 94,
+
+  // --- retirement -----------------------------------------------------------
+  RETIRE_DROP: 10,             // retire once ovr is this far below peak (from block 8 on)
+  RETIRE_MIN_MINUTES: 0.20,
+  RETIRE_P: { 8: 0.20, 9: 0.45, 10: 1.0 },
+
+  // --- market value (display + event triggers only; NOT scored) --------------
+  VAL_A: 0.045, VAL_E: 11.5,   // €m = 0.045 * exp(ovr/11.5) * AGE_VAL[k]
+  AGE_VAL: [1.15,1.15,1.30,1.25,1.25,1.05,0.85,0.60,0.38,0.20,0.08],
+});
+```
+
+### Formulas
+
+```
+demand(P)        = 30 + 0.55 * P
+surplus s        = ovr + AGE_ALLOW[k] + PT_BONUS[status] - demand(P) + (r*2-1)*PT_NOISE
+minutes m        = clamp( 1 / (1 + exp(-s / K)), M_FLOOR, M_CAP )    K = s>=0 ? K_POS : K_NEG
+apps             = round(m * 82)
+
+gainMult(m)      = 0.12 + 1.25 * m^0.9
+envMult(P)       = 0.92 + 0.0025 * P
+challenge        = clamp( (demand(P) - ovr) / 12, -0.35, +0.25 )
+stretch          = 1 + challenge * min(1, m / 0.45)
+growthMult       = min( GROWTH_CAP, gainMult(m) * envMult(P) * stretch ) * POS_MOD[pos].growth
+declineMult(m)   = 1.15 - 0.30 * m
+
+delta            = GROWTH_AGE[k] >= 0 ? GROWTH_AGE[k] * growthMult
+                                      : GROWTH_AGE[k] * declineMult(m)
+                   + (r2*2-1) * GROWTH_JITTER
+ovr'             = clamp(ovr + delta, 40, 94)          // carried as a FLOAT, displayed rounded
+value            = 0.045 * exp(ovr/11.5) * AGE_VAL[k]  // €m, 1dp
+```
+
+**Why this shape.**
+
+- `AGE_ALLOW` is the youth allowance: a club plays a 16-year-old on promise, not on rating, and
+  stops doing so at 30. It is the single term that makes *the same rating* mean bench at one age
+  and starter at another.
+- `challenge` is the design's whole tension. Positive when the club is above you *and you play*
+  → fastest growth. Negative when you are above the club → you coast. The lower clamp (−0.35) is
+  wider than the upper (+0.25) deliberately: coasting costs more than stretching pays. Without
+  the asymmetry "always take guaranteed minutes" is strictly dominant (see O-1).
+- `stretch` scales the challenge bonus by `m/0.45`, so a stretch move only pays **if you actually
+  play**. Riding the bench at a giant gets neither the bonus nor the minutes. This is the
+  bench-warmer trap, and it is structural, not a die roll.
+- **Decline ignores growthMult entirely.** `GROWTH_AGE[k] < 0` routes through `declineMult`, which
+  ranges 0.87…1.13. Playing a lot slows decline slightly; nothing stops it. Decline is therefore
+  inevitable on *every* path, which is what US-002's AC demands and what the emotional arc needs.
+- `PT_NOISE = 2.5` and `GROWTH_JITTER = 0.8` are the only randomness in the sim. They are small
+  on purpose: R2 says the feature dies if the outcome feels like a slot machine. Everything
+  visible comes from the decision.
+
+### Position
+
+One constant set with per-position modifiers, not four archetypes — this answers Slice 06's open
+question ("four sets of tuning constants, or one set with modifiers?").
+
+```js
+export const POS_MOD = {
+  GK: { peakShift:+1, growth:0.85, ptBonus:-1, g:0.000, a:0.004, cs:0.30 },
+  DF: { peakShift:+1, growth:0.95, ptBonus: 0, g:0.050, a:0.045 },
+  MF: { peakShift: 0, growth:1.00, ptBonus: 0, g:0.150, a:0.120 },
+  FW: { peakShift:-1, growth:1.05, ptBonus: 0, g:0.420, a:0.130 },
+};
+q          = clamp((ovr - 50) / 35, 0, 1.2)          // 50→0, 85→1.0, 94→1.2
+goalRate   = POS_MOD[pos].g * (0.55 + 0.85*q)
+assistRate = POS_MOD[pos].a * (0.60 + 0.75*q)
+goals      = round(apps * goalRate   * (0.85 + 0.30*r3))
+assists    = round(apps * assistRate * (0.85 + 0.30*r4))
+cleanSheets= round(apps * 0.30 * (0.50 + 0.70*q))    // GK only, replaces the goals column
+```
+
+`peakShift` shifts the `GROWTH_AGE` lookup by ±1 block (keepers peak later, forwards earlier):
+`GROWTH_AGE[clamp(k + peakShift, 0, 10)]`. `ptBonus:-1` for GK because there is one goalkeeper
+shirt — competition is structurally fiercer. **The GK career table shows `CS` instead of `G`**,
+which is the concrete answer to Slice 06's "table of zeroes" worry.
+
+Sanity: FW at OVR 80 with 60 apps → 0.42×(0.55+0.73) = 0.54/app → 32 goals per two seasons.
+MF at OVR 58 with 68 apps → 7 goals, 6 assists. GK at OVR 70 with 70 apps → 25 clean sheets.
+
+### Career Score (D-1, three components)
+
+```js
+peakPts = clamp(round(50 * (peakOvr - 50) / 45), 0, 50)              // 50→0, 95→50
+lonPts  = clamp(round(25 * totalApps / 720), 0, 25)                  // LONGEVITY_FULL = 720
+clubPts = clamp(round(25 * ((bestPrestige - 40)/55)**2), 0, 25)      // squared: only giants score
+export const CAREER_TIERS = [[0,'JOURNEYMAN'],[30,'SOLID PRO'],[48,'CULT HERO'],[64,'STAR'],[80,'ICON']];
+```
+
+`clubPts` is squared because 68% of `clubs.json` sits in prestige 35–54; a linear map would hand
+20/25 to a Sevilla-level career. Squared: Sevilla(84)→16, Roma(88)→19, Real Madrid(99)→25,
+Wolfsburg(64)→5, a Serie B side(50)→1. `bestPrestige` = max prestige over **career rows**, so loan
+clubs count and a parent club you never played for does not.
+
+The DISCUSS worked examples land on their stated tiers under these constants: Marco 61 → CULT
+HERO, Jonas 53 → CULT HERO, Aisha 37 → SOLID PRO. Point totals shift (see O-4) because the
+prestige source changed; the labels do not.
+
+---
+
+## Wave: DESIGN / [REF] Divergence Proof
+
+R2 is the risk that kills the feature: *if two clearly different decision policies produce similar
+careers, the fantasy collapses into a slot machine.* This section hand-simulates two contrasting
+policies from an identical start, block by block, with the constants above.
+
+**Method note, and it matters:** both runs are computed with **`PT_NOISE = 0` and
+`GROWTH_JITTER = 0`** — the median draw. Every difference below is produced by the decision
+policy alone. None of it is luck. That is the strongest form the proof can take.
+
+**Shared start (seeded day):** `AS Roma (Serie A, prestige 88) · MF · Age 16 · OVR 50`.
+
+### Policy A — always take the biggest club offered
+
+| k | Ages | Club | Status | m | Apps | OVR | G | A |
+|---|------|------|--------|---|------|-----|---|---|
+| 0 | 16–18 | AS Roma (Serie A, 88) | prospect | .094 | 8 | 50 → 52 | 1 | 1 |
+| 1 | 18–20 | AS Roma | prospect | .075 | 6 | 52 → 53 | 1 | 0 |
+| 2 | 20–22 | Legia Warsaw (Ekstraklasa, 64) | prospect | .248 | 20 | 53 → 56 | 2 | 2 |
+| 3 | 22–24 | Genoa CFC (Serie A, 74) | prospect | .158 | 13 | 56 → 57 | 1 | 1 |
+| 4 | 24–26 | Genoa CFC | stay | .215 | 18 | 57 → 58 | 2 | 2 |
+| 5 | 26–28 | Angers SCO (Ligue 1, 64) | prospect | .228 | 19 | 58 → 59 | 2 | 2 |
+| 6 | 28–30 | Angers SCO | stay | .333 | 27 | 59 → **59** | 3 | 3 |
+| 7 | 30–32 | Cardiff City (Championship, 54) | rotation | .489 | 40 | 59 → 58 | 5 | 4 |
+| 8 | 32–34 | Cardiff City | stay | .317 | 26 | 58 → 54 | 3 | 2 |
+| 9 | 34–36 | Beerschot (Challenger Pro, 38) | rotation | .396 | 32 | 54 → 48 | 3 | 3 |
+
+Retires at 35 (block 9 end, OVR 48.4 is 10.9 below peak → `RETIRE_DROP` fires).
+**10 rows · 209 apps · 23 g · 20 a · peak OVR 59 at 30 · best club Roma (88) · peak value ~€8m.**
+
+Score: peak `50×(59−50)/45` = **10** · longevity `25×209/720` = **7** · club `25×((88−40)/55)²` =
+**19** → **36 · SOLID PRO**.
+
+### Policy B — always chase minutes
+
+| k | Ages | Club | Status | m | Apps | OVR | G | A |
+|---|------|------|--------|---|------|-----|---|---|
+| 0 | 16–18 | Südtirol (Serie B, 47) | **loan** | .920 | 75 | 50 → 59 | 6 | 5 |
+| 1 | 18–20 | KAA Gent (Belgian Pro, 61) | **loan** | .900 | 74 | 59 → 66 | 8 | 7 |
+| 2 | 20–22 | Torino (Serie A, 68) | guaranteed | .898 | 74 | 66 → 73 | 10 | 8 |
+| 3 | 22–24 | OGC Nice (Ligue 1, 74) | guaranteed | .920 | 75 | 73 → 76 | 12 | 10 |
+| 4 | 24–26 | AFC Ajax (Eredivisie, 82) | guaranteed | .866 | 71 | 76 → 79 | 13 | 10 |
+| 5 | 26–28 | Sevilla (La Liga, 84) | guaranteed | .856 | 70 | 79 → 80 | 13 | 10 |
+| 6 | 28–30 | Atalanta BC (Serie A, 85) | guaranteed | .878 | 72 | 80 → **81** | 14 | 11 |
+| 7 | 30–32 | FC Porto (Primeira Liga, 82) | guaranteed | .883 | 72 | 81 → 80 | 14 | 11 |
+| 8 | 32–34 | Legia Warsaw (Ekstraklasa, 64) | guaranteed | .920 | 75 | 80 → 77 | 14 | 11 |
+| 9 | 34–36 | Cardiff City (Championship, 54) | guaranteed | .920 | 75 | 77 → 72 | 14 | 11 |
+| 10 | 36–38 | Sampdoria (Serie B, 46) | guaranteed | .851 | 70 | 72 → 65 | 11 | 9 |
+
+Retires at 38 (block 10 is the last block).
+**11 rows · 803 apps · 129 g · 103 a · peak OVR 81 at 30 · best club Atalanta (85) · peak value
+~€46m.**
+
+Score: peak `50×(81−50)/45` = **34** · longevity `25×803/720` → clamped **25** · club
+`25×((85−40)/55)²` = **17** → **76 · STAR**.
+
+### Verdict
+
+| | A — biggest club | B — chase minutes | Δ | US-002 threshold |
+|---|---|---|---|---|
+| Peak OVR | 59 (age 30) | 81 (age 30) | **+22** | ≥8 ✅ |
+| Total apps | 209 | 803 | **+594** | ≥80 ✅ |
+| Goals | 23 | 129 | +106 | — |
+| Best club | Roma (88) | Atalanta (85) | **−3** | — |
+| Retired | 35 | 38 | +3 | 33–38 ✅ |
+| Peak value | ~€8m | ~€46m | ×5.8 | — |
+| **Career Score** | **36 · SOLID PRO** | **76 · STAR** | **+40** | — |
+
+Block-0 divergence, which US-001 also gates: **8 apps vs 75** (≥30 required ✅) and
+**+2 OVR vs +9** (≥3 required ✅).
+
+**The policies diverge, and they diverge structurally.** With all noise zeroed the gap is still
+40 points and two tiers. The mechanism is legible: A never plays, so `gainMult` sits near its
+0.27 floor for a decade; B plays 90% of available minutes, so `gainMult` sits near its 1.28
+ceiling, and the `stretch` term pays out because he is repeatedly one rung below his club's
+demand while still starting.
+
+**A's one win is best-club (19 vs 17)** — and that is the design working. D-1's three components
+are genuinely three different routes, so the prestige-chaser is not simply dominated on every
+axis. That is what makes the results-screen breakdown an argument rather than a verdict.
+
+**What the proof also exposes:** Policy B is close to *optimal*, not merely different — chasing
+minutes wins the two components worth 75 of the 100 points. The counterweights in v1 are the
+`CHALLENGE_LO = −0.35` coasting penalty (already tuned to make pure-minutes non-trivial), the
+best-club component, and Slice 07's events. This is a real residual risk, tracked as O-1 with a
+named fix and a named trigger. It is a *lesser* failure than R2 — "solved" beats "slot machine" —
+but it should not survive v2.
+
+**Two fixed policies as regression fixtures.** `tools/test.mjs` asserts these exact tables. The
+policies are `POLICY_BIGGEST` and `POLICY_MINUTES`, both pure functions
+`(offers, state) => slotIndex`, reused as the "par" bot in Slice 09.
+
+---
+
+## Wave: DESIGN / [REF] Offer Generation
+
+### The data, as it actually is
+
+`data/clubs.json` was profiled before designing against it. The brief says prestige 5–99; **the
+file's real range is 34–99**, mean 53.1, median 50.
+
+| Bucket | 25–34 | 35–44 | 45–54 | 55–64 | 65–74 | 75–84 | 85–99 |
+|---|---|---|---|---|---|---|---|
+| Tier 1 (715) | 0 | 86 | 342 | 150 | 81 | 37 | 19 |
+| Tier 2 (201) | 1 | 93 | 100 | 6 | 1 | 0 | 0 |
+
+Consequences the design must respect:
+
+1. **Bands must be expressed in the 34–99 space, not 5–99.** Any formula written against the
+   brief's stated range would push half the offer targets below the floor and jam every low-band
+   draw into the same 40 clubs.
+2. **Prestige is stratified by league, not global.** Within a country, tier is almost perfectly
+   recoverable from prestige (only England 70–72 and Spain 60–61 overlap, one club each side).
+   Globally they overlap heavily: an English Championship club (mean 53.8) outranks the whole of
+   the Dutch second tier and the floor of the Scottish top flight.
+3. **Therefore the tier-1/tier-2 climb needs no separate mechanic.** It falls out of a rising
+   `P_fit`. What it needs is *legibility* — see the display rule below.
+
+### Reachable band
+
+```
+P_fit(ovr, age)  = (ovr + PROMISE[k] - 30) / 0.55            // inverse of demand()
+P_hi             = clamp(P_fit + BAND_UP[k], 34, 99)
+P_lo             = clamp(P_fit - BAND_DOWN,  34, 99)
+
+PROMISE:   [ +8, +8, +7, +5, +3, +1,  0, -3, -6, -10, -10 ]
+BAND_UP:   [ +18, +18, +18, +15, +15, +11, +11, +8, +8, +8, +8 ]
+BAND_DOWN: 30 (constant — you can always drop)
+```
+
+`PROMISE` is the age-shaped premium a club pays for a future; it goes negative at 30 and is the
+term that makes the giants stop calling. `BAND_UP` narrows with age for the same reason: the band
+is widest at 16–20 (a prodigy can jump anywhere) and tightest after 30.
+
+Worked checks against real clubs:
+
+| Player | P_fit | P_hi | Reachable? |
+|---|---|---|---|
+| OVR 50, age 16 | 50.9 | 68.9 | Real Madrid (99) **no** ✅ · Wolfsburg (64) yes |
+| OVR 55, age 18 | 60.0 | 78.0 | Sevilla (84) no · OGC Nice (74) yes |
+| OVR 65, age 22 | 72.7 | 87.7 | Newcastle (88) no · Atalanta (85) yes |
+| OVR 78, age 28 | 87.3 | 98.3 | Barcelona (98) yes · Real Madrid (99) no |
+| OVR 78, age 32 | 76.4 | 84.4 | Sevilla (84) yes · Roma (88) **no** — the melancholy |
+| OVR 70, age 34 | 54.5 | 62.5 | top flights closing |
+
+The explicit anti-absurdity guarantee US-001 asks for — *a 50-rated 16-year-old is not offered
+Real Madrid* — is the first row, and it is structural rather than a special case.
+
+### The three offers
+
+Exactly three slots, always distinct, always ≥6 prestige apart.
+
+| Slot | Archetype | Target prestige | Status | PT |
+|---|---|---|---|---|
+| **A** | **Ambition** | `max(currentP, P_hi)` — the biggest thing available | `prospect` if target > `P_fit+10`, else `rotation`; `stay` if it *is* the current club | −4 / +2 / 0 |
+| **B** | **Minutes** | `P_fit − 12`, clamped to `P_lo` | `guaranteed` (+6) — or **`loan`** (+8), see below | +6 / +8 |
+| **C** | **Balance** | `P_fit`; **the current club is pinned here if `abs(currentP − P_fit) ≤ 12`** | `stay` or `rotation` | 0 / +2 |
+
+Three rules that make this behave:
+
+- **`stay` is always status `stay` (0), never `prospect`.** Staying put cannot change your standing
+  at a club you are already at. Without this rule the sim produces an artefact where a player's
+  minutes drop on a block where nothing changed.
+- **Squeeze-out.** If `m < 0.15` for two consecutive blocks, the current club is removed from the
+  offer set entirely, rendered as *"{Club} have told you to find regular football."* Without this,
+  "always take the biggest club" is a dead end: an academy player who never plays never grows,
+  so his band never rises, so his own club stays the biggest offer forever, so he plays eleven
+  blocks of six appearances. The rule is realistic, it prevents a degenerate run, and it is what
+  turns Policy A above into a plausible career instead of a flat line.
+- **Current-club expiry.** The current club also drops off when `currentP > P_hi + 8` — a 32-year-old
+  squad player is not renewed by a club two bands above him. This is the mechanic that produces
+  the slow descent in both worked careers.
+
+### Sampling
+
+```js
+// CLUBS is data/clubs.json.clubs, indexed once at load, sorted ascending by prestige.
+function sampleClub(CLUBS, target, rnd, ctx){
+  let tau = 5, pool = [];
+  while(pool.length < 8 && tau <= 25){ pool = inRange(CLUBS, target-tau, target+tau)
+       .filter(c => !ctx.played.has(c.name)); tau += 4; }
+  const w = c => (1 / (1 + Math.abs(c.prestige - target)))
+               * (ctx.loanCountry && c.country === ctx.loanCountry ? 3 : 1)
+               * (ctx.stuckCountry === c.country ? 0.5 : 1);
+  return weightedPick(pool, w, rnd);          // same running-total loop as buildPuzzle()
+}
+```
+
+- **Triangular weight** around the target: the band is a plausibility filter, the weight is the
+  realism. Extremes of the band are reachable but rare.
+- **`played` exclusion** — never offered a club already in the career (except the pinned current
+  club). Keeps the PATH row worth reading.
+- **`loanCountry` ×3** — loan destinations are biased toward the parent club's country. Without
+  it a Roma academy graduate gets loaned to a Dutch second-division side, which reads wrong.
+- **`stuckCountry` ×0.5** — after two consecutive blocks in one country, halve that country's
+  weight. Cheap texture; keeps the PATH from being ten Italian clubs.
+- τ widens 5 → 9 → 13 … until ≥8 candidates exist, which is the guarantee behind US-002's AC
+  *"no decision presents fewer than three options"* and closes R9 at both prestige extremes.
+
+### Loan and climb arc
+
+Loans are offered in Slot B when **all** of: `age ≤ 21`, `currentP ≥ P_fit + 10`, and fewer than
+`MAX_LOANS = 2` taken.
+
+- Loan target is `P_fit − 6` (not −12): a loan from a giant goes to a real club, and the +8 loan
+  bonus already guarantees the minutes. This is what makes block 0 of Policy B a Serie B side
+  rather than a Dutch second-tier club.
+- `state.parent` holds the registered club for the loan's duration. A loan lasts exactly one
+  block. On return, Slot A becomes *"Return to {parent}"* with status `stay`.
+- The loan club **counts** for apps, goals, best-club prestige and the PATH; the parent club during
+  a loan does not.
+- PATH renders `Südtirol (loan)`.
+
+**Climb legibility.** The offer card carries club, league and tier: `SÜDTIROL · SERIE B · 2nd tier
+· ★★☆☆☆`. Stars are `ceil((prestige−34)/13)` clamped 1–5, type only, **no crests, ever (C1)**.
+Because tier is near-perfectly recoverable from prestige within a country, dropping a tier and
+climbing back is visible without any extra mechanic.
+
+### Reputation drag — designed, shipped OFF
+
+```
+P_fit = 0.75 * ratingFit + 0.25 * rep,   rep' = 0.65*rep + 0.35*P_block,   rep0 = startClub.prestige
+REP_WEIGHT = 0        // v1 ships at 0. The lever exists; it is not pulled yet.
+```
+
+A player who spends his twenties in the Championship should not be offered Real Madrid at 30 on
+rating alone. This is the named fix for O-1 (chase-minutes near-dominance): it drags the
+minutes-chaser's band down and holds the prestige-chaser's band up. It is **deliberately shipped
+at 0** so v1 validates the simplest model that demonstrably diverges — the proof above stands on
+constants a reader can check by hand. Trigger for enabling it is written into O-1.
+
+---
+
+## Wave: DESIGN / [REF] Event Engine
+
+Slice 07's hard requirement: **events are data, not code.** Adding an event must mean adding a
+JSON object to `data/career-events.json` and nothing else. The only thing that requires a code
+change is inventing a *new kind of condition* or a *new kind of effect* — and that boundary is
+made explicit below rather than left to erode.
+
+### Schema — `data/career-events.json`
+
+```json
+{
+  "version": 1,
+  "events": [ { /* Event */ } ]
+}
+```
+
+```
+Event {
+  id       : string            // stable, unique; appears in the decision path
+  family   : "crossroads" | "gamble" | "offpitch" | "setback" | "peak"
+  weight   : number            // relative selection weight within the eligible pool
+  repeat   : "once" | "family-once" | "cooldown:N" | "always"
+  when     : Predicate
+  title    : string
+  body     : string            // {club} {league} {name} {age} {ovr} interpolated
+  options  : Option[]          // >= 2, and >= 1 must be certain (single outcome, p = 1.0)
+}
+
+Predicate {                    // every key optional; ALL present keys must hold (AND)
+  ageMin, ageMax               : number
+  ovrMin, ovrMax               : number
+  prestigeMin, prestigeMax     : number
+  minutesMin, minutesMax       : number     // last block's m
+  blockMin, blockMax           : number     // block index
+  blocksAtClubMin              : number
+  valueMin                     : number     // €m
+  tierIn                       : number[]
+  positionIn                   : string[]
+  requires                     : string[]   // tags the career must already carry
+  excludes                     : string[]   // event ids or tags that block this one
+}
+
+Option {
+  label    : string
+  note     : string            // the stated-odds line, e.g. "55% Starter · 45% Bench"
+  outcomes : { <key>: Outcome }
+  odds     : [ [key, p], ... ] // p must sum to 1.0 +/- 1e-6; a single [key,1.0] = the safe out
+}
+
+Outcome { copy: string, effects: Effect[] }
+
+Effect { k: EffectKey, v: number|string, for: number }   // for = blocks; 0 = permanent
+```
+
+### Effect vocabulary — the closed set
+
+This table *is* the contract between the catalogue and the simulation. Every key maps onto a
+named input of the sim above. Nothing else is expressible, which is what keeps events from
+becoming code.
+
+| `k` | Applies to | Composition | Typical `v` |
+|---|---|---|---|
+| `ptBonus` | surplus `s` | additive (rating points) | −10 … +8 |
+| `growthMult` | positive-growth product | multiplicative | 0.6 … 1.4 |
+| `declineMult` | decline multiplier | multiplicative | 0.85 … 1.3 |
+| `ovrDelta` | `ovr`, one-shot at apply time | additive | −4 … +3 |
+| `appsMult` | block appearances | multiplicative | 0.25 … 1.0 |
+| `bandUp` | `BAND_UP[k]` | additive prestige | −10 … +12 |
+| `bandDown` | `BAND_DOWN` | additive prestige | 0 … +20 |
+| `valueMult` | market value | multiplicative | 0.5 … 1.6 |
+| `forceOffer` | offer generation | pins one slot to an archetype (`"minutes"`, `"ambition"`) | string |
+| `forceTier` | offer generation | restricts the sampled tier | 1 \| 2 |
+| `tag` | career record | adds a permanent badge to the row, results screen and share | string |
+
+**Composition rule.** Active effects live in `state.mods = [{k, v, until}]`. `applyMods(base, k)`
+folds them: additive keys sum onto the base, multiplicative keys multiply. `until` is a block
+index; `for: 0` means permanent. **`state.mods` is never persisted** — it is re-derived from the
+decision path on every replay (see Determinism below), so an event's effects cannot drift between
+a live run and a resumed one.
+
+Ordering is fixed and documented so it is testable: `ovrDelta` applies immediately at the event;
+`ptBonus` folds into `s` *before* the logistic; `growthMult`/`declineMult` fold in *after*
+`GROWTH_CAP`; `appsMult` applies after `round(m*82)`.
+
+### Selection
+
+```js
+const EVENT_RATE = [0.15,0.30,0.45,0.50,0.50,0.50,0.45,0.40,0.35,0.30,0.20];  // per block index
+// sums to ~3.9 expected events per run -> Slice 07's "start at 3-4 and tune"
+
+function pickEvent(EVENTS, ctx, rnd){
+  if(rnd() > EVENT_RATE[ctx.k]) return null;
+  const pool = EVENTS.events.filter(e => repeatOK(e, ctx) && eligible(e.when, ctx));
+  if(!pool.length) return null;
+  const w = e => e.weight * (e.family === ctx.lastFamily ? 0.35 : 1);   // family cooldown
+  return weightedPick(pool, w, rnd);
+}
+```
+
+Fired **after** the club decision resolves and **before** the next offer set is built, so an event
+can legitimately shape what comes next via `forceOffer` / `bandUp`.
+
+`repeatOK` implements the four repeat modes: `once` (id in `ctx.seenIds` → blocked),
+`family-once` (family in `ctx.seenFamilies` → blocked), `cooldown:N` (id fired within N blocks →
+blocked), `always`.
+
+The `rnd() > EVENT_RATE` gate is drawn from the **`event.pick` sub-stream** and consumes exactly
+one value whether or not an event fires, so the presence of an event never shifts any other draw.
+
+### Three worked events, three families
+
+```json
+{
+  "id": "new-manager-doesnt-rate-you",
+  "family": "offpitch", "weight": 10, "repeat": "once",
+  "when": { "ageMin": 20, "ageMax": 33, "prestigeMin": 55, "minutesMax": 0.55, "blocksAtClubMin": 1 },
+  "title": "A new manager",
+  "body": "{club} have appointed a coach who watched you twice and picked someone else both times.",
+  "options": [
+    { "label": "Fight for your place", "note": "45% win him over · 55% frozen out",
+      "odds": [["won",0.45],["frozen",0.55]],
+      "outcomes": {
+        "won":    { "copy": "Two goals in a fortnight. He never mentions it again.",
+                    "effects": [ {"k":"ptBonus","v":6,"for":1} ] },
+        "frozen": { "copy": "You train with the group and travel with nobody.",
+                    "effects": [ {"k":"ptBonus","v":-9,"for":1}, {"k":"valueMult","v":0.8,"for":1} ] } } },
+    { "label": "Ask to leave", "note": "Certain — a move, a rung down",
+      "odds": [["sure",1.0]],
+      "outcomes": {
+        "sure": { "copy": "The club does not fight to keep you. That stings more than the bench.",
+                  "effects": [ {"k":"forceOffer","v":"minutes","for":1}, {"k":"bandUp","v":-6,"for":1} ] } } }
+  ]
+}
+```
+
+```json
+{
+  "id": "cup-final-on-a-broken-foot",
+  "family": "gamble", "weight": 8, "repeat": "once",
+  "when": { "ageMin": 22, "ageMax": 32, "prestigeMin": 60, "minutesMin": 0.45 },
+  "title": "The final",
+  "body": "A stress fracture, four days out. The specialist says six weeks. The manager says nothing.",
+  "options": [
+    { "label": "Play the final", "note": "40% hero · 60% out for months",
+      "odds": [["hero",0.40],["broken",0.60]],
+      "outcomes": {
+        "hero":   { "copy": "You lasted 63 minutes and you will never buy a drink in this city again.",
+                    "effects": [ {"k":"ovrDelta","v":2,"for":0}, {"k":"tag","v":"final","for":0},
+                                 {"k":"valueMult","v":1.25,"for":1} ] },
+        "broken": { "copy": "You came off at 31 minutes. The rest of the year happens without you.",
+                    "effects": [ {"k":"appsMult","v":0.35,"for":1}, {"k":"growthMult","v":0.7,"for":1} ] } } },
+    { "label": "Sit it out", "note": "Certain — you watch it in a suit",
+      "odds": [["sure",1.0]],
+      "outcomes": {
+        "sure": { "copy": "They win it. You are in the photograph, at the edge.",
+                  "effects": [ {"k":"growthMult","v":1.08,"for":1} ] } } }
+  ]
+}
+```
+
+```json
+{
+  "id": "relegated-as-best-player",
+  "family": "setback", "weight": 9, "repeat": "cooldown:4",
+  "when": { "ageMin": 21, "prestigeMin": 45, "prestigeMax": 78, "minutesMin": 0.5, "blocksAtClubMin": 1 },
+  "title": "Down",
+  "body": "{club} go down on the last day. You were their best player all season.",
+  "options": [
+    { "label": "Go down with them", "note": "Certain — a division lower, and loved",
+      "odds": [["sure",1.0]],
+      "outcomes": {
+        "sure": { "copy": "The captain's armband, a smaller stage, and a stand that sings your name.",
+                  "effects": [ {"k":"forceTier","v":2,"for":1}, {"k":"ptBonus","v":5,"for":1},
+                               {"k":"bandUp","v":-4,"for":2} ] } } },
+    { "label": "Take the release clause", "note": "65% a good move · 35% a bad one",
+      "odds": [["good",0.65],["bad",0.35]],
+      "outcomes": {
+        "good": { "copy": "Three clubs called within an hour. You picked the one that plays.",
+                  "effects": [ {"k":"forceOffer","v":"ambition","for":1}, {"k":"bandUp","v":6,"for":1} ] },
+        "bad":  { "copy": "You are a squad player somewhere warmer and nobody sings anything.",
+                  "effects": [ {"k":"ptBonus","v":-6,"for":1} ] } } }
+  ]
+}
+```
+
+### Catalogue validation — run in `tools/test.mjs`
+
+The catalogue is a dependency the sim trusts. It must prove it can honour the contract rather than
+be assumed to. `validateCatalogue(EVENTS)` asserts, and CI fails on any breach:
+
+- every `id` unique; every `family` in the closed set
+- every event has ≥2 options, and **≥1 option whose `odds` is a single `[key, 1.0]`** — Slice 07's
+  *"there is always an out"*, enforced rather than reviewed
+- every `odds` array sums to 1.0 ± 1e-6, every key present in `outcomes`
+- every `Outcome` has ≥1 effect with a non-zero, non-identity `v` — Slice 07's *"every event
+  changes a number"*, asserted rather than hoped
+- every `k` in the effect vocabulary; every `v` inside that key's stated range
+- every `when` key in the predicate vocabulary (catches typos that would silently make an event
+  universally eligible)
+- the catalogue is *reachable*: for each event, at least one point in a coarse state grid
+  (age × prestige × minutes × block) satisfies its `when` — catches dead events
+- a losing-every-gamble simulated career still reaches retirement with ≥3 offers at every decision
+  (Slice 07's *"a loss is never a dead run"*)
+
+---
+
+## Wave: DESIGN / [REF] Determinism and State
+
+### Seeding contract
+
+```js
+const path   = tokens.join('|');                       // committed choices, in order
+const sub    = tag => mulberry32(hashStr(DATE + '|career|' + path + '|' + tag));
+```
+
+**Four independent sub-streams, not four reads off one stream.** Each `tag` produces a *different
+FNV-1a input*, therefore a different `mulberry32` seed, therefore an uncorrelated sequence. This is
+deliberately stronger than pulling successive values off a single generator, where changing how
+many values one consumer takes silently shifts every downstream draw — a re-roll bug that would
+be invisible until someone compared two runs.
+
+| Tag | Consumes | Drawn over |
+|---|---|---|
+| `offers` | 3 club samples + status assignment | `path(k)` — decisions 0…k−1 only |
+| `sim` | `PT_NOISE`, `GROWTH_JITTER`, goal/assist variance, retirement coin | `path(k+1)` — includes the choice just made |
+| `event.pick` | the `EVENT_RATE` gate + weighted event selection | `path(k+1)` |
+| `event.roll` | the stated-odds outcome | `path(k+1) + '|E' + optionIndex` |
+| `flavour` | surname default, nationality, shirt number, foot | `DATE` only — identical worldwide |
+
+The `path(k)` / `path(k+1)` split is the load-bearing detail: **offers for block k are drawn before
+the block-k choice is in the path**, so the option set cannot depend on which option you are about
+to pick. Everything after it does.
+
+### Path grammar
+
+One token per committed decision, appended in order. The path *is* the save file.
+
+| Token | Meaning |
+|---|---|
+| `P:MF` | position choice (Slice 06) |
+| `3B` | block 3, slot B taken |
+| `E1` | event option index 1 taken |
+
+Example: `P:MF|0B|1B|E1|2B|3A|4C`
+
+Consequences, exactly as C4 and D-2 require:
+
+- **Same choices ⇒ same career.** Every value is a pure function of `(DATE, path, CLUBS, EVENTS)`.
+- **A reload cannot re-roll.** Outcomes are *recomputed*, never *restored*. There is no stored
+  result to differ from a recomputation, because results are not stored.
+- **Divergence at decision *j* is total.** A different token at position *j* changes the hash input
+  for every draw from *j* onward, so two players who fork at decision 3 draw from genuinely
+  independent streams thereafter.
+- **Re-rolling is structurally impossible**, not merely discouraged. The only way to see a
+  different outcome is to make a different choice — which is playing the game (defuses R8's
+  engineering half; its social half remains accepted, per D-4).
+
+### Persisted state
+
+```js
+// key: 'onze:' + todayStr() + ':career'      — matches the existing onze:<date>:<mode>:… convention
+{
+  v:    1,                                     // state schema version
+  sig:  '2026-08-01|916|1|AS Roma',            // DATA_V | clubs.generated | events.version | startClub
+  path: ['P:MF','0B','1B','E1','2B'],
+  name: 'Ferreira'
+}
+```
+
+**~150 bytes.** Nothing computed is stored — no career rows, no ratings, no `mods`, no `done`.
+`done` is derivable (replay reaches retirement) and is therefore omitted rather than duplicated.
+Everything is re-derived by `simulateCareer(CLUBS, EVENTS, date, path)`.
+
+This is the smallest possible surface for the class of bug that C6 and R4 describe: there is no
+stored value that can disagree with a recomputation, because there is no stored value.
+
+**Signature guard.** `sig` includes `DATA_V`, `clubs.json.generated`, `career-events.json.version`
+and the day's starting club. A mismatch discards the state and offers a fresh career rather than
+resuming a corrupt one (US-003 AC). A replay that throws — an unknown slot letter after a
+catalogue change, a path longer than the block table — is caught and treated identically.
+
+### Resume contract
+
+```js
+const career = simulateCareer(CLUBS, EVENTS, date, path);
+// -> { rows[], ovr, peakOvr, age, k, pending, retired, retireAge, path, bestClub, totals }
+```
+
+`pending` is either `{kind:'offer', offers:[a,b,c]}` or `{kind:'event', event, options}` or `null`
+when retired. The UI renders `pending`; that *is* the resume. Reopening mid-run lands on the exact
+decision index with every completed row intact, because the rows were never separately stored.
+Reopening after retirement renders the finished career, the score, Share and a countdown, with no
+control that starts a new run (D-4, US-003).
+
+UTC rollover is already handled: the key contains `todayStr()`, and the existing
+`visibilitychange` handler that serves the other two modes is reused unchanged.
+
+### Storage that lies — `probeStorage()`
+
+localStorage is a substrate that lies. Safari private browsing throws on write; quota can be
+exhausted; the API can be present and non-functional. US-003 requires the career to remain fully
+playable in that case with **no false "your progress is saved" copy** — which means the failure
+must be *detected*, not assumed away.
+
+```js
+function probeStorage(){                       // called once at boot, before any career render
+  try{
+    const k = 'onze:probe';
+    localStorage.setItem(k, '1');
+    const ok = localStorage.getItem(k) === '1';
+    localStorage.removeItem(k);
+    return ok;
+  }catch(e){ return false; }
+}
+const PERSIST = probeStorage();
+```
+
+A write-read-delete canary, not a feature check — `typeof localStorage !== 'undefined'` is true in
+exactly the browsers where writing throws. When `PERSIST` is false the mode plays start-to-finish
+in memory and every persistence affordance and message is suppressed. Every individual read and
+write remains guarded regardless.
+
+The same principle applies to the two data files: `clubs.json` and `career-events.json` are
+validated on load (`validateCatalogue`, plus a clubs shape check for `prestige ∈ [1,99]` and a
+non-empty pool in each band). A failed validation hides the Career segment from `MODES` rather
+than shipping a mode that produces nonsense — the mode refuses to start rather than start wrong.
+
+---
+
+## Wave: DESIGN / [REF] Component Decomposition
+
+Same split the codebase already uses: **all game logic in `game.js` so `tools/test.mjs` exercises
+the exact code the browser runs; all DOM in `index.html`.** Small pure functions, no classes, no
+framework, no build step.
+
+### `game.js` — new exports
+
+```js
+export const CAREER;                                     // frozen constants object (above)
+export const POS_MOD;                                     // per-position modifiers
+export const CAREER_TIERS;                                // [[min, label], ...]
+
+// --- pure primitives -------------------------------------------------------
+export function demand(prestige);                                       // -> number
+export function minutesShare(ovr, k, prestige, status, pos, rnd);       // -> m in [0.06, 0.92]
+export function blockOutcome(st, offer, rnd);                           // -> {apps,goals,assists,cs,ovrNext,value}
+export function reachBand(ovr, k);                                      // -> {fit, hi, lo}
+export function sampleClub(CLUBS, target, rnd, ctx);                    // -> club
+export function buildOffers(CLUBS, st, rnd);                            // -> [offerA, offerB, offerC]
+
+// --- events ----------------------------------------------------------------
+export function eligible(when, ctx);                                    // -> boolean
+export function pickEvent(EVENTS, ctx, rnd);                            // -> event | null
+export function resolveEvent(ev, optIdx, rnd);                          // -> {key, copy, effects}
+export function applyMods(base, key, mods, k);                          // -> number
+export function validateCatalogue(EVENTS);                              // -> {ok, errors[]}  (test + boot)
+
+// --- the one entry point the UI needs --------------------------------------
+export function careerStart(CLUBS, date);                               // -> seeded 16-year-old
+export function simulateCareer(CLUBS, EVENTS, date, path);              // -> full career projection
+export function scoreCareer(career);                                    // -> {total, peakPts, lonPts, clubPts, tier}
+export function careerShareText(career, streak, date);                  // -> string
+
+// --- regression fixtures (also Slice 09 "par") -----------------------------
+export const POLICY_BIGGEST;                                            // (offers, st) => slotIndex
+export const POLICY_MINUTES;                                            // (offers, st) => slotIndex
+```
+
+**`simulateCareer` is the only function the UI calls to advance state.** Every render is a
+projection of its return value; committing a decision is `path.push(token)` followed by a re-run.
+This keeps `index.html` free of game logic and means the entire simulation is testable in Node
+without a DOM — the same property that made `buildPuzzle` testable.
+
+### `index.html` — changes
+
+| Location | Change |
+|---|---|
+| `MODES` | add `['career','🎽 Career']` — verify three segments at 360px |
+| `DATA_V` | bump; add `fetch('data/clubs.json?v=')` + `fetch('data/career-events.json?v=')` |
+| `loadState(mode,…)` | add a `career` branch using the same signature-guard idiom; **do not invent a second persistence idiom** |
+| `save()` | add a `career` branch writing `{v, sig, path, name}` |
+| `render()` | add `renderCareer()` → dispatches to identity / offer / event / table / results views |
+| `shareText()` | add a `career` branch (not a fork) delegating to `careerShareText()` |
+| `shareUrl()` | add `case 'career': return 'https://onzedaily.com/?m=career'` |
+| retirement | call existing `recordPlay()` — the `STREAK.last !== todayStr()` guard already makes it once-per-UTC-day across all three modes |
+| boot | `PERSIST = probeStorage()`; hide the Career segment if `validateCatalogue` fails |
+
+New render functions, all DOM-only: `renderCareerIdentity`, `renderCareerOffers`,
+`renderCareerEvent`, `renderCareerTable`, `renderCareerResults`. None contains a number that is
+not read from `simulateCareer`'s output — score and share can never disagree (US-005 AC).
+
+---
+
+## Wave: DESIGN / [REF] Reuse Analysis
+
+| Existing primitive | Career use | Verdict |
+|---|---|---|
+| `hashStr` | all seed derivation | **REUSE** unchanged |
+| `mulberry32` | all four sub-streams | **REUSE** unchanged |
+| `todayStr` / `yesterdayStr` | day key, UTC rollover | **REUSE** unchanged |
+| `bumpStreak` / `liveStreak` | streak bump on retirement | **REUSE** unchanged — existing guard covers cross-mode double-count |
+| `visibilitychange` rollover handler | new-day detection | **REUSE** unchanged |
+| `MOBILE_SHARE` touch gate + clipboard/`legacyCopy` chain | career share | **REUSE** unchanged |
+| `loadState` / `save` signature-guard idiom | career persistence | **EXTEND** — new branch, same shape |
+| `shareText()` mode branching | career card | **EXTEND** — one branch, do not fork |
+| `shareUrl()` | `?m=career` | **EXTEND** — one case |
+| `MODES` array + `onze:lastMode` fallback | third segment | **EXTEND** — one entry; unknown stored mode already falls back to `squad` |
+| `DATA_V` | cache-bust two new data files | **EXTEND** — bump on any data change (C6) |
+| `MEDIUM_BIAS` comment convention | the `CAREER` constants block | **REUSE** the convention, not the value |
+| `buildPuzzle` weighted-sample loop (running total, `usedClub` set, guard counter) | `sampleClub` | **ADAPT** — identical shape, different weight function |
+| `buildPlayerPuzzle` seeded-shuffle / no-repeat pattern | not needed | not used |
+| `DATA.rosters[season][cid].w` fame weight | prestige source | **REPLACED** by `clubs.json.prestige` — see D-6 |
+| `data/squads.json` | — | **NOT LOADED.** 4 MB; career mode reads only the 96 KB `clubs.json` |
+| — | `simulateCareer`, `blockOutcome`, `buildOffers`, `reachBand`, event engine, `scoreCareer` | **NEW** |
+
+Genuinely new code is confined to the simulation and the event engine. Every piece of daily-mode
+plumbing — seeding, UTC day, persistence idiom, streak, share chain, mode toggle — is reused or
+extended. That is why Slice 01 has no walking skeleton: there is nothing beneath it to build.
+
+---
+
+## Wave: DESIGN / [REF] Decisions
+
+| # | Decision | Rationale | Alternatives rejected |
+|---|---|---|---|
+| **D-6** | **`clubs.json.prestige` replaces `squads.json` `w` as the single prestige source**, everywhere: offer sampling, ★ display, best-club score component. | Career mode must not load the 4 MB `squads.json` (page-weight guardrail: +50 KB). Slice 00 built `clubs.json` (96 KB, 916 clubs, 43 countries, two tiers) precisely so the climb arc has somewhere to happen. | Loading `squads.json` for `w` — blows the page-weight guardrail for one field. Duplicating `w` into `clubs.json` — two prestige scales that will drift. |
+| D-7 | 11 blocks of exactly 2 seasons; retirement at end of block 8/9/10 → 9–11 rows | Preserves "each resolution advances exactly two seasons" while landing retirement in 33–38. Player *decisions* = 1 position + 9–11 club = 10–12, matching US-002's AC. | Variable-length first block (breaks the two-season rule); a 12th block to age 40 (retirement age out of range). |
+| D-8 | Growth is `age-table × minutes × environment × challenge`, decline is `age-table × minutes` only | Makes decline inevitable on every path regardless of choices — the emotional spine — while keeping growth fully choice-driven. | A single symmetric curve: lets a strong player out-run decline, killing the arc. |
+| D-9 | Coasting penalty (`CHALLENGE_LO = −0.35`) is wider than the stretch bonus (`+0.25`) | Without the asymmetry, "always take guaranteed minutes" is strictly dominant on every axis. | Symmetric clamp — measured, produced a solved game. |
+| D-10 | Squeeze-out: two consecutive blocks under 15% minutes removes the current club from the offer set | Without it, "always take the biggest club" is a degenerate flat line — no growth, no band rise, same club forever. Also realistic. | Letting it stand: produces an 11-row career of six appearances, which is not a career. |
+| D-11 | One position constant set with per-position modifiers, not four archetypes | Answers Slice 06's open question. Four archetypes is four tuning problems on a one-day slice. GK shows clean sheets instead of goals — answers the "table of zeroes" worry. | Four independent constant tables. |
+| D-12 | Events are JSON with a **closed effect vocabulary** of 11 keys | Slice 07's "data, not code" only holds if the effect surface is closed. Adding an event = adding an object; adding a new *kind* of effect is the only code change, and that boundary is explicit. | Free-form effect expressions / a mini-DSL: turns the catalogue back into code and makes validation impossible. |
+| D-13 | Four domain-separated RNG sub-streams (`offers`, `sim`, `event.pick`, `event.roll`), not sequential reads | Sequential reads off one generator couple every consumer: change how many values one takes and every downstream draw shifts. Distinct hash inputs are uncorrelated by construction. | One stream with a counter — the classic silent re-roll bug. |
+| D-14 | Offers for block *k* are seeded over the path **excluding** the block-*k* choice; everything after includes it | The option set must not depend on the option about to be picked. | Seeding everything over the full path: makes offers self-referential. |
+| D-15 | Persist `{v, sig, path, name}` only (~150 bytes); re-derive everything | There is no stored value that can disagree with a recomputation, because there is no stored value. Directly implements C4 and shrinks R4's blast radius. | Persisting career rows: two sources of truth, and the exact failure C6 warns about. |
+| D-16 | `clubPts` is squared, not linear | 68% of `clubs.json` sits in prestige 35–54; linear hands 20/25 to a mid-table career. Squared, only genuine giants score. | Linear scale — makes the best-club component nearly free. |
+| D-17 | Reputation drag designed but shipped at `REP_WEIGHT = 0` | v1 validates the simplest model that demonstrably diverges. The lever is written down with a named trigger rather than left as folklore. | Shipping it on (unvalidated, and the divergence proof would no longer be hand-checkable); omitting it (loses the named fix for O-1). |
+| D-18 | `probeStorage()` write-read-delete canary at boot | `typeof localStorage !== 'undefined'` is true in exactly the browsers where writing throws. US-003 forbids false "saved" copy, which requires *detecting* the failure. | Feature detection; try/catch alone (catches writes but still shows the copy). |
+| D-19 | `validateCatalogue` runs in `tools/test.mjs` **and** at boot; failure hides the Career segment | Slice 07's design rules ("every event changes a number", "there is always an out") are asserted, not reviewed. A mode that would produce nonsense refuses to start. | Review-time checking — erodes on the first hurried event addition. |
+
+### Amendments to DISCUSS artifacts required by D-6
+
+These are not optional; they are places the DISCUSS text names `w` or `squads.json` explicitly.
+
+- **C2** — "Top-5 leagues only; the fame weight is the prestige ladder" is superseded by Slice 00.
+  The universe is 916 clubs / 43 countries / 54 leagues / 2 tiers, and the ladder is
+  `clubs.json.prestige`.
+- **C6** — the `DATA_V` rule now attaches to `clubs.json` and `career-events.json`, not
+  `squads.json`. The failure mode is unchanged and still the highest-consequence item in the feature.
+- **US-001 AC** — "prestige indicator derived from the fame weight `w`" → `prestige`.
+- **US-002 AC** — "using the fame weight `w`" → `prestige`; "all offered clubs existed in a top-5
+  league" → "all offered clubs exist in `clubs.json` for the stated season".
+- **US-003 Technical Notes** — "a `data/squads.json` change invalidates stored runs" → `clubs.json`.
+- **US-004 AC** — best-club component reads `prestige`; point totals in the D-1 examples shift
+  (tier labels do not).
+- **Shared artifacts table** — replace the `club fame w` row with `club prestige`
+  (`data/clubs.json`), still HIGH.
+
+---
+
+## Wave: DESIGN / [REF] Open Questions
+
+| # | Question | Why it is open | Named trigger / next step |
+|---|---|---|---|
+| **O-1** | **"Always chase minutes" is close to optimal, not merely different.** It wins the two components worth 75 of 100 points. | The divergence proof shows the policies diverge (R2 answered), but also that one of them is strong. "Solved" is a lesser failure than "slot machine", and acceptable for v1 — not for v2. | If playtesting shows players converge on always-taking-guaranteed-minutes, or anyone describes the game as solved: set `REP_WEIGHT = 0.25` (D-17) and re-run both fixture policies. Second lever: raise `CHALLENGE_HI` to +0.35. |
+| O-2 | Does a goalkeeper career read as interesting? | Clean sheets replace goals (D-11), but no one has read a GK table yet. | Slice 06. Hand-generate one GK career and one FW career and read both aloud. |
+| O-3 | `EVENT_RATE` sums to ~3.9 events per run. Is that right? | Slice 07 says "start at 3–4 and tune". It is a guess with no evidence behind it. | Founder plays five runs and answers: could you recall a moment? Was there noise between the real decisions? |
+| **O-4** | **D-6 changes the prestige source and therefore every score in the DISCUSS examples.** | Owner sign-off needed on the amendment list above. Tier *labels* still land where D-1 said they would; point totals move. | Peter's call before Slice 01 starts. This is cheap now and expensive after the first share card is posted. |
+| O-5 | Loan destinations use a ×3 same-country weight. | Untested. Without it a Roma academy graduate gets loaned to the Dutch second division, which reads wrong; with it, small countries may loop. | Generate 50 seeded block-0 loan offers from five different starting clubs and read the list. |
+| O-6 | Career rows are 9–11; US-002's AC says 10–12 decisions. | Reconciled by counting the position choice (D-7). Needs confirming rather than assuming. | Confirm with the AC's author; amend US-002 to say "9–11 career rows, 10–12 player decisions". |
+| O-7 | `CAREER_TIERS` bands rest on two hand-simulated careers, not a distribution. | Floor ~5, A = 36, B = 76, estimated ceiling ~88. Three data points is not a calibration. | After Slice 02: run 500 seeded careers under 5 fixed policies, plot the score distribution, re-cut the bands once. Then freeze — D-1's version-marker warning applies. |
+| O-8 | Should the share card name the biggest moment ("played the final on a broken foot")? | Slice 07's own open question. The `tag` effect key already carries the data; the share line is already tight at 60 characters. | Defer to Slice 05. The data exists either way, which is the point. |
