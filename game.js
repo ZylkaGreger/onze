@@ -245,6 +245,7 @@ export const CAREER = Object.freeze({
   // Form gate on the band's stretch. At FORM_FULL minutes or above you get the full reach; with no
   // minutes at all you keep only FORM_FLOOR of it, so the giants stop calling until you play again.
   FORM_FULL: 0.55, FORM_FLOOR: 0.30, FORM_DROP: 9,
+  LEGACY_FLOOR: 0.78,   // from block 7 on, the band never falls below this share of your standing
   P_MIN: 34, P_MAX: 99,                  // the REAL range in clubs.json (not 5..99)
   MAX_LOANS: 2,
   SQUEEZE_M: 0.15,                       // two blocks under this and your club drops you
@@ -350,7 +351,7 @@ export function blockOutcome(st, offer, rnd){
 // and an ever-present received identical offers. Worse, from the mid-twenties on, benching barely
 // dents the rating (35% vs 92% minutes at 26 differ by 0.1), so nothing corrected it downstream.
 // Form gates the STRETCH above your level, never your level itself: you can always drop a rung.
-export function reachBand(ovr, k, rep, form){
+export function reachBand(ovr, k, rep, form, peak){
   // Form discounts the rating the MARKET sees, not the rating you have. A player nobody watched
   // is valued as a lesser player, which is the honest version of "if I barely played at Juventus,
   // why would Barcelona call" — the answer is that they never saw you play.
@@ -365,10 +366,22 @@ export function reachBand(ovr, k, rep, form){
     ? ratingFit
     : (1 - CAREER.REP_WEIGHT) * ratingFit + CAREER.REP_WEIGHT * rep;
   const reach = CAREER.FORM_FLOOR + (1 - CAREER.FORM_FLOOR) * reach01;
+  // Late-career dignity, applied to the FLOOR of the band and never to its ceiling. A declining
+  // rating pulled `lo` down with it, so careers ended PSG > Genoa > Baník Ostrava — arithmetically
+  // fair, emotionally wrong, and not what actually happens. Playing the reference game to
+  // retirement showed the honest shape: Man City > Crystal Palace > AC Milan > Sunderland, real
+  // clubs the whole way down. `rep` is the running average of where you have PLAYED, so a career
+  // that was genuinely big keeps a floor under it and a career that never was gets no such gift.
+  // Raising `fit` instead would also have handed a fading 34-year-old offers from giants; only the
+  // bottom of the band moves. The anchor is the BEST club you ever held down, not the running
+  // average: `rep` is a fast EMA that has already forgotten the peak by the time you need it.
+  const anchor = peak === undefined ? rep : Math.max(peak, rep);
+  const legacy = (k >= 7 && anchor !== undefined) ? anchor * CAREER.LEGACY_FLOOR : 0;
+  const lo = Math.min(Math.max(fit - CAREER.BAND_DOWN, legacy), fit);
   return {
     fit,
     hi: clamp(fit + CAREER.BAND_UP[k] * reach, CAREER.P_MIN, CAREER.P_MAX),
-    lo: clamp(fit - CAREER.BAND_DOWN, CAREER.P_MIN, CAREER.P_MAX),
+    lo: clamp(lo, CAREER.P_MIN, CAREER.P_MAX),
     reach,
   };
 }
@@ -414,7 +427,7 @@ export function sampleClub(CLUBS, target, rnd, ctx){
 
 // Three differentiated offers: ambition / minutes / balance.
 export function buildOffers(CLUBS, st, rnd){
-  const band = reachBand(st.ovr, st.k, st.rep, st.lastM);
+  const band = reachBand(st.ovr, st.k, st.rep, st.lastM, st.repPeak);
   const cur = st.club;
   const played = new Set(st.played || []);
   const ctx = { played, stuckCountry: st.stuckCountry, homeCountry: st.homeCountry,
@@ -490,7 +503,7 @@ export function simulateCareer(CLUBS, date, path, EVENTS, pace){
     ovr: start.ovr, k: 0, pos: chosenPos || start.pos, club: start.club, mods: [], tags: [],
     seen: [], seenFamilies: [], lastSeen: {}, blocksAtClub: 0, lastM: 0.5,
     played: [start.club.name], loans: 0, lowBlocks: 0, stuckCountry: null, sameCountry: 1,
-    rep: start.club.prestige, lastM: undefined,
+    rep: start.club.prestige, repPeak: start.club.prestige, lastM: undefined,
     homeCountry: start.club.country,
   };
   const rows = [], log = [], honours = [];
@@ -547,6 +560,9 @@ export function simulateCareer(CLUBS, date, path, EVENTS, pace){
     st.sameCountry = st.club && st.club.country === pick.club.country ? (st.sameCountry || 1) + 1 : 1;
     st.stuckCountry = st.sameCountry >= 3 ? pick.club.country : null;
     st.rep = 0.65 * st.rep + 0.35 * pick.club.prestige;
+    // Standing is only earned by PLAYING: signing for a giant and rotting on the bench
+    // must not buy a floor under the rest of your life.
+    if(out.m >= 0.45) st.repPeak = Math.max(st.repPeak, pick.club.prestige);
     st.blocksAtClub = st.club && st.club.name === pick.club.name ? st.blocksAtClub + 1 : 1;
     st.lastM = out.m;
     st.club = pick.loan ? pick.parent : pick.club;          // a loan returns you to the parent
