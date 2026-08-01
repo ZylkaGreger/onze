@@ -247,9 +247,11 @@ export const CAREER = Object.freeze({
   // skill the mode is about, so the depth is already there. Raising REP_WEIGHT only depressed
   // every strategy without changing their order.
   REP_WEIGHT: 0,
-  // Events are the texture, not the substance. Fire on roughly half of blocks so a run averages
-  // 3-5 of them: enough that two careers tell different stories, few enough that each one lands.
+  // Events are the texture, not the substance. The right rate was an open question with no evidence
+  // behind it (O-3), so rather than guess on the player's behalf it became a choice: Express for a
+  // quick run, Story for an eventful one. Normal is the default and the old value.
   EVENT_RATE: 0.5,
+  PACE: Object.freeze({ express: 0.22, normal: 0.5, story: 0.85 }),
 });
 
 // What each position actually plays like — shown on the picker so the choice is informed, not blind.
@@ -353,7 +355,20 @@ export function sampleClub(CLUBS, target, rnd, ctx){
   ctx = ctx || {};
   const played = ctx.played || new Set();
   let tau = 5, pool = [];
-  while(pool.length < 8 && tau <= 25){
+  // A loan is a domestic arrangement between clubs far more often than not. A ×3 weight was too
+  // weak against a thin same-country band: Mönchengladbach were loaning to Morocco and Benfica to
+  // Russia. Try the parent club's country FIRST and only widen if it genuinely cannot be filled.
+  if(ctx.loanCountry){
+    let t = 8;
+    while(pool.length < 4 && t <= 26){
+      pool = CLUBS.filter(c => c.country === ctx.loanCountry && !played.has(c.name)
+                            && c.prestige >= target - t && c.prestige <= target + t);
+      t += 6;
+    }
+    if(pool.length >= 4) tau = 0;                       // domestic pool is good enough
+    else pool = [];                                     // fall through to the open search
+  }
+  while(pool.length < 8 && tau && tau <= 25){
     pool = CLUBS.filter(c => c.prestige >= target - tau && c.prestige <= target + tau && !played.has(c.name));
     tau += 4;
   }
@@ -437,7 +452,7 @@ export function careerStart(CLUBS, date){
 }
 
 // THE entry point the UI calls. A career is a projection of (date, path) — never stored state.
-export function simulateCareer(CLUBS, date, path, EVENTS){
+export function simulateCareer(CLUBS, date, path, EVENTS, pace){
   const start = careerStart(CLUBS, date);
   let tokens = (path || []).slice();
   // Position is the FIRST decision (Slice 06): it changes how the whole career simulates, so the
@@ -518,7 +533,8 @@ export function simulateCareer(CLUBS, date, path, EVENTS){
                      k, blocksAtClub: st.blocksAtClub, tier: pick.club.tier, pos: st.pos,
                      tags: st.tags, seen: st.seen, seenFamilies: st.seenFamilies, lastSeen: st.lastSeen };
       const gate = sub('event.gate', k + 1);
-      const ev = gate() < CAREER.EVENT_RATE ? pickEvent(EVENTS, ectx, sub('event.pick', k + 1)) : null;
+      const rate = CAREER.PACE[pace] ?? CAREER.EVENT_RATE;
+      const ev = gate() < rate ? pickEvent(EVENTS, ectx, sub('event.pick', k + 1)) : null;
       if(ev){
         const etok = tokens[k + 1];
         if(etok === undefined || !String(etok).startsWith('E')){

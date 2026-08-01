@@ -335,6 +335,7 @@ const FIXED_LEAGUE = 'WORLD', FIXED_DIFF = 'medium';
 let MODE = 'squad';
 const GRID_GUESSES = 9;
 
+let CAREER_PACE = localStorage.getItem('onze:pace') || 'normal';
 let DATA, CLUES = [], CLUBS = [], EVENTS = [], STATE, ALL_NAMES = [], PLAYERS = {};
 let STREAK = { last:'', cur:0, best:0 };
 // One-day World Cup Final skin: auto-on for the final (2026-07-19, UTC via todayStr), or forced with ?wc / ?final.
@@ -421,7 +422,7 @@ function track(name){
 // ── Career mode ──────────────────────────────────────────────────────────────────────────────
 // A career is a pure projection of (date, decision path). We store only the path, so a reload
 // recomputes an identical career and can never re-roll an outcome.
-function careerSig(){ const st=careerStart(CLUBS, todayStr()); return todayStr()+'|'+CLUBS.length+'|'+st.club.name; }
+function careerSig(){ const st=careerStart(CLUBS, todayStr()); return todayStr()+'|'+CLUBS.length+'|'+st.club.name+'|'+CAREER_PACE; }
 const stars = p => '★'.repeat(Math.max(1,Math.min(5,Math.ceil((p-34)/13)))) + '☆'.repeat(5-Math.max(1,Math.min(5,Math.ceil((p-34)/13))));
 const KIND_LABEL = { ambition:'AMBITION', minutes:'GAME TIME', balance:'BALANCE' };
 const STATUS_LABEL = { loan:'On loan · guaranteed minutes', guaranteed:'Guaranteed minutes',
@@ -433,8 +434,25 @@ function renderCareer(){
   document.getElementById('pips').innerHTML='';
   document.querySelector('.inputrow').style.display='none';   // career is tapped, not typed
   track('career_opened');
-  const c = simulateCareer(CLUBS, todayStr(), STATE.path, EVENTS);
+  const c = simulateCareer(CLUBS, todayStr(), STATE.path, EVENTS, CAREER_PACE);
   const s = c.start;
+
+  // pace: how eventful the run is. Only offered before the career starts — changing it mid-run
+  // would alter which events fired, and the whole contract is that a career cannot be re-rolled.
+  if(c.needsPosition){
+    const paces=[['express','Express','A quick run'],['normal','Normal','Balanced'],['story','Story','Eventful']];
+    const bar=document.createElement('div');
+    bar.style.cssText='display:flex;gap:6px;justify-content:center;margin:0 0 4px';
+    bar.innerHTML=paces.map(([id,lbl,sub])=>'<button type="button" class="mbtn pacebtn'+(CAREER_PACE===id?' active':'')+
+      '" data-pace="'+id+'" style="padding:7px 12px;font-size:12px">'+lbl+'</button>').join('');
+    bar.querySelectorAll('.pacebtn').forEach(b=>b.onclick=()=>{
+      CAREER_PACE=b.dataset.pace; localStorage.setItem('onze:pace',CAREER_PACE); render(); });
+    cells.appendChild(bar);
+    const hint=document.createElement('div');
+    hint.style.cssText='text-align:center;font-size:11px;color:var(--dim);margin-bottom:10px';
+    hint.textContent=(paces.find(p=>p[0]===CAREER_PACE)||paces[1])[2]+' — how often life interrupts your career';
+    cells.appendChild(hint);
+  }
 
   // first decision of all: what do you play?
   if(c.needsPosition){
@@ -524,6 +542,21 @@ function renderCareer(){
 const statBox = (label, v) => '<div style="min-width:74px;padding:0 8px"><div style="font-size:20px;font-weight:800">'+v+
   '</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim)">'+label+'</div></div>';
 
+// A small local history — the only thing in the game that accumulates across days. Kept to the
+// last 30 and stored as one compact array; it never leaves the device and needs no account.
+function archiveCareer(c, sc){
+  try{
+    const KEY='onze:careers';
+    const list=JSON.parse(localStorage.getItem(KEY)||'[]');
+    if(list.some(x=>x.d===todayStr())) return list;
+    list.unshift({ d:todayStr(), n:c.start.surname, p:c.start.pos, club:c.start.club.name,
+                   s:sc.total, t:sc.tier, pk:sc.peakOvr, tr:sc.trophies, cp:sc.caps });
+    const cut=list.slice(0,30);
+    localStorage.setItem(KEY, JSON.stringify(cut));
+    return cut;
+  }catch(e){ return []; }
+}
+
 function showCareerEnd(c){
   track('career_finished');
   const sc = c.score || scoreCareer(c);
@@ -573,6 +606,16 @@ function showCareerEnd(c){
   }
   rev.style.display='block';
   document.getElementById('sharetext').textContent = careerShare(c, sc);
+  // past careers
+  const past = archiveCareer(c, sc).slice(1, 6);
+  if(past.length){
+    rev.innerHTML += '<div style="margin-top:16px;text-align:left">'+
+      '<div style="font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:6px">Your last careers</div>'+
+      past.map(x=>'<div style="display:flex;gap:8px;font-size:12px;padding:3px 0;border-top:1px solid var(--line)">'+
+        '<span style="color:var(--dim);width:52px">'+x.d.slice(5)+'</span>'+
+        '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+x.n+' ('+x.p+') · '+x.club+'</span>'+
+        '<span style="font-weight:700">'+x.s+'</span></div>').join('')+'</div>';
+  }
 }
 
 function careerShare(c, sc){
@@ -823,7 +866,7 @@ function shareUrl(){
   return STATE.mode==='player' ? 'https://onzedaily.com/?m=player' : 'https://onzedaily.com';
 }
 function shareText(){
-  if(STATE.mode==='career'){ const c=simulateCareer(CLUBS, todayStr(), STATE.path, EVENTS); return careerShare(c, c.score||scoreCareer(c)); }
+  if(STATE.mode==='career'){ const c=simulateCareer(CLUBS, todayStr(), STATE.path, EVENTS, CAREER_PACE); return careerShare(c, c.score||scoreCareer(c)); }
   const dmap={easy:'🟢',medium:'🟡',hard:'🔴'};
   const row=STATE.guesses.map(g=>g.hit?'🟩':'🟥').join('');
   const d=new Date(); const dd=d.getUTCDate()+' '+d.toLocaleString('en',{month:'short',timeZone:'UTC'});
