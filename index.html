@@ -485,6 +485,9 @@ function renderCareer(){
   cells.appendChild(wrap);
 }
 
+const statBox = (label, v) => '<div style="min-width:74px;padding:0 8px"><div style="font-size:20px;font-weight:800">'+v+
+  '</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--dim)">'+label+'</div></div>';
+
 function showCareerEnd(c){
   const sc = c.score || scoreCareer(c);
   const e=document.getElementById('end'); e.classList.add('show');
@@ -492,8 +495,29 @@ function showCareerEnd(c){
   const st=liveStreak(STREAK);
   document.getElementById('endmsg').textContent = sc.total+' · '+sc.tier + (st>1?' · 🔥 '+st+'-day streak':'');
   const rev=document.getElementById('reveal');
-  rev.innerHTML='Retired at '+c.retireAge+' · peak rating <b>'+sc.peakOvr+'</b> · '+sc.totalApps+' appearances'+
-    '<div class="sbreak"><span>Peak '+sc.peakPts+'/50</span><span>Longevity '+sc.lonPts+'/25</span><span>Best club '+sc.clubPts+'/25</span></div>';
+  const isGK = c.start.pos==='GK';
+  rev.innerHTML='Retired at '+c.retireAge+' · peak rating <b>'+sc.peakOvr+'</b>'+
+    '<div class="sbreak" style="margin-top:8px"><span>Peak '+sc.peakPts+'/40</span><span>Longevity '+sc.lonPts+'/20</span>'+
+      '<span>Best club '+sc.clubPts+'/20</span><span>Honours '+sc.honPts+'/20</span></div>'+
+    // the career in numbers — what Copero gives you at the end, and what people actually compare
+    '<div style="display:flex;justify-content:center;gap:0;margin-top:14px;text-align:center;flex-wrap:wrap">'+
+      statBox('Apps', sc.totalApps)+
+      (isGK ? statBox('Clean sheets', sc.cs) : statBox('Goals', sc.goals)+statBox('Assists', sc.assists))+
+      statBox('Trophies', sc.trophies)+
+    '</div>'+
+    (sc.caps>0
+      ? '<div style="margin-top:12px;font-size:13px">🌍 <b>'+sc.caps+' caps</b> for '+c.start.nat+(sc.intGoals>0?' · '+sc.intGoals+' international goals':'')+'</div>'
+      : '<div style="margin-top:12px;font-size:12px;color:var(--dim)">Never capped by '+c.start.nat+'</div>');
+  // the trophy cabinet
+  if(c.honours && c.honours.length){
+    const byComp={}; c.honours.forEach(h=>{const k=h.comp; byComp[k]=byComp[k]||{n:0,clubs:new Set()}; byComp[k].n++; byComp[k].clubs.add(h.club);});
+    rev.innerHTML += '<div style="margin-top:14px;text-align:left">'+
+      '<div style="font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:6px">Trophy cabinet</div>'+
+      Object.entries(byComp).map(([comp,v])=>'<div style="font-size:13px;padding:3px 0">🏆 <b>'+comp+'</b>'+(v.n>1?' ×'+v.n:'')+
+        ' <span style="color:var(--dim)">· '+[...v.clubs].join(', ')+'</span></div>').join('')+'</div>';
+  } else {
+    rev.innerHTML += '<div style="margin-top:12px;font-size:12px;color:var(--dim)">🏆 Empty trophy cabinet</div>';
+  }
   if(c.tags && c.tags.length){
     rev.innerHTML += '<div style="margin-top:8px">'+c.tags.map(t=>'<span class="badge" style="margin:0 3px">'+t+'</span>').join('')+'</div>';
   }
@@ -512,8 +536,12 @@ function careerShare(c, sc){
   // day's answer — so unlike the puzzle modes there is nothing to hide.
   const path=c.rows.map(r=>r.club.name).filter((v,i,a)=>a.indexOf(v)===i).slice(0,5).join(' → ');
   const tag = (c.tags&&c.tags.length) ? '\n'+c.tags.slice(0,2).join(' · ') : '';
+  const isGK=c.start.pos==='GK';
+  const line = isGK ? sc.totalApps+' apps · '+sc.cs+' cs' : sc.totalApps+' apps · '+sc.goals+'⚽ '+sc.assists+'🅰';
+  const honLine = (sc.trophies?'🏆 '+sc.trophies:'') + (sc.caps?(sc.trophies?' · ':'')+'🌍 '+sc.caps+' caps':'');
   return '🎽 Onze Career — '+dd+'\n'+c.start.surname+' ('+c.start.pos+') · started at '+c.start.club.name+tag+
-    '\n'+sc.total+'/100 · '+sc.tier+' · peak '+sc.peakOvr+stag+'\n'+path+'\nhttps://onzedaily.com/?m=career';
+    '\n'+sc.total+'/100 · '+sc.tier+' · peak '+sc.peakOvr+stag+
+    '\n'+line+(honLine?'\n'+honLine:'')+'\n'+path+'\nhttps://onzedaily.com/?m=career';
 }
 
 function renderPips(){

@@ -394,6 +394,8 @@ export function careerStart(CLUBS, date){
   const NAMES = ['Ferreira','Novak','Lindqvist','Adeyemi','Costa','Moreau','Halbert','Vasquez','Okafor','Dimitrov','Rossi','Keane'];
   return {
     date: d, club, pos,
+    nat: club.country,                       // you came through this academy, so this is your country
+
     surname: NAMES[Math.floor(rnd() * NAMES.length)],
     number: 2 + Math.floor(rnd() * 28),
     foot: rnd() < 0.78 ? 'Right' : 'Left',
@@ -419,7 +421,8 @@ export function simulateCareer(CLUBS, date, path, EVENTS){
     played: [start.club.name], loans: 0, lowBlocks: 0, stuckCountry: null, sameCountry: 1,
     homeCountry: start.club.country,
   };
-  const rows = [], log = [];
+  const rows = [], log = [], honours = [];
+  const caps = { total: 0, goals: 0 };
   let peak = start.ovr, done = false, retireAge = null;
 
   for(let k = 0; k < CAREER.BLOCKS; k++){
@@ -429,7 +432,7 @@ export function simulateCareer(CLUBS, date, path, EVENTS){
     const offers = buildOffers(CLUBS, st, sub('offers', k));
     const tok = tokens[k];
     if(tok === undefined) return { start: { ...start, pos: st.pos }, rows, offers, st: { ...st }, done: false, peak, score: null,
-                                   event: null, tags: st.tags.slice(), log };
+                                   event: null, tags: st.tags.slice(), log, honours, caps };
 
     const slot = { A: 0, B: 1, C: 2 }[String(tok).slice(-1)] ?? 0;
     const pick = offers[Math.min(slot, offers.length - 1)];
@@ -441,8 +444,12 @@ export function simulateCareer(CLUBS, date, path, EVENTS){
       growthMod: applyMods(1, 'growthMult', st.mods, k),
       declineMod: applyMods(1, 'declineMult', st.mods, k),
       appsMod: applyMods(1, 'appsMult', st.mods, k) }, r);
+    const hon = blockHonours(pick.club, out.m, sub('honours', k + 1), CLUBS);
+    const cap = blockCaps(st.ovr, out.m, st.pos, sub('caps', k + 1));
+    honours.push(...hon.map(h => ({ ...h, age: 16 + 2 * k, club: pick.club.name })));
+    caps.total += cap.caps; caps.goals += cap.goals;
     rows.push({
-      age: 16 + 2 * k, club: pick.club, loan: !!pick.loan,
+      age: 16 + 2 * k, club: pick.club, loan: !!pick.loan, honours: hon, caps: cap.caps,
       ovr: Math.round(st.ovr), apps: out.apps, goals: out.goals, assists: out.assists,
       cs: out.cs, value: out.value, m: out.m,
     });
@@ -496,25 +503,36 @@ export function simulateCareer(CLUBS, date, path, EVENTS){
       }
     }
   }
-  const career = { start: { ...start, pos: chosenPos || start.pos }, rows, done, peak, retireAge: retireAge || (16 + 2 * rows.length),
+  const career = { start: { ...start, pos: chosenPos || start.pos }, rows, done, peak, honours, caps, retireAge: retireAge || (16 + 2 * rows.length),
                    tags: st.tags.slice(), log, event: null };
   career.score = done ? scoreCareer(career) : null;
   career.offers = [];
   return career;
 }
 
+// Four components since honours shipped. A pre-honours "61" and a post-honours "61" do not mean
+// the same thing, which is why the share card carries the scoring version.
+export const SCORE_VERSION = 2;
 export function scoreCareer(career){
   const rows = career.rows || [];
   const peakOvr = career.peak || 50;
   const totalApps = rows.reduce((s, r) => s + r.apps, 0);
   const bestPrestige = rows.reduce((s, r) => Math.max(s, r.club.prestige), 0);
-  const peakPts = clamp(Math.round(50 * (peakOvr - 50) / 45), 0, 50);
-  const lonPts = clamp(Math.round(25 * totalApps / 720), 0, 25);
-  const clubPts = clamp(Math.round(25 * Math.pow((bestPrestige - 40) / 55, 2)), 0, 25);
-  const total = peakPts + lonPts + clubPts;
+  const hon = career.honours || [];
+  const peakPts = clamp(Math.round(40 * (peakOvr - 50) / 45), 0, 40);
+  const lonPts = clamp(Math.round(20 * totalApps / 720), 0, 20);
+  const clubPts = clamp(Math.round(20 * Math.pow((bestPrestige - 40) / 55, 2)), 0, 20);
+  // Winning things is weighted by what it took to win: a continental cup outranks a domestic one.
+  const honRaw = hon.reduce((s, h) => s + (h.kind === 'continental' ? 5 : h.kind === 'league' ? 3 : 1.5), 0);
+  const honPts = clamp(Math.round(20 * (1 - Math.exp(-honRaw / 9))), 0, 20);   // diminishing, never capped out early
+  const total = peakPts + lonPts + clubPts + honPts;
   let tier = CAREER_TIERS[0][1];
   for(const [min, label] of CAREER_TIERS) if(total >= min) tier = label;
-  return { total, peakPts, lonPts, clubPts, tier, peakOvr: Math.round(peakOvr), totalApps, bestPrestige };
+  const goals = rows.reduce((s, r) => s + r.goals, 0), assists = rows.reduce((s, r) => s + r.assists, 0);
+  const cs = rows.reduce((s, r) => s + (r.cs || 0), 0);
+  return { total, peakPts, lonPts, clubPts, honPts, tier, peakOvr: Math.round(peakOvr), totalApps,
+           bestPrestige, goals, assists, cs, trophies: hon.length, caps: (career.caps || {}).total || 0,
+           intGoals: (career.caps || {}).goals || 0, v: SCORE_VERSION };
 }
 
 // Reference policies — regression fixtures, and the basis for "par" (Slice 09).
@@ -618,4 +636,55 @@ export function validateCatalogue(EVENTS){
     if(!hasCertain) errors.push(`${ev.id}: no certain option — every gamble needs a safe alternative`);
   }
   return { ok: errors.length === 0, errors };
+}
+
+// ── Honours and internationals ───────────────────────────────────────────────────────────────
+// What a career leaves behind: what you won, and whether your country ever called.
+// Both are derived from the same seeded stream as everything else, so they replay identically.
+
+// A club's title odds come from how it ranks INSIDE its own league, not globally: winning the
+// Eredivisie with Ajax must be plausible while winning it with Excelsior is not, and a mid-table
+// Premier League side should not out-rank a Dutch champion just because English prestige is higher.
+export function titleOdds(club, CLUBS){
+  const peers = CLUBS.filter(c => c.league === club.league);
+  if(peers.length < 2) return 0.05;
+  const max = Math.max(...peers.map(c => c.prestige));
+  const min = Math.min(...peers.map(c => c.prestige));
+  const rel = (club.prestige - min) / Math.max(1, max - min);          // 0..1 within its own league
+  return Math.max(0, Math.pow(rel, 2.4) * 0.72);                       // only genuine contenders win
+}
+
+const CONTINENTAL = {
+  Europe: 'Champions League', SouthAmerica: 'Copa Libertadores', NorthAmerica: 'CONCACAF Champions Cup',
+  Asia: 'AFC Champions League', Africa: 'CAF Champions League',
+};
+const REGION = {
+  Brazil:'SouthAmerica', Argentina:'SouthAmerica', Uruguay:'SouthAmerica', Colombia:'SouthAmerica', Chile:'SouthAmerica',
+  USA:'NorthAmerica', Mexico:'NorthAmerica',
+  'Saudi Arabia':'Asia', Japan:'Asia', 'South Korea':'Asia', Qatar:'Asia', UAE:'Asia', Australia:'Asia',
+  Egypt:'Africa', Morocco:'Africa', 'South Africa':'Africa',
+};
+const regionOf = country => REGION[country] || 'Europe';
+
+// Trophies for one block. You must have played a real part to be credited (m >= PLAYED_ENOUGH).
+export function blockHonours(club, m, rnd, CLUBS){
+  const out = [];
+  if(m < 0.25) return out;                       // a squad number is not a medal
+  const odds = titleOdds(club, CLUBS);
+  const share = Math.min(1, m / 0.6);            // played more, likelier to have been central to it
+  if(rnd() < odds * share) out.push({ comp: club.league, kind: 'league' });
+  if(rnd() < (0.10 + odds * 0.55) * share) out.push({ comp: 'Domestic Cup', kind: 'cup' });
+  if(club.prestige >= 78 && rnd() < odds * 0.42 * share)
+    out.push({ comp: CONTINENTAL[regionOf(club.country)], kind: 'continental' });
+  return out;
+}
+
+// International caps. Your country calls once you are good enough, and keeps calling while you are.
+export function blockCaps(ovr, m, pos, rnd){
+  if(ovr < 68 || m < 0.3) return { caps: 0, goals: 0 };
+  const strength = Math.min(1, (ovr - 66) / 20);
+  const caps = Math.round((6 + 14 * strength) * Math.min(1, m / 0.55) * (0.75 + 0.5 * rnd()));
+  const pm = POS_MOD[pos] || POS_MOD.MF;
+  const goals = Math.round(caps * pm.g * 0.75 * (0.6 + 0.8 * rnd()));
+  return { caps: Math.max(0, caps), goals: Math.max(0, goals) };
 }

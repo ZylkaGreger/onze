@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 // regex-slicing functions out of the HTML; tests track behaviour by importing it directly.
 import { mulberry32, hashStr, norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
          careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS,
-         validateCatalogue, pickEvent, resolveEvent, applyMods, eligible } from '../game.js';
+         validateCatalogue, pickEvent, resolveEvent, applyMods, eligible, titleOdds, SCORE_VERSION } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -334,11 +334,11 @@ test('career: a 16-year-old is never offered a club far beyond him', () => {
   assert.ok(reachBand(78, 6).hi > band.hi, 'a good 28-year-old can reach further');
 });
 
-test('career: score is the three locked components and never exceeds 100', () => {
+test('career: score is its four components and never exceeds 100', () => {
   for (const date of ['2026-08-02', '2026-08-05', '2026-08-09']) {
     for (const slot of ['A', 'B', 'C']) {
       const s = scoreCareer(playPolicy(date, slot));
-      assert.equal(s.total, s.peakPts + s.lonPts + s.clubPts, 'total is the sum of its parts');
+      assert.equal(s.total, s.peakPts + s.lonPts + s.clubPts + s.honPts, 'total is the sum of its parts');
       assert.ok(s.total >= 0 && s.total <= 100);
       assert.ok(CAREER_TIERS.some(([, label]) => label === s.tier), 'tier from the constant table');
     }
@@ -423,4 +423,25 @@ test('career: position is the first decision and genuinely changes the game', ()
   assert.ok(gk.rows.some(r => r.cs > 0), 'keepers record clean sheets');
   assert.ok(fw.rows.reduce((s, r) => s + r.goals, 0) > gk.rows.reduce((s, r) => s + r.goals, 0) * 3,
     'a forward scores far more than a keeper');
+});
+
+test('honours & caps: you are only credited for what you took part in', () => {
+  // a career of bench-warming wins nothing and is never capped — medals need minutes
+  const bench = playPolicy('2026-08-06', 'A', 'FW');
+  const played = playPolicy('2026-08-06', 'B', 'FW');
+  const sb = scoreCareer(bench), sp = scoreCareer(played);
+  assert.ok(sp.totalApps > sb.totalApps * 2, 'the played career actually played');
+  assert.ok(sp.caps >= sb.caps, 'caps follow minutes and quality, never the reverse');
+  // trophies are club-plausible: nobody wins a league from a club that cannot contend
+  for (const h of (played.honours || [])) {
+    const club = CLUBS.find(c => c.name === h.club);
+    if (h.kind === 'league' && club) assert.ok(titleOdds(club, CLUBS) > 0, `${h.club} cannot win ${h.comp}`);
+  }
+});
+
+test('honours: a continental cup is worth more than a domestic one', () => {
+  const base = { rows: [], peak: 60, caps: {} };
+  const cont = scoreCareer({ ...base, honours: [{ kind: 'continental' }] });
+  const cup = scoreCareer({ ...base, honours: [{ kind: 'cup' }] });
+  assert.ok(cont.honPts > cup.honPts, 'winning Europe must outrank a domestic cup');
 });
