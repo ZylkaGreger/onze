@@ -261,7 +261,13 @@ export const POS_MOD = Object.freeze({
   FW: { peakShift: -1, growth: 1.01, ptBonus: 0, g: 0.420, a: 0.130 },
 });
 
-export const CAREER_TIERS = [[0, 'JOURNEYMAN'], [30, 'SOLID PRO'], [48, 'CULT HERO'], [64, 'STAR'], [80, 'ICON']];
+// Recut against 800 simulated careers (all four positions, 40 days, five strategies) rather than
+// the two hand-simulated ones these were first guessed from. That sample runs min 21 / median 60 /
+// max 80 — so the old ICON floor of 80 sat exactly on the ceiling and was never once reached.
+// Bands now target roughly: JOURNEYMAN 20% · SOLID PRO 30% · CULT HERO 25% · STAR 18% · ICON 7%.
+// FROZEN from here: SCORE_VERSION must be bumped if these move, because a shared "68" would
+// silently change tier. See D-1's version-marker warning.
+export const CAREER_TIERS = [[0, 'JOURNEYMAN'], [38, 'SOLID PRO'], [58, 'CULT HERO'], [68, 'STAR'], [76, 'ICON']];
 
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 
