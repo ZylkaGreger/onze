@@ -214,6 +214,18 @@
   .crow .cval,.chead .cval{width:43px;text-align:right;font-variant-numeric:tabular-nums;
     color:var(--dim);font-size:11.5px;flex:0 0 auto}
 
+  /* A played block opens into its two seasons on a tap - this is how year-by-year survives the
+     collapse. The hit region is padded out to 36px because a 28px row is under the tap minimum. */
+  .crow.blk{cursor:pointer;position:relative}
+  .crow.blk::after{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}
+  .crow.blk:hover{background:var(--panel2)}
+  .crow.blk.open{background:var(--panel2)}
+  .crow.blk:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+  .srow{display:flex;align-items:center;gap:6px;padding:3px 9px;font-size:var(--t-xs);
+    color:var(--dim);background:var(--bg);border-bottom:1px solid var(--line)}
+  .srow .cage{width:26px;flex:0 0 auto;text-align:center;font-size:10px;color:var(--dim)}
+  .srow .cclub{flex:1;min-width:0;overflow:hidden;white-space:nowrap}
+  .srow .ovr{font-size:10px;padding:0 4px;min-width:26px}
   .crow.natrow{background:var(--bg);border-top:1px solid var(--line)}
   /* "uncapped" needs 54px in a 43px cell. Scoped here, never globally: .cclub is flex:1. */
   .crow.natrow .cval{width:auto;flex:0 0 auto;padding-left:6px}
@@ -675,6 +687,89 @@ function ratingDelta(c){
 const stat = (label, v, big) => '<div class="sitem"><div class="sv'+(big?' big':'')+'">'+v+'</div>'+
   '<div class="sl">'+label+'</div></div>';
 
+// Which grain the ledger draws at. 'block' is the shipped default; ?rows=year is a temporary
+// review aid so the two can be compared on a real device before the call is made permanent.
+const ROW_GRAIN = new URLSearchParams(location.search).get('rows') === 'year' ? 'year' : 'block';
+// Which block is expanded into its seasons. Module scope, not STATE: opening a row is a view
+// action, it never enters the decision path, so the pure-function-of-decisions contract holds.
+let CAREER_OPEN = null;
+
+function ledgerCells(age, club, ovr, apps, ga, val, extra){
+  return '<span class="cage">'+age+'</span>'+
+    '<span class="cclub">'+club+'</span>'+
+    '<span class="cnum">'+(ovr===''?'':'<i class="ovr '+ovrTier(ovr)+'">'+ovr+'</i>')+'</span>'+
+    '<span class="cnum">'+apps+'</span>'+
+    '<span class="cnum">'+ga+'</span>'+
+    '<span class="cval">'+val+'</span>';
+}
+
+function buildLedger(c, s){
+  const t=document.createElement('div'); t.className='ctable';
+  const gk = s.pos==='GK';
+  let html='<div class="chead"><span style="width:26px">Age</span><span style="flex:1">Club</span>'+
+      '<span class="cnum">OVR</span><span class="cnum">Apps</span><span class="cnum">'+(gk?'CS':'G/A')+'</span>'+
+      '<span class="cval">Value</span></div>';
+  const last = c.rows.length-1;
+  c.rows.forEach((r,bi)=>{
+    const hon = r.honours&&r.honours.length
+      ? ' <span style="color:var(--gold)">🏆'+(r.honours.length>1?r.honours.length:'')+'</span>' : '';
+    const club = r.club.name+(r.loan?' <span style="color:var(--dim);font-weight:400">(loan)</span>':'')+hon;
+    if(ROW_GRAIN==='year'){
+      (r.seasons||[{age:r.age,ovr:r.ovr,apps:r.apps,goals:r.goals,assists:r.assists,cs:r.cs}]).forEach((sn,i)=>{
+        html+='<div class="crow'+(bi===last?' now':'')+'"'+(i===0?'':' style="border-top:none"')+'>'+
+          ledgerCells(sn.age, i===0?club:'<span style="color:var(--dim);font-weight:400">↳</span>',
+                      sn.ovr, sn.apps, gk?sn.cs:(sn.goals+'/'+sn.assists), i===0?money(r.value):'')+'</div>';
+      });
+      return;
+    }
+    // BLOCK TOTALS, not seasons[0]. seasons[] is a presentational split of a block the engine
+    // never simulated separately, so reading sn.* here would silently halve every number.
+    const open = CAREER_OPEN===bi;
+    html+='<div class="crow blk'+(bi===last?' now':'')+(open?' open':'')+'" data-blk="'+bi+'" tabindex="0" role="button" '+
+      'aria-expanded="'+open+'" aria-label="Age '+r.age+', '+r.club.name+' — show both seasons">'+
+      ledgerCells(r.age, club, r.ovrEnd, r.apps, gk?r.cs:(r.goals+'/'+r.assists), money(r.value))+'</div>';
+    if(open){
+      (r.seasons||[]).forEach(sn=>{
+        html+='<div class="srow">'+ledgerCells(sn.age,
+          '<span style="color:var(--dim)">↳ season</span>', sn.ovr, sn.apps,
+          gk?sn.cs:(sn.goals+'/'+sn.assists), '')+'</div>';
+      });
+    }
+  });
+  // Everything still ahead, pre-printed. This is what makes the slab a constant height: the
+  // table is the same size at the first decision as at the last. Blocks, not years - and only
+  // while a career is still running.
+  if(!c.done && c.rows.length < CAREER.BLOCKS){
+    if(ROW_GRAIN==='year'){
+      for(let a=16+c.rows.length*2; a<16+CAREER.BLOCKS*2; a++)
+        html+='<div class="crow ghost">'+ledgerCells(a,'·','','','','')+'</div>';
+    } else {
+      for(let k=c.rows.length; k<CAREER.BLOCKS; k++)
+        html+='<div class="crow ghost">'+ledgerCells(16+2*k,'·','','','','')+'</div>';
+    }
+  }
+  const capsTotal=(c.caps&&c.caps.total)||0, capGoals=(c.caps&&c.caps.goals)||0;
+  html+='<div class="crow natrow"><span class="cage">🌍</span>'+
+    '<span class="cclub">'+s.nat+'</span><span class="cnum"></span>'+
+    '<span class="cnum">'+(capsTotal||'–')+'</span>'+
+    '<span class="cnum">'+(capsTotal? (gk?'–':capGoals) : '–')+'</span>'+
+    '<span class="cval">'+(capsTotal? 'caps' : 'uncapped')+'</span></div>';
+  t.innerHTML = html;
+  // Tap a played block to open its two seasons. Rebuilt in place rather than through render(),
+  // so opening a row never replays the entrance animation or re-runs the simulation.
+  t.querySelectorAll('.crow.blk').forEach(row=>{
+    const toggle=()=>{
+      const bi=+row.dataset.blk;
+      CAREER_OPEN = CAREER_OPEN===bi ? null : bi;
+      const fresh=buildLedger(c,s);
+      t.replaceWith(fresh);
+    };
+    row.onclick=toggle;
+    row.onkeydown=e=>{ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); toggle(); } };
+  });
+  return t;
+}
+
 function renderCareer(){
   // Declared as a hoisted function, not a const: the position-picker branch returns before the
   // table is built and would otherwise hit the temporal dead zone.
@@ -754,48 +849,16 @@ function renderCareer(){
     '</div>';
   cells.appendChild(card);
 
-  // the career so far
+  // ── the career so far: ONE ROW PER TWO-YEAR BLOCK ─────────────────────────────────────
+  // A reversal of the per-season table, and a deliberate one. Per season the table grew 68px
+  // every turn and finished at 814px on an 812px phone, so the picture of the life was the one
+  // thing you could never see whole. Per block it is a fixed slab: eleven rows from age 16 to 36,
+  // the played ones filled, the rest pre-printed empty, identical height at the first decision
+  // and at retirement. The years are not deleted - tap any played row and it opens into its two
+  // seasons, from the r.seasons array game.js already computes. ?rows=year restores the old
+  // grain for a side-by-side on a real phone; it is a review aid and comes out once Peter calls it.
   if(c.rows.length){
-    const t=document.createElement('div'); t.className='ctable';
-    t.innerHTML='<div class="chead"><span style="width:24px">Age</span><span style="flex:1">Club</span>'+
-        '<span class="cnum">OVR</span><span class="cnum">Apps</span><span class="cnum">'+(s.pos==='GK'?'CS':'G/A')+'</span>'+
-        '<span class="cval">Value</span></div>'+
-      c.rows.map(r=>(r.seasons||[{age:r.age,ovr:r.ovr,apps:r.apps,goals:r.goals,assists:r.assists,cs:r.cs}])
-        .map((sn,i)=>'<div class="crow'+(r===c.rows[c.rows.length-1]?' now':'')+'"'+(i===0?'':' style="border-top:none"')+'>'+
-          '<span class="cage">'+sn.age+'</span>'+
-          '<span class="cclub">'+(i===0
-             ? r.club.name+(r.loan?' <span style="color:var(--dim);font-weight:400">(loan)</span>':'')
-             : '<span style="color:var(--dim);font-weight:400">↳</span>')+
-            (i===0&&r.honours&&r.honours.length?' <span style="color:var(--gold)">🏆'+(r.honours.length>1?r.honours.length:'')+'</span>':'')+'</span>'+
-          '<span class="cnum"><i class="ovr '+ovrTier(sn.ovr)+'">'+sn.ovr+'</i></span>'+
-          '<span class="cnum">'+sn.apps+'</span>'+
-          '<span class="cnum">'+(s.pos==='GK'? sn.cs : (sn.goals+'/'+sn.assists))+'</span>'+
-          '<span class="cval">'+(i===0 ? money(r.value) : '')+'</span></div>').join('')).join('');
-    // The years still ahead, faint. The reference game pre-lists them and it is the reason the
-    // table reads as a LIFE rather than as a log: you can see how much is left to play for.
-    // ...but only while there IS something left to play for. Retirement can trigger from block 8,
-    // and 70% of careers end before block 11, so gating on years-played alone printed empty rows for
-    // ages the player will never see — under the row that ended his career, on the end screen he
-    // screenshots and shares.
-    const playedYears=c.rows.length*2, totalYears=CAREER.BLOCKS*2;
-    if(playedYears<totalYears && !c.done){
-      const ahead=[];
-      for(let a=16+playedYears; a<16+totalYears; a+=1) ahead.push(a);
-      t.innerHTML += ahead.slice(0,Math.min(ahead.length,6)).map(a=>
-        '<div class="crow ghost"><span class="cage">'+a+'</span><span class="cclub">·</span>'+
-        '<span class="cnum"></span><span class="cnum"></span><span class="cnum"></span><span class="cval"></span></div>').join('');
-    }
-    // Your country, pinned under the club rows exactly as a real career page would show it.
-    // Caps are the one stat that belongs outside the club table, and keeping it visible from
-    // move one makes "never capped" land as a real outcome rather than an absence.
-    const capsTotal=(c.caps&&c.caps.total)||0, capGoals=(c.caps&&c.caps.goals)||0;
-    t.innerHTML += '<div class="crow natrow"><span class="cage">🌍</span>'+
-      '<span class="cclub">'+s.nat+'</span>'+
-      '<span class="cnum"></span>'+
-      '<span class="cnum">'+(capsTotal||'–')+'</span>'+
-      '<span class="cnum">'+(capsTotal? (s.pos==='GK'? '–' : capGoals) : '–')+'</span>'+
-      '<span class="cval">'+(capsTotal? 'caps' : 'uncapped')+'</span></div>';
-
+    const t = buildLedger(c, s);
     window.__careerTable = t;
   }
 
@@ -845,7 +908,7 @@ function renderCareer(){
       const b=document.createElement('button'); b.className='offer'; b.type='button';
       b.innerHTML='<div class="oclub" style="font-size:15px">'+o.label+'</div>'+
         '<div class="ometa">'+(o.note||'')+'</div>';
-      b.onclick=()=>{ CAREER_ANIMATE=true; track('career_event_answered'); STATE.path.push('E'+i); save(); render(); };
+      b.onclick=()=>{ CAREER_ANIMATE=true; CAREER_OPEN=null; track('career_event_answered'); STATE.path.push('E'+i); save(); render(); };
       wrap.appendChild(b);
     });
     cells.appendChild(wrap);
@@ -866,7 +929,7 @@ function renderCareer(){
         '<div class="ometa">'+o.club.league+(o.club.tier===2?' · 2nd tier':'')+
           ' · <span class="stars">'+stars(o.club.prestige)+'</span> · '+(STATUS_LABEL[o.status]||'')+'</div>'+
       '</div>';
-    b.onclick=()=>{ CAREER_ANIMATE=true; STATE.path.push(c.rows.length+'ABC'[i]); save(); render(); };
+    b.onclick=()=>{ CAREER_ANIMATE=true; CAREER_OPEN=null; STATE.path.push(c.rows.length+'ABC'[i]); save(); render(); };
     wrap.appendChild(b);
   });
   cells.appendChild(wrap);
