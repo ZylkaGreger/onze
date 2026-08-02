@@ -126,20 +126,20 @@
     box-shadow:inset 0 1px 0 rgba(255,255,255,.055)}
   .bovr{flex:0 0 auto;width:58px;height:58px;border-radius:12px;display:flex;flex-direction:column;
     align-items:center;justify-content:center;color:#0b0f14;font-variant-numeric:tabular-nums}
-  .bovr .bl{font-size:9px;font-weight:800;letter-spacing:.08em;opacity:.72;line-height:1}
+  .bovr .bl{font-size:11px;font-weight:800;letter-spacing:.08em;opacity:.72;line-height:1}
   .bovr .bn{font-size:25px;font-weight:800;line-height:1.05;letter-spacing:-.02em}
   .bmid{flex:1;min-width:0}
   .bname{font-size:var(--t-lg);font-weight:800;letter-spacing:-.01em;line-height:1.15;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .bchips{display:flex;align-items:center;gap:5px;margin-top:5px}
-  .chip{font-size:10px;font-weight:800;letter-spacing:.04em;padding:3px 6px;border-radius:5px;
+  .chip{font-size:11px;font-weight:800;letter-spacing:.04em;padding:2px 6px;border-radius:5px;
     background:var(--bg);color:var(--dim);white-space:nowrap}
-  .chip.pos{background:#2b2038;color:#d9b8f0}
+  .chip.pos{background:var(--raised);color:var(--txt)}   /* was #2b2038/#d9b8f0 - outside the token set */
   .bclub{font-size:var(--t-xs);color:var(--dim);white-space:nowrap;overflow:hidden;
     text-overflow:ellipsis;min-width:0}
   .bright{flex:0 0 auto;text-align:right}
   .bkv{display:flex;align-items:baseline;justify-content:flex-end;gap:6px;line-height:1.25}
-  .bkv .k{font-size:9px;font-weight:800;letter-spacing:.07em;color:var(--dim)}
+  .bkv .k{font-size:11px;font-weight:800;letter-spacing:.07em;color:var(--dim)}
   .bkv .v{font-size:var(--t-md);font-weight:800;font-variant-numeric:tabular-nums}
   .bspark{display:block;width:100%;height:22px;margin:-2px 0 8px;overflow:visible}
   .modes{display:inline-flex;background:var(--panel2);border:1px solid var(--line);
@@ -211,9 +211,16 @@
     color:var(--dim);font-size:11.5px;flex:0 0 auto}
 
   .crow.natrow{background:var(--bg);border-top:1px solid var(--line)}
+  /* "uncapped" needs 54px in a 43px cell. Scoped here, never globally: .cclub is flex:1. */
+  .crow.natrow .cval{width:auto;flex:0 0 auto;padding-left:6px}
   .crow.natrow .cclub{font-weight:600}
   .crow.natrow .cage{background:transparent;font-size:12px}
-  .crow.ghost{opacity:.26}
+  /* Ghosts read as future because their data cells are EMPTY, not because they are dimmed.
+     opacity:.26 composited --dim on --panel to 1.5173:1 - illegible on a phone in daylight, and
+     so a rule that defeated the "see how much is left to play for" job of the rows themselves.
+     The age chip loses its background instead, or a full-opacity ghost chip would be pixel-
+     identical to a played one (.crow .cage already sets colour and background). */
+  .crow.ghost .cage{background:transparent}
   .crow.ghost .cclub{color:var(--dim);font-weight:400}
   .ctable{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin:12px 0;overflow:hidden}
   .chead{display:flex;gap:6px;padding:6px 9px;font-size:10px;text-transform:uppercase;letter-spacing:.6px;
@@ -673,7 +680,7 @@ function renderCareer(){
     const bar=document.createElement('div');
     bar.style.cssText='display:flex;gap:6px;justify-content:center;margin:0 0 4px';
     bar.innerHTML=paces.map(([id,lbl,sub])=>'<button type="button" class="mbtn pacebtn'+(CAREER_PACE===id?' active':'')+
-      '" data-pace="'+id+'" style="padding:7px 12px;font-size:12px">'+lbl+'</button>').join('');
+      '" data-pace="'+id+'" style="min-height:44px;padding:0 16px;font-size:13px">'+lbl+'</button>').join('');
     bar.querySelectorAll('.pacebtn').forEach(b=>b.onclick=()=>{
       CAREER_PACE=b.dataset.pace; localStorage.setItem('onze:pace',CAREER_PACE); render(); });
     cells.appendChild(bar);
