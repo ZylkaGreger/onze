@@ -105,15 +105,17 @@
   @keyframes riseIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
   @keyframes barFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
   @keyframes rowIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-  .nu .resolve{animation:riseIn .34s cubic-bezier(.2,.7,.3,1) both}
-  .nu .mbar i{transform-origin:left center;animation:barFill .5s .12s cubic-bezier(.2,.7,.3,1) both}
+  /* Re-pointed from .resolve/.mbar when the resolution card was folded into the .now row.
+     These selectors are the whole choreography; leaving them aimed at deleted elements would
+     have killed the entrance silently, with nothing to see and nothing to throw. */
+  .nu .crow.now .why{animation:riseIn .34s cubic-bezier(.2,.7,.3,1) both}
+  .nu .mline i{transform-origin:left center;animation:barFill .5s .12s cubic-bezier(.2,.7,.3,1) both}
   .nu .crow.now{animation:rowIn .3s .06s ease-out both}
-  .nu .crow.now:last-of-type{animation-delay:.14s}
   .offer{will-change:transform}
   .offer:active{transform:scale(.972)}
   /* An animation that has already played must not be re-triggered by an unrelated re-render. */
   @media (prefers-reduced-motion: reduce){
-    .nu .resolve,.nu .mbar i,.nu .crow.now{animation:none}
+    .nu .crow.now .why,.nu .mline i,.nu .crow.now{animation:none}
     .offer,.offer:active{transition:none;transform:none}
   }
 
@@ -152,19 +154,6 @@
     vertical-align:2px;margin-left:5px;animation:pulse 2s ease-in-out infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
   body.wc .mbtn.active{color:var(--gold)}
-  .resolve{background:var(--panel2);border:1px solid var(--line);border-left:2px solid var(--line);
-    border-radius:11px;padding:11px 12px;margin:14px 0 4px}
-  /* A season that went well and one that went badly must not look identical. Left edge only —
-     enough to feel, not enough to shout. */
-  .resolve.rise{border-left-color:var(--accent);background:linear-gradient(90deg,rgba(63,185,80,.07),transparent),var(--panel2)}
-  .resolve.fall{border-left-color:var(--down);background:linear-gradient(90deg,rgba(229,115,74,.06),transparent),var(--panel2)}
-  .resolve .rhead{font-size:var(--t-sm);color:var(--dim);margin-bottom:6px}
-  .resolve .rrow{display:flex;justify-content:space-between;gap:8px;font-size:var(--t-md);color:var(--dim);flex-wrap:wrap}
-  .resolve .rrow b{font-variant-numeric:tabular-nums}
-  .mbar{height:4px;background:var(--bg);border-radius:3px;margin-top:9px;overflow:hidden}
-  .mbar i{display:block;height:100%;background:var(--accent);border-radius:3px}
-  .mlab{font-size:var(--t-xs);color:var(--dim);margin-top:4px;text-transform:uppercase;letter-spacing:.5px}
-  .rwin{font-size:var(--t-sm);color:var(--gold);margin-top:7px}
   /* A club with no crest still needs a face. A monogram tile — two letters on a hue derived
      from the club's own name — gives every club a stable identity we are allowed to ship,
      and does the job crests do for the reference game. */
@@ -217,6 +206,17 @@
   /* A played block opens into its two seasons on a tap - this is how year-by-year survives the
      collapse. The hit region is padded out to 36px because a 28px row is under the tap minimum. */
   .crow.blk{cursor:pointer;position:relative}
+  /* The current block stacks: its normal cells, then what the decision did, then the minutes
+     underline. Left edge carries the rise/fall colour, enough to feel and not enough to shout. */
+  .crow.now{display:block;padding:0}
+  .crow.now .nowline{display:flex;align-items:center;gap:6px;padding:5px 9px}
+  .crow.now.rise{border-left:2px solid var(--accent)}
+  .crow.now.fall{border-left:2px solid var(--down)}
+  .why{display:flex;align-items:center;gap:10px;font-size:var(--t-xs);color:var(--dim);
+    padding:0 9px 5px;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden}
+  .why b{font-weight:800}
+  .mline{display:block;height:2px;background:var(--bg);margin:0 9px 4px}
+  .mline i{display:block;height:100%}
   .crow.blk::after{content:"";position:absolute;left:0;right:0;top:-4px;bottom:-4px}
   .crow.blk:hover{background:var(--panel2)}
   .crow.blk.open{background:var(--panel2)}
@@ -703,6 +703,25 @@ function ledgerCells(age, club, ovr, apps, ga, val, extra){
     '<span class="cval">'+val+'</span>';
 }
 
+// The resolution, folded onto the row it describes. Everything the old card said that the row
+// does not already say: how far the rating moved, how far the value moved, and the share of
+// available minutes - the number the simulation actually turns on, and the reason a choice
+// worked or did not. The minutes bar becomes the row's own 2px underline.
+function whyStrip(r, prev, gk){
+  const dOvr = Math.round(r.ovrEnd - (prev ? prev.ovrEnd : 50));
+  const dVal = r.value - (prev ? prev.value : 0.1);
+  const arrow = v => v>0?'▲':v<0?'▼':'–';
+  const col   = v => v>0?'var(--accent)':v<0?'var(--down)':'var(--dim)';
+  const mins  = Math.round(r.m*100);
+  return '<span class="why">'+
+      '<b style="color:'+col(dOvr)+'">'+arrow(dOvr)+' '+(dOvr>0?'+':'')+dOvr+' OVR</b>'+
+      '<b style="color:'+col(dVal)+'">'+arrow(dVal)+' '+(dVal>=0?'+':'−')+money(Math.abs(dVal))+'</b>'+
+      '<span>'+mins+'% mins</span>'+
+      (r.honours&&r.honours.length? '<span style="color:var(--gold)">🏆 '+r.honours.map(h=>h.comp).join(' · ')+'</span>':'')+
+    '</span>'+
+    '<span class="mline"><i style="width:'+mins+'%;background:'+(r.m<0.25?'var(--down)':'var(--accent)')+'"></i></span>';
+}
+
 function buildLedger(c, s){
   const t=document.createElement('div'); t.className='ctable';
   const gk = s.pos==='GK';
@@ -710,6 +729,8 @@ function buildLedger(c, s){
       '<span class="cnum">OVR</span><span class="cnum">Apps</span><span class="cnum">'+(gk?'CS':'G/A')+'</span>'+
       '<span class="cval">Value</span></div>';
   const last = c.rows.length-1;
+  const prevRow = c.rows[last-1];
+  const dOvr = c.rows.length ? Math.round(c.rows[last].ovrEnd-(prevRow? prevRow.ovrEnd : 50)) : 0;
   c.rows.forEach((r,bi)=>{
     const hon = r.honours&&r.honours.length
       ? ' <span style="color:var(--gold)">🏆'+(r.honours.length>1?r.honours.length:'')+'</span>' : '';
@@ -725,9 +746,15 @@ function buildLedger(c, s){
     // BLOCK TOTALS, not seasons[0]. seasons[] is a presentational split of a block the engine
     // never simulated separately, so reading sn.* here would silently halve every number.
     const open = CAREER_OPEN===bi;
-    html+='<div class="crow blk'+(bi===last?' now':'')+(open?' open':'')+'" data-blk="'+bi+'" tabindex="0" role="button" '+
+    const good = bi===last && (dOvr>=4 || (r.honours&&r.honours.length));
+    const bad  = bi===last && (dOvr<=-3 || r.m<0.20);
+    html+='<div class="crow blk'+(bi===last?' now':'')+(open?' open':'')+
+      (good?' rise':bad?' fall':'')+'" data-blk="'+bi+'" tabindex="0" role="button" '+
       'aria-expanded="'+open+'" aria-label="Age '+r.age+', '+r.club.name+' — show both seasons">'+
-      ledgerCells(r.age, club, r.ovrEnd, r.apps, gk?r.cs:(r.goals+'/'+r.assists), money(r.value))+'</div>';
+      '<span class="nowline">'+
+        ledgerCells(r.age, club, r.ovrEnd, r.apps, gk?r.cs:(r.goals+'/'+r.assists), money(r.value))+
+      '</span>'+
+      (bi===last ? whyStrip(r, prevRow, gk) : '')+'</div>';
     if(open){
       (r.seasons||[]).forEach(sn=>{
         html+='<div class="srow">'+ledgerCells(sn.age,
@@ -865,33 +892,11 @@ function renderCareer(){
   if(c.done || STATE.done){ appendTable(); STATE.done=true; showCareerEnd(c); return; }
   document.getElementById('end').classList.remove('show');
 
-  // WHAT YOUR LAST DECISION DID. Previously a choice silently appended a table row and the
-  // consequence had to be inferred by comparing numbers. Now the block that just resolved is
-  // stated: rating moved this much, value moved this much, you played this share of the minutes.
-  if(c.rows.length){
-    const r=c.rows[c.rows.length-1], prev=c.rows[c.rows.length-2];
-    const dOvr=Math.round(r.ovrEnd-(prev? prev.ovrEnd : 50));
-    const nowV=r.value, prevV=prev? prev.value : 0.1;
-    const dVal=nowV-prevV;
-    const up=v=>v>0, arrow=v=>v>0?'▲':v<0?'▼':'–';
-    const col=v=>v>0?'var(--accent)':v<0?'var(--down)':'var(--dim)';
-    const box=document.createElement('div');
-    const good = dOvr>=4 || (r.honours&&r.honours.length);
-    const bad  = dOvr<=-3 || r.m<0.20;
-    box.className='resolve'+(good?' rise':bad?' fall':'');
-    box.innerHTML=
-      '<div class="rhead">'+r.club.name+(r.loan?' (loan)':'')+' · age '+r.age+'–'+(r.age+1)+'</div>'+
-      '<div class="rrow">'+
-        '<span>Rating <b style="color:'+col(dOvr)+'">'+arrow(dOvr)+' '+(dOvr>0?'+':'')+dOvr+'</b></span>'+
-        '<span>Value <b style="color:'+col(dVal)+'">'+arrow(dVal)+' '+(dVal>=0?'+':'−')+money(Math.abs(dVal))+'</b></span>'+
-        '<span>'+r.apps+' apps'+(s.pos==='GK'? ' · '+r.cs+' cs' : ' · '+r.goals+'⚽')+'</span>'+
-      '</div>'+
-      // minutes share — the number the sim actually turns on, and the reason a choice worked or did not
-      '<div class="mbar"><i style="width:'+Math.round(r.m*100)+'%;background:'+(r.m<0.25?'var(--down)':'var(--accent)')+'"></i></div>'+
-      '<div class="mlab">'+Math.round(r.m*100)+'% of available minutes</div>'+
-      (r.honours&&r.honours.length? '<div class="rwin">🏆 '+r.honours.map(h=>h.comp).join(' · ')+'</div>':'');
-    cells.appendChild(box);
-  }
+  // WHAT YOUR LAST DECISION DID — printed on the row your last decision created, not on a card
+  // floating above it. The standalone card was 91px plus 18px of margins and duplicated four
+  // facts (club, age range, apps, goals) that are already cells in that same row; its header line
+  // was verbatim the row it sat on. Now the .now row carries a .why strip and a minutes underline,
+  // for 27px instead of 109px, and "what happened" reads where it happened.
 
   // an event interrupts the club decision and must be answered first
   if(c.event){
