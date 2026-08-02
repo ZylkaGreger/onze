@@ -647,7 +647,10 @@ export function simulateCareer(CLUBS, date, path, EVENTS, pace){
             if(e.k === 'ovrDelta'){ st.ovr = Math.max(CAREER.OVR_MIN, Math.min(CAREER.OVR_MAX, st.ovr + e.v)); continue; }
             st.mods.push({ k: e.k, v: e.v, until: e.for === 0 ? 0 : k + e.for });
           }
-          log.push({ k, title: ev.title, choice: res.label, copy: res.copy });
+          // id and key so the UI can find the event again and show which way the roll went.
+          // Without them a 60/40 gamble was answered and never resolved on screen: the outcome
+          // only ever appeared in the end-screen log, half a career later.
+          log.push({ k, id: ev.id, key: res.key, title: ev.title, choice: res.label, copy: res.copy });
         }
         tokens.splice(k + 1, 1);            // the event token is consumed, blocks stay aligned
       }

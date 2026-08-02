@@ -173,6 +173,25 @@
   .offer:hover{border-color:var(--raised);background:var(--panel2)}
   .offer:active{transform:scale(.995)}
   .offer .obody{flex:1;min-width:0}
+  /* THE REVEAL. A 60/40 choice used to be answered and never resolved on screen - the outcome
+     surfaced only in the end-screen log, half a career later. Now the possibilities flip past,
+     slowing down, and stop on the one that happened. The result is decided by the seed before
+     the first frame; the animation only shows you a decision that has already been made. */
+  .outcome{background:var(--panel2);border:1px solid var(--line);border-radius:12px;
+    padding:12px;margin:12px 0 4px;overflow:hidden}
+  .outcome .rlab{font-size:var(--t-xs);letter-spacing:.7px;text-transform:uppercase;
+    color:var(--dim);font-weight:700}
+  .rslot{display:flex;align-items:center;gap:9px;margin-top:7px;min-height:30px}
+  .rodds{flex:0 0 auto;font-size:var(--t-md);font-weight:800;font-variant-numeric:tabular-nums;
+    min-width:46px;padding:3px 7px;border-radius:7px;background:var(--bg);color:var(--dim);text-align:center}
+  .rtext{flex:1;min-width:0;font-size:var(--t-md);font-weight:700;line-height:1.25}
+  .rslot.spin .rodds,.rslot.spin .rtext{opacity:.55}
+  .rslot.land .rodds{background:var(--accent);color:#06210e}
+  .rslot.land.bad .rodds{background:var(--down);color:#2a0f06}
+  .rslot.land{animation:landPop .32s cubic-bezier(.2,.8,.3,1.4) both}
+  @keyframes landPop{0%{transform:scale(.94)}60%{transform:scale(1.03)}100%{transform:none}}
+  .rcopy{font-size:var(--t-md);color:var(--dim);margin-top:8px;line-height:1.45}
+  @media (prefers-reduced-motion: reduce){ .rslot.land{animation:none} }
   .offer.plain{display:block}                    /* cards with no monogram stack rather than sit in a row */
   /* A forced event has one option and no choice in it. It should not look like a decision you
      are making, so it loses the hover affordance and states its cost plainly instead. */
@@ -490,7 +509,7 @@
 // game.js is versioned like the data files. Without this a browser can run a CACHED module
 // against fresh data after a deploy — which during development produced a NaN rating, and in
 // production would silently give some players a different career. Bump APP_V with game.js.
-const APP_V = '2026-08-02c';
+const APP_V = '2026-08-02e';
 const { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity,
          simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS, parScore, roadNotTaken,
@@ -500,7 +519,7 @@ const MAX_GUESSES = 6;
 // DATA_V: cache-buster for the data files. BUMP THIS whenever data/*.json changes, or players with
 // a cached copy see a DIFFERENT daily puzzle than everyone else (the mystery-player pick depends on
 // pool size — the 150→300 pool change split users onto two different daily players).
-const DATA_V = '2026-08-02c';
+const DATA_V = '2026-08-02d';
 const MODES = [
   ['squad','📋 Squads'],
   // ['link','🔗 Find the link'],   // hidden Jun 2026 (kept in code/data — re-add this line to bring it back)
@@ -703,6 +722,9 @@ const ROW_GRAIN = new URLSearchParams(location.search).get('rows') === 'year' ? 
 // Which block is expanded into its seasons. Module scope, not STATE: opening a row is a view
 // action, it never enters the decision path, so the pure-function-of-decisions contract holds.
 let CAREER_OPEN = null;
+// Set when an event option is tapped, consumed by the next render. Purely presentational, never
+// in STATE.path — a resumed career shows no reveal, which is right: you already saw it.
+let CAREER_REVEAL = null;
 
 function ledgerCells(age, club, ovr, apps, ga, val, extra){
   return '<span class="cage">'+age+'</span>'+
@@ -730,6 +752,43 @@ function whyStrip(r, prev, gk){
       (r.honours&&r.honours.length? '<span style="color:var(--gold)">🏆 '+r.honours.map(h=>h.comp).join(' · ')+'</span>':'')+
     '</span>'+
     '<span class="mline"><i style="width:'+mins+'%;background:'+(r.m<0.25?'var(--down)':'var(--accent)')+'"></i></span>';
+}
+
+// Flip through the possibilities, decelerating, and stop on the one the seed already chose.
+// Nothing here decides anything: `landKey` is passed in, and a player who reloads mid-spin gets
+// the same result, because the result was never in the animation.
+function revealOutcome(ev, optIdx, landKey, copy){
+  const opt = ev.options[Math.min(optIdx, ev.options.length-1)];
+  const odds = opt.odds || [];
+  const box = document.createElement('div'); box.className='outcome';
+  const shortOf = k => (opt.outcomes[k] && opt.outcomes[k].short) || k;
+  const pctOf   = k => Math.round((odds.find(o=>o[0]===k)||[0,0])[1]*100);
+  box.innerHTML = '<div class="rlab">'+opt.label+'</div>'+
+    '<div class="rslot"><span class="rodds"></span><span class="rtext"></span></div>'+
+    '<div class="rcopy" hidden></div>';
+  const slot = box.querySelector('.rslot'), oddsEl = box.querySelector('.rodds'),
+        textEl = box.querySelector('.rtext'), copyEl = box.querySelector('.rcopy');
+  const paint = k => { oddsEl.textContent = pctOf(k)+'%'; textEl.textContent = shortOf(k); };
+  const land = () => {
+    paint(landKey);
+    slot.classList.remove('spin');
+    slot.classList.add('land');
+    // "bad" is the losing branch: the one that is not the first-listed outcome of this option.
+    if(odds.length > 1 && odds[0][0] !== landKey) slot.classList.add('bad');
+    copyEl.textContent = copy; copyEl.hidden = false;
+  };
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(odds.length < 2 || still){ land(); return box; }
+  // decelerating flip: fast at first, and always ending on the real outcome
+  slot.classList.add('spin');
+  let i = 0, delay = 55;
+  const tick = () => {
+    paint(odds[i % odds.length][0]); i++;
+    delay *= 1.28;
+    if(delay < 260) setTimeout(tick, delay); else setTimeout(land, delay);
+  };
+  tick();
+  return box;
 }
 
 function buildLedger(c, s){
@@ -923,12 +982,22 @@ function renderCareer(){
       const b=document.createElement('button'); b.className='offer plain'+(ev.forced?' forced':''); b.type='button';
       b.innerHTML='<div class="oclub" style="font-size:15px">'+o.label+'</div>'+
         '<div class="ometa">'+(o.note||'')+'</div>';
-      b.onclick=()=>{ CAREER_ANIMATE=true; CAREER_OPEN=null; track('career_event_answered'); STATE.path.push('E'+i); save(); render(); };
+      b.onclick=()=>{ CAREER_ANIMATE=true; CAREER_OPEN=null; track('career_event_answered');
+        CAREER_REVEAL={ id:ev.id, opt:i }; STATE.path.push('E'+i); save(); render(); };
       wrap.appendChild(b);
     });
     cells.appendChild(wrap);
     appendTable();
     return;
+  }
+
+  // Show how the gamble turned out, once, on the render straight after the tap.
+  if(CAREER_REVEAL && c.log && c.log.length){
+    const last = c.log[c.log.length-1];
+    const ev = EVENTS.find(e => e.id === CAREER_REVEAL.id);
+    if(ev && last.id === CAREER_REVEAL.id && last.key)
+      cells.appendChild(revealOutcome(ev, CAREER_REVEAL.opt, last.key, last.copy));
+    CAREER_REVEAL = null;
   }
 
   // THE LAST STRETCH. 68% of careers end before the eleventh block, and most of those ended on a
@@ -1168,6 +1237,7 @@ function showCareerEnd(c){
   track('career_finished');
   const sc = c.score || scoreCareer(c);
   const e=document.getElementById('end'); e.classList.add('show');
+  clearEnd();                       // a re-render must not stack a second card under the first
   recordPlay();
   const st=liveStreak(STREAK);
   document.getElementById('endmsg').textContent = sc.total+' · '+sc.tier + (st>1?' · 🔥 '+st+'-day streak':'');
@@ -1303,7 +1373,7 @@ function renderPips(){
   STATE.guesses.forEach(g=>{const p=document.createElement('div');p.className='pip '+(g.hit?'hit':'miss');pips.appendChild(p);});
   for(let i=STATE.guesses.length;i<MAX_GUESSES;i++){const p=document.createElement('div');p.className='pip';pips.appendChild(p);}
   const input=document.getElementById('guess'); input.disabled=STATE.done;
-  if(STATE.done) showEnd(); else document.getElementById('end').classList.remove('show');
+  if(STATE.done) showEnd(); else { clearEnd(); document.getElementById('end').classList.remove('show'); }
 }
 
 function render(){ if(STATE.mode==='link') renderLink(); else if(STATE.mode==='grid') renderGrid(); else if(STATE.mode==='player') renderPlayer(); else if(STATE.mode==='career') renderCareer(); else renderSquad(); }
@@ -1324,7 +1394,7 @@ function renderPlayer(){
     ? (STATE.win?`solved in ${STATE.shown} clue${STATE.shown===1?'':'s'}`:'revealed')
     : `Clue ${Math.min(STATE.shown,n)}/${n} · ${g} guess${g===1?'':'es'}`;
   const input=document.getElementById('guess'); input.disabled=STATE.done;
-  if(STATE.done) showEnd(); else document.getElementById('end').classList.remove('show');
+  if(STATE.done) showEnd(); else { clearEnd(); document.getElementById('end').classList.remove('show'); }
 }
 
 function renderSquad(){
@@ -1414,7 +1484,7 @@ function renderGrid(){
   const input=document.getElementById('guess'); input.disabled=STATE.done;
   input.placeholder = STATE.active==null ? 'Type a player — it lands in the right cell…'
     : `${p.rows[Math.floor(STATE.active/3)].name} × ${p.cols[STATE.active%3].name}…`;
-  if(STATE.done) showEnd(); else document.getElementById('end').classList.remove('show');
+  if(STATE.done) showEnd(); else { clearEnd(); document.getElementById('end').classList.remove('show'); }
 }
 
 // cellRarity (the proxy grid-rarity score) now lives in ./game.js. gridRarity() stays here
@@ -1586,8 +1656,16 @@ async function shareResult(){
   }catch(e){}
   toast(legacyCopy(text) ? 'Copied to clipboard!' : 'Copy failed — long-press to copy');
 }
+// #end is shared by all four modes, and the career share card is inserted as a SIBLING of
+// #reveal rather than inside it — so rewriting #reveal.innerHTML never removed it. Finish a
+// career, switch to Mystery player, solve that, and the career card was still sitting under the
+// answer. Anything appended beside #reveal has to be cleared by whoever renders next.
+function clearEnd(){
+  document.querySelectorAll('#end .cardwrap').forEach(n => n.remove());
+}
 function showEnd(){
   const e=document.getElementById('end'); e.classList.add('show');
+  clearEnd();
   const won = STATE.mode==='link' ? !!STATE.answer
     : STATE.mode==='grid' ? STATE.cells.filter(Boolean).length===9
     : STATE.mode==='player' ? STATE.win

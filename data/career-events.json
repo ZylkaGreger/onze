@@ -1,6 +1,6 @@
 {
  "version": 1,
- "note": "Career-mode events. DATA, not code — adding an event means adding an object here. A FORCED event (forced:true) has exactly one option and no choice in it - an injury, a relegation - and its single option must be certain, so nobody is made to roll dice they did not choose. Every option's odds must sum to 1.0, and at least one option per event must be certain (a safe out). Tone: situations that are funny or painful because they are plausible, never winks at the player.",
+ "note": "Career-mode events. DATA, not code — adding an event means adding an object here. A FORCED event (forced:true) has exactly one option and no choice in it - an injury, a relegation - and its single option must be certain, so nobody is made to roll dice they did not choose. Every option's odds must sum to 1.0, and at least one option per event must be certain (a safe out). Tone: situations that are funny or painful because they are plausible, never winks at the player. Every outcome of a MULTI-outcome option carries a short label, used by the reveal animation that flips between the possibilities before landing on the one that happened.",
  "events": [
   {
    "id": "newboss",
@@ -37,7 +37,8 @@
          "v": 5,
          "for": 2
         }
-       ]
+       ],
+       "short": "he comes round"
       },
       "lose": {
        "copy": "He never picked you again.",
@@ -52,7 +53,8 @@
          "v": 0.5,
          "for": 1
         }
-       ]
+       ],
+       "short": "frozen out"
       }
      }
     },
@@ -189,7 +191,8 @@
          "v": 1.35,
          "for": 0
         }
-       ]
+       ],
+       "short": "it is fine"
       },
       "unpaid": {
        "copy": "Three months without wages, and a season lost to it.",
@@ -209,7 +212,8 @@
          "v": 10,
          "for": 2
         }
-       ]
+       ],
+       "short": "the wages stop"
       }
      }
     },
@@ -287,7 +291,8 @@
      "outcomes": {
       "quiet": {
        "copy": "You said nothing and it died on its own.",
-       "effects": []
+       "effects": [],
+       "short": "forgotten"
       },
       "follows": {
        "copy": "It followed you to every away ground for a year.",
@@ -302,7 +307,8 @@
          "v": 0.9,
          "for": 0
         }
-       ]
+       ],
+       "short": "it follows you"
       }
      }
     }
@@ -342,7 +348,8 @@
          "v": 1.12,
          "for": 2
         }
-       ]
+       ],
+       "short": "you settle"
       },
       "worn": {
        "copy": "You never really settled.",
@@ -357,7 +364,8 @@
          "v": -3,
          "for": 1
         }
-       ]
+       ],
+       "short": "it wears you down"
       }
      }
     },
@@ -499,7 +507,8 @@
          "v": 3,
          "for": 1
         }
-       ]
+       ],
+       "short": "hero"
       },
       "broken": {
        "copy": "You lasted twenty minutes. Then six months.",
@@ -519,7 +528,8 @@
          "v": 0.7,
          "for": 1
         }
-       ]
+       ],
+       "short": "out for months"
       }
      }
     },
@@ -597,7 +607,8 @@
          "v": "abroad",
          "for": 1
         }
-       ]
+       ],
+       "short": "you adapt and thrive"
       },
       "flop": {
        "copy": "You never worked it out.",
@@ -622,7 +633,8 @@
          "v": "abroad",
          "for": 1
         }
-       ]
+       ],
+       "short": "you never settle"
       }
      }
     },
@@ -683,7 +695,8 @@
          "v": "Reinvented",
          "for": 0
         }
-       ]
+       ],
+       "short": "a second career"
       },
       "lost": {
        "copy": "You were neither one thing nor the other.",
@@ -698,7 +711,8 @@
          "v": -3,
          "for": 2
         }
-       ]
+       ],
+       "short": "you lose your edge"
       }
      }
     },
@@ -828,7 +842,8 @@
          "v": 0.7,
          "for": 1
         }
-       ]
+       ],
+       "short": "back early"
       },
       "again": {
        "copy": "You came back twice and broke down twice.",
@@ -843,7 +858,8 @@
          "v": -4,
          "for": 0
         }
-       ]
+       ],
+       "short": "you break down again"
       }
      }
     },
@@ -980,7 +996,8 @@
          "v": 3,
          "for": 1
         }
-       ]
+       ],
+       "short": "they back down"
       },
       "rot": {
        "copy": "You trained with the kids until January.",
@@ -995,7 +1012,8 @@
          "v": 0.75,
          "for": 1
         }
-       ]
+       ],
+       "short": "you rot in the reserves"
       }
      }
     },
@@ -1152,7 +1170,8 @@
          "v": 1.15,
          "for": 0
         }
-       ]
+       ],
+       "short": "you decide it"
       },
       "villain": {
        "copy": "You missed the chance. They remember that too.",
@@ -1162,7 +1181,8 @@
          "v": -3,
          "for": 1
         }
-       ]
+       ],
+       "short": "you are the one who missed"
       }
      }
     },
@@ -1402,7 +1422,8 @@
          "v": 3,
          "for": 2
         }
-       ]
+       ],
+       "short": "you love it"
       },
       "lose": {
        "copy": "It got infected. You missed six weeks to a bird.",
@@ -1412,7 +1433,8 @@
          "v": 0.7,
          "for": 1
         }
-       ]
+       ],
+       "short": "it goes wrong"
       }
      }
     },
@@ -1467,7 +1489,8 @@
          "k": "tag",
          "v": "schooled"
         }
-       ]
+       ],
+       "short": "you pass and sleep badly"
       },
       "lose": {
        "copy": "You revised instead of recovering and had the worst season of your youth.",
@@ -1477,7 +1500,8 @@
          "v": 0.72,
          "for": 1
         }
-       ]
+       ],
+       "short": "it costs you a season"
       }
      }
     },
@@ -1539,7 +1563,8 @@
          "v": 1.18,
          "for": 2
         }
-       ]
+       ],
+       "short": "he is right"
       },
       "lose": {
        "copy": "He talked you out of the one move that was real.",
@@ -1549,7 +1574,8 @@
          "v": -6,
          "for": 2
         }
-       ]
+       ],
+       "short": "he is a car with a phone in it"
       }
      }
     },
@@ -1611,7 +1637,8 @@
          "v": 0.88,
          "for": 3
         }
-       ]
+       ],
+       "short": "it makes you"
       },
       "lose": {
        "copy": "You carried it badly and your own game went first.",
@@ -1621,7 +1648,8 @@
          "v": 0.8,
          "for": 2
         }
-       ]
+       ],
+       "short": "it is a weight"
       }
      }
     },
