@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { mulberry32, hashStr, norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
          careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS, buildOffers,
          validateCatalogue, pickEvent, resolveEvent, applyMods, eligible, titleOdds, SCORE_VERSION, EFFECT_KEYS,
-         nationStrength, blockCaps, parScore, POS_MOD, roadNotTaken } from '../game.js';
+         nationStrength, blockCaps, parScore, POS_MOD, roadNotTaken, sharePath } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -563,6 +563,46 @@ test('offers follow FORM, not just rating — a bench-warmer is not called by gi
   assert.ok(benched.lo <= starter.lo + 1, 'the floor is not raised by poor form');
   // and with no history at all (the very first decision) nothing is penalised
   assert.equal(reachBand(50, 0, undefined, undefined).hi, reachBand(50, 0).hi);
+});
+
+test('the shared path never lies about where a career went', () => {
+  const mk = a => a.map(([name, prestige]) => ({ club: { name, prestige } }));
+  // Peter's actual career: the old code sliced the first five DISTINCT names, so a run that went
+  // on to Juventus and finished at Korona Kielce shared a career that appeared to end at Bayern.
+  const real = mk([['Atromitos',55],['Lincoln City',52],['Tottenham Hotspur',88],['Tottenham Hotspur',88],
+    ['Bayer 04 Leverkusen',86],['Bayer 04 Leverkusen',86],['FC Bayern Munich',97],['Juventus',93],
+    ['Al Shabab Club',62],['Korona Kielce',45],['Korona Kielce',45]]);
+  const line = sharePath(real, 5);
+  assert.ok(line.startsWith('Atromitos'), `must start where the career started: ${line}`);
+  assert.ok(/Korona Kielce · 8 clubs$/.test(line), `must end where the career ended: ${line}`);
+  assert.ok(line.includes('FC Bayern Munich'), `must keep the biggest club: ${line}`);
+  assert.equal(line.split(' → ').length, 5, `at most 5 names: ${line}`);
+
+  // a short career is printed whole, with no count and nothing dropped
+  assert.equal(sharePath(mk([['Ajax',80],['Ajax',80],['Porto',84],['Lyon',78]]), 5), 'Ajax → Porto → Lyon');
+  // consecutive blocks at one club are ONE spell; a genuine return years later is two
+  assert.equal(sharePath(mk([['Ajax',80],['Ajax',80],['Ajax',80]]), 5), 'Ajax');
+  assert.equal(sharePath(mk([['Ajax',80],['Porto',84],['Ajax',80]]), 5), 'Ajax → Porto → Ajax');
+
+  // and the invariant that actually matters, over real careers
+  const CL = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/clubs.json'), 'utf8')).clubs;
+  const EVS = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/career-events.json'), 'utf8')).events;
+  for(const date of ['2026-08-03','2026-08-07','2026-08-11']){
+    const route = ['P:MF'];
+    let c;
+    for(let guard = 0; guard < 40; guard++){
+      c = simulateCareer(CL, date, route, EVS, 'normal');
+      if(c.done) break;
+      if(c.event){ route.push('E' + (c.event.options.length - 1)); continue; }
+      if(!c.offers.length) break;
+      route.push(c.rows.length + 'A');
+    }
+    if(!c.rows.length) continue;
+    const out = sharePath(c.rows, 5);
+    const first = c.rows[0].club.name, last = c.rows[c.rows.length-1].club.name;
+    assert.ok(out.startsWith(first), `${date}: path must start at ${first} — got "${out}"`);
+    assert.ok(out.includes(last), `${date}: path must include the final club ${last} — got "${out}"`);
+  }
 });
 
 test('an event that says you left must not then offer you your old club', () => {

@@ -515,6 +515,34 @@ export function buildOffers(CLUBS, st, rnd){
   return offers.filter(Boolean).slice(0, 3);
 }
 
+// The career path as a line of text. This used to be `.slice(0, 5)` over the distinct club
+// names, which silently dropped everything after the fifth — so a player who went on to Juventus
+// and finished at Korona Kielce shared a career that appeared to end at Bayern. A share is the one
+// artefact that leaves the site; it does not get to be wrong about where a career went.
+//
+// Rules: spells, not names (two blocks at one club is one spell, matching the drawn card, and a
+// RETURN to a club years later is a second spell because it genuinely happened twice). The first
+// and last spell are always kept, and so is the biggest club you played for, because that is what
+// the brag is actually about. Anything omitted is marked, so the line can be short without ever
+// implying it is complete.
+export function sharePath(rows, max){
+  const spells=[];
+  for(const r of rows){
+    const last=spells[spells.length-1];
+    if(last && last.name===r.club.name) continue;
+    spells.push({ name:r.club.name, prestige:r.club.prestige });
+  }
+  if(spells.length<=max) return spells.map(s=>s.name).join(' → ');
+  const keep=new Set([0, spells.length-1]);
+  let best=0; spells.forEach((sp,i)=>{ if(sp.prestige>spells[best].prestige) best=i; });
+  keep.add(best);
+  const rest=spells.map((sp,i)=>i).filter(i=>!keep.has(i)).sort((a,b)=>spells[b].prestige-spells[a].prestige);
+  for(const i of rest){ if(keep.size>=max) break; keep.add(i); }
+  // Read chronologically, and state the true number of clubs rather than scattering ellipses
+  // through the line. The count is what stops a selection from reading as a complete list.
+  return [...keep].sort((a,b)=>a-b).map(i=>spells[i].name).join(' → ') + ' · ' + spells.length + ' clubs';
+}
+
 // The day's seeded 16-year-old. Identical for every player worldwide (D-2).
 export function careerStart(CLUBS, date){
   const d = date || todayStr();

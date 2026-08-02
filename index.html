@@ -509,11 +509,11 @@
 // game.js is versioned like the data files. Without this a browser can run a CACHED module
 // against fresh data after a deploy — which during development produced a NaN rating, and in
 // production would silently give some players a different career. Bump APP_V with game.js.
-const APP_V = '2026-08-02e';
+const APP_V = '2026-08-02f';
 const { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity,
          simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS, parScore, roadNotTaken,
-         isLastStretch } = await import('./game.js?v=' + APP_V);
+         isLastStretch, sharePath } = await import('./game.js?v=' + APP_V);
 
 const MAX_GUESSES = 6;
 // DATA_V: cache-buster for the data files. BUMP THIS whenever data/*.json changes, or players with
@@ -1356,7 +1356,7 @@ function careerShare(c, sc){
   const st=liveStreak(STREAK), stag=st>1?' · 🔥 '+st+'d':'';
   // Spoiler-free by construction: a career path reveals the sharer's own decisions, never the
   // day's answer — so unlike the puzzle modes there is nothing to hide.
-  const path=c.rows.map(r=>r.club.name).filter((v,i,a)=>a.indexOf(v)===i).slice(0,5).join(' → ');
+  const path=sharePath(c.rows, 5);
   const tag = (c.tags&&c.tags.length) ? '\n'+c.tags.slice(0,2).join(' · ') : '';
   const isGK=c.start.pos==='GK';
   const line = isGK ? sc.totalApps+' apps · '+sc.cs+' cs' : sc.totalApps+' apps · '+sc.goals+'⚽ '+sc.assists+'🅰';
