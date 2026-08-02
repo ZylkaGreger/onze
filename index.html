@@ -582,7 +582,14 @@ function track(name){
 // ── Career mode ──────────────────────────────────────────────────────────────────────────────
 // A career is a pure projection of (date, decision path). We store only the path, so a reload
 // recomputes an identical career and can never re-roll an outcome.
-function careerSig(){ const st=careerStart(CLUBS, todayStr()); return todayStr()+'|'+CLUBS.length+'|'+st.club.name+'|'+CAREER_PACE; }
+// SIM_V: bump ONLY when a change alters simulation OUTPUT - balance constants, the offer band,
+// the event catalogue, scoring. Never for a view change. A stored path replayed against different
+// rules is a different career, and 'Your last careers' prints yesterday's stored score directly
+// beside today's recomputed one, so a silent rules change makes the two incomparable side by side.
+// Deliberately not APP_V, which is documented above as bumped with every game.js edit including
+// cosmetic ones.
+const SIM_V = '2026-08-02';
+function careerSig(){ const st=careerStart(CLUBS, todayStr()); return todayStr()+'|'+SIM_V+'|'+CLUBS.length+'|'+st.club.name+'|'+CAREER_PACE; }
 // Three-letter country code, the way a squad list writes it. Falls back to the first three
 // letters so an unmapped country still renders as a chip rather than a gap.
 const NAT3={Germany:'GER',England:'ENG',Spain:'ESP',Italy:'ITA',France:'FRA',Netherlands:'NED',
@@ -883,8 +890,11 @@ function archiveCareer(c, sc){
     const KEY='onze:careers';
     const list=JSON.parse(localStorage.getItem(KEY)||'[]');
     if(list.some(x=>x.d===todayStr())) return list;
+    // Stamp the rules the score was produced under. "Your last careers" prints these stored
+    // scores directly beneath today's freshly computed one, so a run scored under older balance
+    // must be able to say so rather than sit silently alongside as if comparable.
     list.unshift({ d:todayStr(), n:c.start.surname, p:c.start.pos, club:c.start.club.name,
-                   s:sc.total, t:sc.tier, pk:sc.peakOvr, tr:sc.trophies, cp:sc.caps });
+                   s:sc.total, t:sc.tier, pk:sc.peakOvr, tr:sc.trophies, cp:sc.caps, sv:SIM_V });
     const cut=list.slice(0,30);
     localStorage.setItem(KEY, JSON.stringify(cut));
     return cut;
@@ -1167,7 +1177,9 @@ function showCareerEnd(c){
       past.map(x=>'<div style="display:flex;gap:8px;font-size:12px;padding:3px 0;border-top:1px solid var(--line)">'+
         '<span style="color:var(--dim);width:52px">'+x.d.slice(5)+'</span>'+
         '<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+x.n+' ('+x.p+') · '+x.club+'</span>'+
-        '<span style="font-weight:700">'+x.s+'</span></div>').join('')+'</div>';
+        '<span style="font-weight:700"'+(x.sv&&x.sv!==SIM_V?' title="scored under earlier balance"':'')+'>'+
+          x.s+(x.sv&&x.sv!==SIM_V?'<span style="color:var(--dim);font-weight:400">*</span>':'')+
+        '</span></div>').join('')+'</div>';
   }
 }
 
