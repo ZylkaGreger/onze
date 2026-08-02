@@ -351,6 +351,16 @@ export function blockOutcome(st, offer, rnd){
 // and an ever-present received identical offers. Worse, from the mid-twenties on, benching barely
 // dents the rating (35% vs 92% minutes at 26 differ by 0.1), so nothing corrected it downstream.
 // Form gates the STRETCH above your level, never your level itself: you can always drop a rung.
+// From this block on, the retirement roll can fire. The UI uses it to warn a player that the
+// end is near - 68% of careers end before block 11, and most of those ended on a coin the
+// player never saw coming. Derived from RETIRE_P rather than hardcoded, so it cannot drift.
+export const RETIRE_FIRST_BLOCK = Math.min(...Object.keys(CAREER.RETIRE_P).map(Number));
+export function isLastStretch(k, ovr, peak, m){
+  if(k < RETIRE_FIRST_BLOCK) return null;
+  const worn = (peak - ovr) >= CAREER.RETIRE_DROP || (m !== undefined && m < CAREER.RETIRE_MIN_MINUTES);
+  return { worn, odds: CAREER.RETIRE_P[k] ?? 1 };
+}
+
 export function reachBand(ovr, k, rep, form, peak){
   // Form discounts the rating the MARKET sees, not the rating you have. A player nobody watched
   // is valued as a lesser player, which is the honest version of "if I barely played at Juventus,
