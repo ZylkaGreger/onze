@@ -15,7 +15,7 @@ import { fileURLToPath } from 'node:url';
 // regex-slicing functions out of the HTML; tests track behaviour by importing it directly.
 import { mulberry32, hashStr, norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
          careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS,
-         validateCatalogue, pickEvent, resolveEvent, applyMods, eligible, titleOdds, SCORE_VERSION,
+         validateCatalogue, pickEvent, resolveEvent, applyMods, eligible, titleOdds, SCORE_VERSION, EFFECT_KEYS,
          nationStrength, blockCaps, parScore, POS_MOD, roadNotTaken } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -563,6 +563,43 @@ test('offers follow FORM, not just rating — a bench-warmer is not called by gi
   assert.ok(benched.lo <= starter.lo + 1, 'the floor is not raised by poor form');
   // and with no history at all (the very first decision) nothing is penalised
   assert.equal(reachBand(50, 0, undefined, undefined).hi, reachBand(50, 0).hi);
+});
+
+test('a forced event has one option, and you are never made to roll dice you did not choose', () => {
+  const forced = EVENTS.filter(e => e.forced);
+  assert.ok(forced.length >= 3, `expected forced setbacks in the catalogue, found ${forced.length}`);
+  for(const ev of forced){
+    assert.equal(ev.options.length, 1, `${ev.id}: a forced event has exactly one option`);
+    const o = ev.options[0];
+    assert.equal(o.odds.length, 1, `${ev.id}: a forced option must be certain`);
+    assert.equal(o.odds[0][1], 1, `${ev.id}: a forced option must be certain`);
+    assert.ok(o.note, `${ev.id}: a forced option must state its cost on the button`);
+  }
+  // and the validator must still reject a forced event that is secretly a gamble
+  const bad = [{ id:'x', family:'setback', weight:1, forced:true, title:'t', body:'b', options:[
+    { label:'l', odds:[['a',0.5],['b',0.5]], outcomes:{ a:{copy:'a',effects:[]}, b:{copy:'b',effects:[]} } }]}];
+  const v = validateCatalogue(bad);
+  assert.ok(!v.ok, 'a forced 50/50 must not validate');
+  assert.ok(v.errors.some(e => /no certain option/.test(e)),
+    `expected the existing certainty check to catch it, got: ${v.errors.join('; ')}`);
+});
+
+test('every effect the catalogue authors is one the engine actually reads', () => {
+  // bandUp, bandDown and valueMult were authored 13 times between them and read nowhere, and
+  // forceOffer/forceTier were never implemented at all. An effect that validates and does
+  // nothing is the worst kind: the catalogue promises a consequence that never arrives.
+  const used = new Set();
+  for(const ev of EVENTS) for(const o of ev.options)
+    for(const key in (o.outcomes||{})) for(const e of (o.outcomes[key].effects||[])) used.add(e.k);
+  for(const k of used) assert.ok(EFFECT_KEYS.includes(k), `catalogue uses unknown effect "${k}"`);
+  for(const dead of ['forceOffer','forceTier'])
+    assert.ok(!EFFECT_KEYS.includes(dead), `"${dead}" was never implemented and must not validate`);
+  // and the wired ones must MOVE something
+  const base = reachBand(70, 4, undefined, 0.8);
+  const up = reachBand(70, 4, undefined, 0.8);
+  assert.ok(applyMods(0, 'bandUp', [{k:'bandUp', v:9, until:0}], 4) === 9, 'bandUp must accumulate');
+  assert.ok(applyMods(1, 'valueMult', [{k:'valueMult', v:1.2, until:0}], 4) === 1.2, 'valueMult must multiply');
+  assert.ok(base.hi === up.hi, 'sanity: the band itself is unchanged without mods');
 });
 
 test('a paused turn is still the same career — caps and honours survive an event', () => {

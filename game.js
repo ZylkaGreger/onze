@@ -339,7 +339,7 @@ export function blockOutcome(st, offer, rnd){
   const goals = Math.round(apps * gr * (0.85 + 0.30 * (rnd ? rnd() : 0.5)));
   const assists = Math.round(apps * ar * (0.85 + 0.30 * (rnd ? rnd() : 0.5)));
   const cs = st.pos === 'GK' ? Math.round(apps * (pm.cs || 0) * (0.50 + 0.70 * q)) : 0;
-  const value = CAREER.VAL_A * Math.exp(st.ovr / CAREER.VAL_E) * CAREER.AGE_VAL[st.k];
+  const value = CAREER.VAL_A * Math.exp(st.ovr / CAREER.VAL_E) * CAREER.AGE_VAL[st.k] * (offer.valueMod ?? 1);
   return { m, apps, goals, assists, cs, ovrNext, value };
 }
 
@@ -428,6 +428,13 @@ export function sampleClub(CLUBS, target, rnd, ctx){
 // Three differentiated offers: ambition / minutes / balance.
 export function buildOffers(CLUBS, st, rnd){
   const band = reachBand(st.ovr, st.k, st.rep, st.lastM, st.repPeak);
+  // Event effects on the band. Both were declared in EFFECT_KEYS and authored in the catalogue
+  // from the first day and neither was ever read, so an event promising "this opens doors" moved
+  // nothing at all. bandUp raises the ceiling you can reach, bandDown drops the floor you can
+  // fall to; neither may cross the other.
+  const bUp = applyMods(0, 'bandUp', st.mods, st.k), bDown = applyMods(0, 'bandDown', st.mods, st.k);
+  if(bUp) band.hi = clamp(band.hi + bUp, band.fit, CAREER.P_MAX);
+  if(bDown) band.lo = clamp(band.lo - bDown, CAREER.P_MIN, band.fit);
   const cur = st.club;
   const played = new Set(st.played || []);
   const ctx = { played, stuckCountry: st.stuckCountry, homeCountry: st.homeCountry,
@@ -528,7 +535,8 @@ export function simulateCareer(CLUBS, date, path, EVENTS, pace){
       ptBonusMod: applyMods(0, 'ptBonus', st.mods, k),
       growthMod: applyMods(1, 'growthMult', st.mods, k),
       declineMod: applyMods(1, 'declineMult', st.mods, k),
-      appsMod: applyMods(1, 'appsMult', st.mods, k) }, r);
+      appsMod: applyMods(1, 'appsMult', st.mods, k),
+      valueMod: applyMods(1, 'valueMult', st.mods, k) }, r);
     const hon = blockHonours(pick.club, out.m, sub('honours', k + 1), CLUBS);
     const cap = blockCaps(st.ovr, out.m, st.pos, sub('caps', k + 1), start.nat);
     honours.push(...hon.map(h => ({ ...h, age: 16 + 2 * k, club: pick.club.name })));
@@ -655,7 +663,10 @@ export const POLICY_MINUTES = (offers) => Math.min(1, offers.length - 1);
 // on every replay, so a resumed run cannot drift from a live one.
 
 // The closed effect vocabulary. Anything outside this set is a catalogue bug, not a feature.
-export const EFFECT_KEYS = ['ptBonus','growthMult','declineMult','ovrDelta','appsMult','bandUp','bandDown','valueMult','forceOffer','forceTier','tag'];
+// forceOffer/forceTier were removed: never implemented, and the validator's presence in this list
+// was the only reason the catalogue could author them. An effect key that exists but is never read
+// is worse than a missing one - it passes validation and silently does nothing.
+export const EFFECT_KEYS = ['ptBonus','growthMult','declineMult','ovrDelta','appsMult','bandUp','bandDown','valueMult','tag'];
 const MULTIPLICATIVE = new Set(['growthMult','declineMult','appsMult','valueMult']);
 
 export function eligible(when, ctx){
@@ -729,7 +740,17 @@ export function validateCatalogue(EVENTS){
     if(!ev.id) errors.push('event with no id');
     if(ids.has(ev.id)) errors.push(`duplicate id: ${ev.id}`);
     ids.add(ev.id);
-    if(!ev.options || ev.options.length < 2) errors.push(`${ev.id}: needs >= 2 options`);
+    // A FORCED event has exactly one option and no choice in it: an injury, a sacking, a
+    // relegation. The reference game does this and it works precisely because it is honest -
+    // the game is not pretending you had agency over a torn meniscus. The existing hasCertain
+    // check below already does the rest of the work: a forced event whose single option is a
+    // gamble fails with "no certain option", which is exactly right. You cannot be made to roll
+    // dice you did not choose to roll.
+    if(ev.forced){
+      if((ev.options || []).length !== 1) errors.push(`${ev.id}: a forced event needs exactly 1 option`);
+    } else if(!ev.options || ev.options.length < 2){
+      errors.push(`${ev.id}: needs >= 2 options`);
+    }
     let hasCertain = false;
     for(const o of (ev.options || [])){
       const sum = (o.odds || []).reduce((s, [, p]) => s + p, 0);

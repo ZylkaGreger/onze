@@ -174,6 +174,11 @@
   .offer:active{transform:scale(.995)}
   .offer .obody{flex:1;min-width:0}
   .offer.plain{display:block}                    /* cards with no monogram stack rather than sit in a row */
+  /* A forced event has one option and no choice in it. It should not look like a decision you
+     are making, so it loses the hover affordance and states its cost plainly instead. */
+  .offer.forced{cursor:default;border-color:rgba(229,115,74,.35);background:rgba(229,115,74,.05)}
+  .offer.forced:hover{border-color:rgba(229,115,74,.35);background:rgba(229,115,74,.05)}
+  .offer.forced .ometa{color:var(--down)}
   .offer.plain .ometa{margin-top:4px}
   .offer .oclub{font-weight:700;font-size:var(--t-lg);margin-top:1px;line-height:1.2}
   .offer .ometa{font-size:var(--t-sm);color:var(--dim);margin-top:3px}
@@ -910,7 +915,7 @@ function renderCareer(){
     cells.appendChild(box);
     const wrap=document.createElement('div'); wrap.style.cssText='display:flex;flex-direction:column;gap:8px';
     ev.options.forEach((o,i)=>{
-      const b=document.createElement('button'); b.className='offer'; b.type='button';
+      const b=document.createElement('button'); b.className='offer plain'+(ev.forced?' forced':''); b.type='button';
       b.innerHTML='<div class="oclub" style="font-size:15px">'+o.label+'</div>'+
         '<div class="ometa">'+(o.note||'')+'</div>';
       b.onclick=()=>{ CAREER_ANIMATE=true; CAREER_OPEN=null; track('career_event_answered'); STATE.path.push('E'+i); save(); render(); };
