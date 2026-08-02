@@ -414,6 +414,27 @@ export function sampleClub(CLUBS, target, rnd, ctx){
     if(pool.length >= 4) tau = 0;                       // domestic pool is good enough
     else pool = [];                                     // fall through to the open search
   }
+  // A move the story called "home" must land at home; one it called "abroad" must not land in the
+  // country you are leaving. Same widening shape as the loan search, and both fall through to the
+  // open one rather than returning nothing if the band genuinely cannot be filled.
+  if(ctx.mustCountry){
+    let t = 10;
+    while(pool.length < 3 && t <= 34){
+      pool = CLUBS.filter(c => c.country === ctx.mustCountry && !played.has(c.name)
+                            && c.prestige >= target - t && c.prestige <= target + t);
+      t += 8;
+    }
+    if(pool.length >= 3) tau = 0; else pool = [];
+  }
+  if(ctx.avoidCountry){
+    let t = 8;
+    while(pool.length < 6 && t <= 30){
+      pool = CLUBS.filter(c => c.country !== ctx.avoidCountry && !played.has(c.name)
+                            && c.prestige >= target - t && c.prestige <= target + t);
+      t += 6;
+    }
+    if(pool.length >= 6) tau = 0; else pool = [];
+  }
   while(pool.length < 8 && tau && tau <= 25){
     pool = CLUBS.filter(c => c.prestige >= target - tau && c.prestige <= target + tau && !played.has(c.name));
     tau += 4;
@@ -426,7 +447,8 @@ export function sampleClub(CLUBS, target, rnd, ctx){
   // block in one country, which is where "ten Italian clubs" would actually start to show.
   const w = c => (1 / (1 + Math.abs(c.prestige - target)))
                * (ctx.loanCountry && c.country === ctx.loanCountry ? 3 : 1)
-               * (ctx.curCountry && c.country === ctx.curCountry ? 2.6 : 1)
+               * (ctx.avoidCountry && c.country === ctx.avoidCountry ? 0 : 1)
+               * (ctx.curCountry && !ctx.avoidCountry && c.country === ctx.curCountry ? 2.6 : 1)
                * (ctx.homeCountry && c.country === ctx.homeCountry ? 1.8 : 1)
                * (ctx.stuckCountry === c.country ? 0.65 : 1);
   let tot = 0; for(const c of pool) tot += w(c);
@@ -457,7 +479,17 @@ export function buildOffers(CLUBS, st, rnd){
   // — which breaks the one promise this mode makes ("we all started at X").
   const squeezed = st.k > 0 && (st.lowBlocks || 0) >= 2;
   const outgrown = st.k > 0 && cur && cur.prestige > band.hi + 8;
-  const keepCur = cur && !squeezed && !outgrown;
+  // ...and did you already leave? Four event outcomes state a departure as fact — "you handed in
+  // a transfer request", "you were gone within a fortnight", "you left with a straight back",
+  // "you went home" — and every one of them was then followed by an offer to STAY at the club you
+  // had just left. The engine simply had no way to know. Now it does.
+  const leaving = !!activeMod(st.mods, 'mustLeave', st.k);
+  const keepCur = cur && !squeezed && !outgrown && !leaving;
+  // A move the copy calls "home" or "abroad" has to actually go there, or the ledger contradicts
+  // the story on the very next row.
+  const moveTo = activeMod(st.mods, 'moveTo', st.k);
+  if(moveTo === 'home' && st.homeCountry) ctx.mustCountry = st.homeCountry;
+  if(moveTo === 'abroad') ctx.avoidCountry = st.club ? st.club.country : st.homeCountry;
 
   const offers = [];
   // A — ambition: the biggest thing available
@@ -676,7 +708,7 @@ export const POLICY_MINUTES = (offers) => Math.min(1, offers.length - 1);
 // forceOffer/forceTier were removed: never implemented, and the validator's presence in this list
 // was the only reason the catalogue could author them. An effect key that exists but is never read
 // is worse than a missing one - it passes validation and silently does nothing.
-export const EFFECT_KEYS = ['ptBonus','growthMult','declineMult','ovrDelta','appsMult','bandUp','bandDown','valueMult','tag'];
+export const EFFECT_KEYS = ['ptBonus','growthMult','declineMult','ovrDelta','appsMult','bandUp','bandDown','valueMult','mustLeave','moveTo','tag'];
 const MULTIPLICATIVE = new Set(['growthMult','declineMult','appsMult','valueMult']);
 
 export function eligible(when, ctx){
@@ -732,6 +764,18 @@ export function resolveEvent(ev, optIdx, rnd){
 }
 
 // Fold active mods onto a base value. Additive keys sum; multiplicative keys multiply.
+// applyMods does arithmetic. These two carry a flag or a word, so they need their own lookup:
+// the LAST still-active mod for the key wins.
+export function activeMod(mods, key, k){
+  let v;
+  for(const m of (mods || [])){
+    if(m.k !== key) continue;
+    if(m.until !== 0 && k > m.until) continue;
+    v = m.v;
+  }
+  return v;
+}
+
 export function applyMods(base, key, mods, k){
   let add = 0, mul = 1;
   for(const m of (mods || [])){

@@ -14,7 +14,7 @@ import { fileURLToPath } from 'node:url';
 // The shipped game logic — the SAME module the browser imports (index.html). No more
 // regex-slicing functions out of the HTML; tests track behaviour by importing it directly.
 import { mulberry32, hashStr, norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
-         careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS,
+         careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS, buildOffers,
          validateCatalogue, pickEvent, resolveEvent, applyMods, eligible, titleOdds, SCORE_VERSION, EFFECT_KEYS,
          nationStrength, blockCaps, parScore, POS_MOD, roadNotTaken } from '../game.js';
 
@@ -563,6 +563,51 @@ test('offers follow FORM, not just rating — a bench-warmer is not called by gi
   assert.ok(benched.lo <= starter.lo + 1, 'the floor is not raised by poor form');
   // and with no history at all (the very first decision) nothing is penalised
   assert.equal(reachBand(50, 0, undefined, undefined).hi, reachBand(50, 0).hi);
+});
+
+test('an event that says you left must not then offer you your old club', () => {
+  // The owner's report: "the text says the club does not want me, and yet I can choose to stay."
+  // Four outcomes state a departure as fact and the engine had no way to know, because the effect
+  // meant to carry it (forceOffer) was declared, authored, and never implemented.
+  const DEPART = [['newboss','Ask to leave now'], ['relegation','Jump'],
+                  ['sold','Go, and go well'], ['homesick','Engineer a move home'], ['abroad','Go']];
+  for(const [id, label] of DEPART){
+    const ev = EVENTS.find(e => e.id === id);
+    assert.ok(ev, `event ${id} missing`);
+    const o = ev.options.find(x => x.label === label);
+    assert.ok(o, `${id}: option "${label}" missing`);
+    for(const key in o.outcomes){
+      const eff = (o.outcomes[key].effects || []).map(e => e.k);
+      assert.ok(eff.includes('mustLeave'),
+        `${id} / "${label}" / ${key} says you left ("${o.outcomes[key].copy}") but carries no mustLeave`);
+    }
+  }
+  // and the engine must honour it: with mustLeave active, the current club cannot be offered
+  const st = { k: 4, ovr: 72, rep: 70, repPeak: 74, lastM: 0.7, played: ['Old Club'], loans: 0,
+               lowBlocks: 0, club: CLUBS.find(c => c.prestige >= 68 && c.prestige <= 76),
+               homeCountry: 'Germany', mods: [{ k: 'mustLeave', v: 1, until: 4 }] };
+  const rnd = mulberry32(1234);
+  const offers = buildOffers(CLUBS, st, rnd);
+  assert.ok(offers.length, 'expected offers');
+  assert.ok(!offers.some(o => o.club.name === st.club.name),
+    `mustLeave was active and ${st.club.name} was still offered`);
+  // without the mod, staying is available again (so the guard is the mod, not an accident)
+  const stay = buildOffers(CLUBS, { ...st, mods: [] }, mulberry32(1234));
+  assert.ok(stay.some(o => o.status === 'stay'), 'without mustLeave a stay should be possible here');
+});
+
+test('a move the story calls "home" or "abroad" actually goes there', () => {
+  const base = { k: 4, ovr: 72, rep: 70, repPeak: 74, lastM: 0.7, played: [], loans: 0, lowBlocks: 0,
+                 club: CLUBS.find(c => c.country === 'Italy' && c.prestige >= 66 && c.prestige <= 76),
+                 homeCountry: 'Germany' };
+  const home = buildOffers(CLUBS, { ...base, mods: [
+    { k:'mustLeave', v:1, until:4 }, { k:'moveTo', v:'home', until:4 }] }, mulberry32(7));
+  assert.ok(home.some(o => o.club.country === 'Germany'),
+    `"you went home" must offer a club at home, got ${home.map(o => o.club.country).join(', ')}`);
+  const away = buildOffers(CLUBS, { ...base, mods: [
+    { k:'mustLeave', v:1, until:4 }, { k:'moveTo', v:'abroad', until:4 }] }, mulberry32(7));
+  assert.ok(away.every(o => o.club.country !== base.club.country),
+    `"you went abroad" must not offer a club in the country you left (${base.club.country})`);
 });
 
 test('a forced event has one option, and you are never made to roll dice you did not choose', () => {

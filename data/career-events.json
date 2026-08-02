@@ -73,6 +73,11 @@
          "k": "valueMult",
          "v": 0.85,
          "for": 0
+        },
+        {
+         "k": "mustLeave",
+         "v": 1,
+         "for": 1
         }
        ]
       }
@@ -373,6 +378,16 @@
          "k": "bandUp",
          "v": -6,
          "for": 1
+        },
+        {
+         "k": "mustLeave",
+         "v": 1,
+         "for": 1
+        },
+        {
+         "k": "moveTo",
+         "v": "home",
+         "for": 1
         }
        ]
       }
@@ -571,6 +586,16 @@
          "k": "bandUp",
          "v": 8,
          "for": 2
+        },
+        {
+         "k": "mustLeave",
+         "v": 1,
+         "for": 1
+        },
+        {
+         "k": "moveTo",
+         "v": "abroad",
+         "for": 1
         }
        ]
       },
@@ -586,6 +611,16 @@
          "k": "growthMult",
          "v": 0.72,
          "for": 2
+        },
+        {
+         "k": "mustLeave",
+         "v": 1,
+         "for": 1
+        },
+        {
+         "k": "moveTo",
+         "v": "abroad",
+         "for": 1
         }
        ]
       }
@@ -898,7 +933,13 @@
      "outcomes": {
       "jump": {
        "copy": "You were gone within a fortnight.",
-       "effects": []
+       "effects": [
+        {
+         "k": "mustLeave",
+         "v": 1,
+         "for": 1
+        }
+       ]
       }
      }
     }
@@ -974,6 +1015,11 @@
         {
          "k": "ptBonus",
          "v": 2,
+         "for": 1
+        },
+        {
+         "k": "mustLeave",
+         "v": 1,
          "for": 1
         }
        ]
