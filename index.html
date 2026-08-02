@@ -121,17 +121,19 @@
      Replaces a 200px stacked card. Vertical budget is the currency in this screen: every px
      spent here is a px the career table does not get, and the table is the picture of the life.
      Anchor left (rating), identity in the middle, age/value right — one row, ~86px. */
-  .band{display:flex;align-items:center;gap:11px;background:linear-gradient(180deg,var(--panel2),var(--panel));
-    border:1px solid var(--line);border-radius:14px;padding:11px 12px;margin:10px 0 8px;
+  .band{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,var(--panel2),var(--panel));
+    border:1px solid var(--line);border-radius:14px;padding:9px 12px;margin:0 0 10px;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.055)}
-  .bovr{flex:0 0 auto;width:58px;height:58px;border-radius:12px;display:flex;flex-direction:column;
+  .bovr{flex:0 0 auto;width:52px;height:52px;border-radius:12px;display:flex;flex-direction:column;
     align-items:center;justify-content:center;color:#0b0f14;font-variant-numeric:tabular-nums}
   .bovr .bl{font-size:11px;font-weight:800;letter-spacing:.08em;opacity:.72;line-height:1}
-  .bovr .bn{font-size:25px;font-weight:800;line-height:1.05;letter-spacing:-.02em}
-  .bmid{flex:1;min-width:0}
+  .bovr .bn{font-size:22px;font-weight:800;line-height:1.05;letter-spacing:-.02em}
+  .bmid{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+  .btop{display:flex;align-items:center;gap:6px;min-width:0}
+  .btop .bname{flex:0 1 auto}
   .bname{font-size:var(--t-lg);font-weight:800;letter-spacing:-.01em;line-height:1.15;
     white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .bchips{display:flex;align-items:center;gap:5px;margin-top:5px}
+  .bchips{display:flex;align-items:center;gap:5px;min-width:0}
   .chip{font-size:11px;font-weight:800;letter-spacing:.04em;padding:2px 6px;border-radius:5px;
     background:var(--bg);color:var(--dim);white-space:nowrap}
   .chip.pos{background:var(--raised);color:var(--txt)}   /* was #2b2038/#d9b8f0 - outside the token set */
@@ -141,7 +143,6 @@
   .bkv{display:flex;align-items:baseline;justify-content:flex-end;gap:6px;line-height:1.25}
   .bkv .k{font-size:11px;font-weight:800;letter-spacing:.07em;color:var(--dim)}
   .bkv .v{font-size:var(--t-md);font-weight:800;font-variant-numeric:tabular-nums}
-  .bspark{display:block;width:100%;height:22px;margin:-2px 0 8px;overflow:visible}
   .modes{display:inline-flex;background:var(--panel2);border:1px solid var(--line);
     border-radius:11px;padding:3px;gap:3px}
   .mbtn{background:transparent;border:none;color:var(--dim);font:inherit;font-size:14px;font-weight:600;
@@ -168,23 +169,26 @@
      from the club's own name — gives every club a stable identity we are allowed to ship,
      and does the job crests do for the reference game. */
   .mono{width:40px;height:40px;border-radius:10px;flex:0 0 auto;display:flex;align-items:center;
-    justify-content:center;font-weight:800;font-size:15px;letter-spacing:-.01em;
-    color:rgba(255,255,255,.95);
+    justify-content:center;font-weight:800;font-size:15px;letter-spacing:-.01em;position:relative;
+    color:rgba(255,255,255,.95);overflow:hidden;
     box-shadow:inset 0 1px 0 rgba(255,255,255,.16),inset 0 0 0 1px rgba(0,0,0,.30)}
-  .offer{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;
-    cursor:pointer;text-align:left;width:100%;font:inherit;color:var(--txt);display:flex;gap:11px;
+  /* The kit stripe. Crests are trademarks we hold no licence for, so we do what Football Manager
+     does after a decade of litigation on exactly this point: a simplified mark in the club's own
+     KIT COLOURS. The bar carries the real colour; the tile behind it is the same hue pushed dark
+     enough to sit in our panel. Clubs missing from club-colours.json keep the hashed hue. */
+  .mono i{position:absolute;left:0;top:0;bottom:0;width:6px}
+  .mono i.two{left:6px;width:3px}
+  .offer{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;
+    cursor:pointer;text-align:left;width:100%;font:inherit;color:var(--txt);display:flex;gap:10px;
     align-items:center;transition:background .15s,border-color .15s,transform .06s}
   .offer:hover{border-color:var(--raised);background:var(--panel2)}
   .offer:active{transform:scale(.995)}
   .offer .obody{flex:1;min-width:0}
   .offer.plain{display:block}                    /* cards with no monogram stack rather than sit in a row */
   .offer.plain .ometa{margin-top:4px}
-  .offer .kind{font-size:var(--t-xs);text-transform:uppercase;letter-spacing:.8px;color:var(--dim);font-weight:700}
   .offer .oclub{font-weight:700;font-size:var(--t-lg);margin-top:1px;line-height:1.2}
   .offer .ometa{font-size:var(--t-sm);color:var(--dim);margin-top:3px}
   .offer .stars{color:var(--gold);font-size:var(--t-xs);letter-spacing:.5px}
-  .pbar{height:3px;background:var(--bg);border-radius:2px;margin-top:6px;overflow:hidden}
-  .pbar i{display:block;height:100%;border-radius:2px;background:linear-gradient(90deg,var(--gold),#f0c040)}
   .crow{display:flex;align-items:center;gap:6px;padding:7px 9px;border-bottom:1px solid var(--line);font-size:13px}
   .crow:last-child{border-bottom:none}
   /* Age as a chip and the rating as a colour-coded badge. The reference game proved both read
@@ -244,7 +248,7 @@
   .sv{font-size:var(--t-lg);font-weight:700;font-variant-numeric:tabular-nums}
   /* Green means CHANGE, not state. A rating that has just fallen must not print green at 26px. */
   .sv.big{font-size:var(--t-hero);color:var(--txt);line-height:1.1;letter-spacing:-.02em}
-  .sdelta{font-size:var(--t-sm);font-weight:800;margin-left:5px;vertical-align:.42em}
+  .sdelta{font-size:var(--t-sm);font-weight:800;margin-left:5px;vertical-align:.08em}
   .sl{font-size:var(--t-xs);font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--dim);margin-top:4px}
   .spark{display:block;width:100%;height:34px;margin-top:10px;overflow:visible}
   .cardwrap{margin:16px 0 4px}
@@ -465,7 +469,7 @@
 // game.js is versioned like the data files. Without this a browser can run a CACHED module
 // against fresh data after a deploy — which during development produced a NaN rating, and in
 // production would silently give some players a different career. Bump APP_V with game.js.
-const APP_V = '2026-08-01c';
+const APP_V = '2026-08-02';
 const { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity,
          simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS, parScore, roadNotTaken } = await import('./game.js?v=' + APP_V);
@@ -474,7 +478,7 @@ const MAX_GUESSES = 6;
 // DATA_V: cache-buster for the data files. BUMP THIS whenever data/*.json changes, or players with
 // a cached copy see a DIFFERENT daily puzzle than everyone else (the mystery-player pick depends on
 // pool size — the 150→300 pool change split users onto two different daily players).
-const DATA_V = '2026-07-24';
+const DATA_V = '2026-08-02';
 const MODES = [
   ['squad','📋 Squads'],
   // ['link','🔗 Find the link'],   // hidden Jun 2026 (kept in code/data — re-add this line to bring it back)
@@ -591,7 +595,6 @@ const NAT3={Germany:'GER',England:'ENG',Spain:'ESP',Italy:'ITA',France:'FRA',Net
 const natCode = c => NAT3[c] || (c||'').slice(0,3).toUpperCase();
 const ovrTier = v => v>=88?'t5' : v>=80?'t4' : v>=70?'t3' : v>=60?'t2' : 't1';
 const stars = p => '★'.repeat(Math.max(1,Math.min(5,Math.ceil((p-34)/13)))) + '☆'.repeat(5-Math.max(1,Math.min(5,Math.ceil((p-34)/13))));
-const KIND_LABEL = { ambition:'AMBITION', minutes:'GAME TIME', balance:'BALANCE' };
 // Stable colour per club, derived from its own name — no lookup table to maintain, and two clubs
 // never collide visually within one career because the career only ever shows a handful at once.
 // Twelve stops, cyan → magenta, deliberately skipping the green band (95-165) and the gold/orange
@@ -615,34 +618,43 @@ function monoLetters(name){
   return (second ? words[0][0]+second[0]
                  : stripped.replace(/[^\p{L}]/gu,'').slice(0,2)).toUpperCase();
 }
+// Kit colours, loaded from data/club-colours.json (Wikipedia home-kit params, 865 of 916 clubs).
+// NOT crests: a crest is a registered trademark and we hold no licence. Manchester United sued
+// Sega over Football Manager in 2018 on exactly this ground - and notably also over Sega NOT
+// showing the crest where a consumer expected it. Sega's answer, through the whole case, was a
+// simplified mark in the club's colours, which is what this is.
+let CLUB_COLOURS = {};
+const clamp01=(v,lo,hi)=>Math.max(lo,Math.min(hi,v));
+function hexHsl(hex){
+  const n=parseInt(hex,16), r=(n>>16&255)/255, g=(n>>8&255)/255, b=(n&255)/255;
+  const mx=Math.max(r,g,b), mn=Math.min(r,g,b), l=(mx+mn)/2, d=mx-mn;
+  if(!d) return {h:0,s:0,l};
+  const sat=l>.5 ? d/(2-mx-mn) : d/(mx+mn);
+  let h; if(mx===r) h=((g-b)/d+(g<b?6:0)); else if(mx===g) h=(b-r)/d+2; else h=(r-g)/d+4;
+  return {h:h*60, s:sat, l};
+}
+const hsl=(h,s,l)=>'hsl('+Math.round(h)+' '+Math.round(s*100)+'% '+Math.round(l*100)+'%)';
 function monogram(club){
-  const letters=monoLetters(club.name);
-  const h=clubHue(club.name);
-  return '<div class="mono" style="background:linear-gradient(155deg,hsl('+h+' 30% 40%),hsl('+h+' 36% 26%))">'+letters+'</div>';
+  const letters=monoLetters(club.name), cc=CLUB_COLOURS[club.name];
+  if(!cc){
+    const h=clubHue(club.name);
+    return '<div class="mono" style="background:linear-gradient(155deg,hsl('+h+' 30% 40%),hsl('+h+' 36% 26%))">'+letters+'</div>';
+  }
+  const bars=cc.slice(0,2).map((c,i)=>{
+    const k=hexHsl(c);
+    // A pure-white kit must stay white and a pure-black kit must stay dark, but neither may
+    // vanish: the bar is clamped into a band where it is always visible against the tile.
+    return '<i'+(i?' class="two"':'')+' style="background:'+hsl(k.h,k.s,clamp01(k.l,.30,.92))+'"></i>';
+  }).join('');
+  const k=hexHsl(cc[0]);
+  const bg=hsl(k.h, Math.min(k.s,.50), clamp01(k.l*.34+.09,.13,.28));
+  return '<div class="mono" style="background:linear-gradient(155deg,'+bg+','+
+    hsl(k.h,Math.min(k.s,.50),clamp01(k.l*.24+.06,.10,.21))+')">'+bars+letters+'</div>';
 }
-const STATUS_LABEL = { loan:'On loan · guaranteed minutes', guaranteed:'Guaranteed minutes',
-  rotation:'In the rotation', stay:'Stay and fight for your place', prospect:'One for the future — you will wait' };
-
-// Inline SVG, no library, no build step: the rating curve so far. A career is ABOUT a number
-// rising and then falling, and a column of digits does not show that — a line does, instantly.
-function sparkline(c){
-  const pts=[]; c.rows.forEach(r=>(r.seasons||[r]).forEach(sn=>pts.push(sn.ovr)));
-  if(pts.length<3) return '';
-  const W=280,H=22,lo=Math.min(...pts)-2,hi=Math.max(...pts)+2,span=Math.max(1,hi-lo);
-  const total=CAREER.BLOCKS*2;                       // full life, so the drawn part shows progress
-  const x=i=>(i/(total-1))*W, y=v=>H-((v-lo)/span)*H;
-  const d=pts.map((v,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+y(v).toFixed(1)).join(' ');
-  const area=d+' L'+x(pts.length-1).toFixed(1)+' '+H+' L0 '+H+' Z';
-  const peakI=pts.indexOf(Math.max(...pts));
-  return '<svg class="bspark" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" aria-hidden="true">'+
-    '<defs><linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">'+
-      '<stop offset="0%" stop-color="var(--accent)" stop-opacity=".28"/>'+
-      '<stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/></linearGradient></defs>'+
-    '<path d="'+area+'" fill="url(#sg)"/>'+
-    '<path d="'+d+'" fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/>'+
-    '<circle cx="'+x(peakI).toFixed(1)+'" cy="'+y(pts[peakI]).toFixed(1)+'" r="2.4" fill="var(--accent)"/>'+
-    '</svg>';
-}
+// Short forms are load-bearing, not cosmetic: with the long ones the merged meta line wraps and
+// the card grows from 62px to 72px on all three offers.
+const STATUS_LABEL = { loan:'guaranteed', guaranteed:'guaranteed',
+  rotation:'rotation', stay:'fight for it', prospect:"you'll wait" };
 
 // The delta rides beside the rating, so green/orange encodes movement while the number itself
 // stays neutral — a fallen rating no longer renders in the colour that means "good".
@@ -724,9 +736,9 @@ function renderCareer(){
     '<div class="bovr" style="background:'+tierBg+(ovrTier(curOvr)==='t1'?';color:#e6edf3':'')+'">'+
       '<span class="bl">OVR</span><span class="bn">'+curOvr+'</span></div>'+
     '<div class="bmid">'+
-      '<div class="bname">'+s.surname+ratingDelta(c)+'</div>'+
+      '<div class="btop"><span class="bname">'+s.surname+ratingDelta(c)+'</span>'+
+        '<span class="chip pos">#'+s.number+' '+s.pos+'</span></div>'+
       '<div class="bchips"><span class="chip">'+natCode(s.nat)+'</span>'+
-        '<span class="chip pos">#'+s.number+' '+s.pos+'</span>'+
         '<span class="bclub">'+curClub.name+'</span></div>'+
     '</div>'+
     '<div class="bright">'+
@@ -734,7 +746,6 @@ function renderCareer(){
       '<div class="bkv"><span class="k">VALUE</span><span class="v">'+money(curVal)+'</span></div>'+
     '</div>';
   cells.appendChild(card);
-  const sp = sparkline(c); if(sp){ const sw=document.createElement('div'); sw.innerHTML=sp; cells.appendChild(sw.firstChild); }
 
   // the career so far
   if(c.rows.length){
@@ -836,20 +847,17 @@ function renderCareer(){
   }
 
   // the decision
-  const head=document.createElement('div'); head.style.cssText='font-weight:700;margin:14px 0 8px;font-size:15px';
+  const head=document.createElement('div'); head.style.cssText='font-weight:700;margin:10px 0 6px;font-size:13px;color:var(--dim)';
   head.textContent = c.rows.length ? 'Age '+(16+2*c.rows.length)+' — what next?' : 'You are 16, in the academy at '+s.club.name+'. What now?';
   cells.appendChild(head);
   const wrap=document.createElement('div'); wrap.style.cssText='display:flex;flex-direction:column;gap:8px';
   c.offers.forEach((o,i)=>{
     const b=document.createElement('button'); b.className='offer'; b.type='button';
-    const pct=Math.round(Math.max(0,Math.min(100,(o.club.prestige-34)/65*100)));
     b.innerHTML=monogram(o.club)+
       '<div class="obody">'+
-        '<div class="kind">'+(KIND_LABEL[o.kind]||'')+'</div>'+
         '<div class="oclub">'+(o.status==='stay'?'Stay at ':'')+o.club.name+(o.loan?' <span style="color:var(--dim);font-weight:500">(loan)</span>':'')+'</div>'+
-        '<div class="ometa">'+o.club.league+(o.club.tier===2?' · 2nd tier':'')+' · <span class="stars">'+stars(o.club.prestige)+'</span></div>'+
-        '<div class="pbar"><i style="width:'+pct+'%"></i></div>'+
-        '<div class="ometa">'+(STATUS_LABEL[o.status]||'')+'</div>'+
+        '<div class="ometa">'+o.club.league+(o.club.tier===2?' · 2nd tier':'')+
+          ' · <span class="stars">'+stars(o.club.prestige)+'</span> · '+(STATUS_LABEL[o.status]||'')+'</div>'+
       '</div>';
     b.onclick=()=>{ CAREER_ANIMATE=true; STATE.path.push(c.rows.length+'ABC'[i]); save(); render(); };
     wrap.appendChild(b);
@@ -1570,13 +1578,15 @@ function start(mode, league, diff){
 // game.js import above) finishes evaluating AFTER that event has already fired, so a listener
 // registered here would never run and the page would render nothing at all.
 const boot = async()=>{
-  const [sq, cl, cb, evs] = await Promise.all([
+  const [sq, cl, cb, evs, kc] = await Promise.all([
     fetch('data/squads.json?v='+DATA_V).then(r=>r.json()),
     fetch('data/player-clues.json?v='+DATA_V).then(r=>r.json()).catch(()=>[]),   // mystery-player clues (optional)
     fetch('data/clubs.json?v='+DATA_V).then(r=>r.json()).catch(()=>({clubs:[]})),   // career-mode club universe (96 KB)
     fetch('data/career-events.json?v='+DATA_V).then(r=>r.json()).catch(()=>({events:[]})),  // career events
+    fetch('data/club-colours.json?v='+DATA_V).then(r=>r.json()).catch(()=>({colours:{}})),   // kit colours (29 KB)
   ]);
   DATA=sq; CLUES=cl||[]; CLUBS=(cb&&cb.clubs)||[]; EVENTS=(evs&&evs.events)||[];
+  CLUB_COLOURS=(kc&&kc.colours)||{};
   applyFinalTheme();
   try{ STREAK=JSON.parse(localStorage.getItem('onze:streak'))||STREAK; }catch(e){}
   renderStreak();
