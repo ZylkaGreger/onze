@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { mulberry32, hashStr, norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
          careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS, buildOffers,
          validateCatalogue, pickEvent, resolveEvent, applyMods, eligible, titleOdds, SCORE_VERSION, EFFECT_KEYS,
-         nationStrength, blockCaps, parScore, POS_MOD, roadNotTaken, sharePath } from '../game.js';
+         nationStrength, blockCaps, parScore, POS_MOD, roadNotTaken, sharePath, careerBadges } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -563,6 +563,53 @@ test('offers follow FORM, not just rating — a bench-warmer is not called by gi
   assert.ok(benched.lo <= starter.lo + 1, 'the floor is not raised by poor form');
   // and with no history at all (the very first decision) nothing is penalised
   assert.equal(reachBand(50, 0, undefined, undefined).hi, reachBand(50, 0).hi);
+});
+
+test('career badges are earned by the shape of a career, and stay rare', () => {
+  const mk = rows => ({ start:{pos:'MF'}, rows, honours:[], caps:{total:0,goals:0}, peak:70 });
+  const R = (name,country,tier,prestige,apps,ovrEnd) =>
+    ({ club:{name,country,tier,prestige}, apps, goals:0, assists:0, cs:0, ovrEnd });
+
+  // one-club: every block at the same club
+  const one = mk(Array.from({length:9}, () => R('Ajax','Netherlands',1,80,40,70)));
+  assert.ok(careerBadges(one).some(b => b.id === 'one-club'), 'a one-club career must earn it');
+  // ...and a career that moved must not
+  const moved = mk([R('Ajax','Netherlands',1,80,40,70), R('Porto','Portugal',1,80,40,70)]);
+  assert.ok(!careerBadges(moved).some(b => b.id === 'one-club'), 'two clubs is not one club');
+
+  // homecoming needs the LAST spell to be the first club, with real clubs in between
+  const home = mk([R('Ajax','Netherlands',1,80,40,70), R('Porto','Portugal',1,80,40,70),
+                   R('Lyon','France',1,78,40,70), R('Ajax','Netherlands',1,80,40,70)]);
+  assert.ok(careerBadges(home).some(b => b.id === 'homecoming'), 'returning to your first club is a homecoming');
+
+  // an empty career earns nothing rather than throwing
+  assert.deepEqual(careerBadges({ start:{pos:'MF'}, rows:[] }), []);
+  assert.deepEqual(careerBadges(null), []);
+
+  // and over real careers they must stay uncommon — a badge everyone gets is not a badge
+  const CL = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/clubs.json'), 'utf8')).clubs;
+  const freq = {}; let runs = 0, none = 0;
+  for(let i = 0; i < 25; i++){
+    const date = new Date(Date.UTC(2026, 7, 3 + i)).toISOString().slice(0, 10);
+    for(const pos of ['GK','DF','MF','FW']){
+      const route = ['P:' + pos];
+      let c;
+      for(let guard = 0; guard < 40; guard++){
+        c = simulateCareer(CL, date, route, EVENTS, 'normal');
+        if(c.done) break;
+        if(c.event){ route.push('E' + (c.event.options.length - 1)); continue; }
+        if(!c.offers.length) break;
+        route.push(c.rows.length + 'B');
+      }
+      runs++;
+      const b = careerBadges(c);
+      if(!b.length) none++;
+      b.forEach(x => freq[x.id] = (freq[x.id] || 0) + 1);
+    }
+  }
+  for(const id in freq)
+    assert.ok(freq[id] / runs < 0.55, `badge "${id}" fires in ${Math.round(100*freq[id]/runs)}% of careers — not a badge`);
+  assert.ok(none / runs < 0.45, `${Math.round(100*none/runs)}% of careers earned nothing at all`);
 });
 
 test('a position-gated event is only ever drawn by that position', () => {

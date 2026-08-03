@@ -543,6 +543,63 @@ export function sharePath(rows, max){
   return [...keep].sort((a,b)=>a-b).map(i=>spells[i].name).join(' → ') + ' · ' + spells.length + ' clubs';
 }
 
+// ── Career badges ────────────────────────────────────────────────────────────────────────────
+// Earned by the SHAPE of a career, not by an event choice. Every tag the game awarded until now
+// came from answering an event — nothing recognised what you actually did with eleven decisions.
+// These do, and they give a replay something to aim at other than a higher number: you cannot
+// plan a one-club career and a five-country career on the same run.
+//
+// Pure derivation from the finished career, so they cost no simulation and cannot drift from it.
+export function careerBadges(c){
+  if(!c || !c.rows || !c.rows.length) return [];
+  const rows = c.rows, out = [];
+  const add = (id, label, desc) => out.push({ id, label, desc });
+
+  // spells: consecutive blocks at one club count once
+  const spells = [];
+  for(const r of rows){
+    const last = spells[spells.length-1];
+    if(last && last.name === r.club.name){ last.n++; continue; }
+    spells.push({ name: r.club.name, country: r.club.country, tier: r.club.tier, n: 1 });
+  }
+  const countries = new Set(rows.map(r => r.club.country));
+  const clubs = new Set(rows.map(r => r.club.name));
+  const apps = rows.reduce((t, r) => t + r.apps, 0);
+  const goals = rows.reduce((t, r) => t + r.goals, 0);
+  const cs = rows.reduce((t, r) => t + (r.cs || 0), 0);
+  const hon = c.honours || [];
+  const kinds = new Set(hon.map(h => h.kind));
+  const caps = (c.caps && c.caps.total) || 0;
+  const peak = Math.round(c.peak || 0);
+  const peakBlock = rows.reduce((bi, r, i) => r.ovrEnd > rows[bi].ovrEnd ? i : bi, 0);
+
+  if(clubs.size === 1)                       add('one-club','One-club man','Never played for anyone else');
+  if(countries.size >= 8)                    add('passport','Passport full', countries.size + ' countries');
+  // "first division" alone is not an achievement — the offer band puts most careers there anyway.
+  // A serious club every single season, for a full career, is.
+  if(rows.length >= 8 && rows.every(r => r.club.tier === 1 && r.club.prestige >= 68))
+                                             add('top-flight','Never dropped','A serious club every season'); 
+  if(spells.length >= 3 && spells[0].name === spells[spells.length-1].name)
+                                             add('homecoming','Homecoming','Retired where you started');
+  if(spells.some(sp => sp.n >= 5))           add('decade','A decade at one club','Ten years in one shirt');
+  if(kinds.has('league') && kinds.has('cup') && kinds.has('continental'))
+                                             add('everything','Won everything','League, cup and continental');
+  // Appearances are almost pure strategy: median 165 chasing ambition against 729 chasing
+  // minutes. The badge marks the top of that path rather than the path itself.
+  if(apps >= 780)                            add('centurion','Eight hundred games', apps + ' appearances');
+  if(caps === 0 && peak >= 74)               add('uncapped','Never called', 'Peak ' + peak + ', and no country ever rang');
+  if(caps >= 60)                             add('centurion-caps','A country\u2019s player', caps + ' caps');
+  if(peakBlock >= 7)                         add('late','Late bloomer','Best years came after 30');
+  if(peak >= 88)                             add('worldclass','World class','Peaked at ' + peak);
+  if(c.start.pos === 'GK' ? cs >= 140 : goals >= 180)
+                                             add('numbers','The numbers', c.start.pos === 'GK' ? cs + ' clean sheets' : goals + ' goals');
+  // A journeyman is not simply someone who moved a lot — chasing minutes moves you every block.
+  // It is someone who moved a lot and was never at a big club, which is a different career.
+  if(spells.length >= 8 && Math.max(...rows.map(r => r.club.prestige)) <= 76)
+                                             add('journeyman','Journeyman', spells.length + ' clubs, no giants');
+  return out;
+}
+
 // The day's seeded 16-year-old. Identical for every player worldwide (D-2).
 export function careerStart(CLUBS, date){
   const d = date || todayStr();

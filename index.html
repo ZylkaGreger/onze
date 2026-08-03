@@ -509,11 +509,11 @@
 // game.js is versioned like the data files. Without this a browser can run a CACHED module
 // against fresh data after a deploy — which during development produced a NaN rating, and in
 // production would silently give some players a different career. Bump APP_V with game.js.
-const APP_V = '2026-08-02f';
+const APP_V = '2026-08-03';
 const { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity,
          simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS, parScore, roadNotTaken,
-         isLastStretch, sharePath } = await import('./game.js?v=' + APP_V);
+         isLastStretch, sharePath, careerBadges } = await import('./game.js?v=' + APP_V);
 
 const MAX_GUESSES = 6;
 // DATA_V: cache-buster for the data files. BUMP THIS whenever data/*.json changes, or players with
@@ -1277,6 +1277,19 @@ function showCareerEnd(c){
   if(c.tags && c.tags.length){
     rev.innerHTML += '<div style="margin-top:8px">'+c.tags.map(t=>'<span class="badge" style="margin:0 3px">'+t+'</span>').join('')+'</div>';
   }
+  // What the SHAPE of the career earned, as opposed to what an event choice awarded. These are
+  // the reason to play a different way rather than simply chase a bigger number: you cannot take
+  // "One-club man" and "Passport full" on the same run.
+  const badges = careerBadges(c);
+  if(badges.length){
+    rev.innerHTML += '<div style="margin-top:14px;text-align:left">'+
+      '<div style="font-size:10px;letter-spacing:.7px;text-transform:uppercase;color:var(--dim);font-weight:700;margin-bottom:7px">Career badges</div>'+
+      '<div style="display:flex;flex-wrap:wrap;gap:6px">'+
+      badges.map(b=>'<span style="display:inline-flex;flex-direction:column;gap:1px;background:var(--panel2);'+
+        'border:1px solid var(--line);border-radius:9px;padding:6px 9px;text-align:left">'+
+        '<b style="font-size:12px">'+b.label+'</b>'+
+        '<span style="font-size:10px;color:var(--dim)">'+b.desc+'</span></span>').join('')+'</div></div>';
+  }
   if(c.log && c.log.length){
     rev.innerHTML += '<div style="margin-top:12px;text-align:left;font-size:12px;line-height:1.55">'+
       c.log.map(l=>'<div style="padding:4px 0;border-top:1px solid var(--line)"><b style="color:var(--txt)">'+(18+2*l.k)+'</b> '+l.copy+'</div>').join('')+'</div>';
@@ -1357,7 +1370,9 @@ function careerShare(c, sc){
   // Spoiler-free by construction: a career path reveals the sharer's own decisions, never the
   // day's answer — so unlike the puzzle modes there is nothing to hide.
   const path=sharePath(c.rows, 5);
-  const tag = (c.tags&&c.tags.length) ? '\n'+c.tags.slice(0,2).join(' · ') : '';
+  const bg = careerBadges(c);
+  const tag = ((c.tags&&c.tags.length) || bg.length)
+    ? '\n'+[...bg.slice(0,1).map(b=>b.label), ...(c.tags||[]).slice(0,2)].join(' · ') : '';
   const isGK=c.start.pos==='GK';
   const line = isGK ? sc.totalApps+' apps · '+sc.cs+' cs' : sc.totalApps+' apps · '+sc.goals+'⚽ '+sc.assists+'🅰';
   const honLine = (sc.trophies?'🏆 '+sc.trophies:'') + (sc.caps?(sc.trophies?' · ':'')+'🌍 '+sc.caps+' caps':'');
