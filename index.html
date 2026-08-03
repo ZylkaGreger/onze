@@ -519,7 +519,7 @@ const MAX_GUESSES = 6;
 // DATA_V: cache-buster for the data files. BUMP THIS whenever data/*.json changes, or players with
 // a cached copy see a DIFFERENT daily puzzle than everyone else (the mystery-player pick depends on
 // pool size — the 150→300 pool change split users onto two different daily players).
-const DATA_V = '2026-08-03';
+const DATA_V = '2026-08-03b';
 const MODES = [
   ['squad','📋 Squads'],
   // ['link','🔗 Find the link'],   // hidden Jun 2026 (kept in code/data — re-add this line to bring it back)
@@ -629,7 +629,7 @@ function track(name){
 // beside today's recomputed one, so a silent rules change makes the two incomparable side by side.
 // Deliberately not APP_V, which is documented above as bumped with every game.js edit including
 // cosmetic ones.
-const SIM_V = '2026-08-03';
+const SIM_V = '2026-08-03b';
 function careerSig(){ const st=careerStart(CLUBS, todayStr()); return todayStr()+'|'+SIM_V+'|'+CLUBS.length+'|'+st.club.name+'|'+CAREER_PACE; }
 // Three-letter country code, the way a squad list writes it. Falls back to the first three
 // letters so an unmapped country still renders as a chip rather than a gap.

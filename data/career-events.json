@@ -1,6 +1,6 @@
 {
  "version": 1,
- "note": "Career-mode events. DATA, not code — adding an event means adding an object here. A FORCED event (forced:true) has exactly one option and no choice in it - an injury, a relegation - and its single option must be certain, so nobody is made to roll dice they did not choose. Every option's odds must sum to 1.0, and at least one option per event must be certain (a safe out). Tone: situations that are funny or painful because they are plausible, never winks at the player. Every outcome of a MULTI-outcome option carries a short label, used by the reveal animation that flips between the possibilities before landing on the one that happened.",
+ "note": "Career-mode events. DATA, not code — adding an event means adding an object here. A FORCED event (forced:true) has exactly one option and no choice in it - an injury, a relegation - and its single option must be certain, so nobody is made to roll dice they did not choose. Every option's odds must sum to 1.0, and at least one option per event must be certain (a safe out). Tone: situations that are funny or painful because they are plausible, never winks at the player. Every outcome of a MULTI-outcome option carries a short label, used by the reveal animation that flips between the possibilities before landing on the one that happened. An event may REQUIRE a tag another event awarded (when.requires), which is how a career remembers its own cast: the coach who rated you at 20 can return as your manager at 32.",
  "events": [
   {
    "id": "newboss",
@@ -1487,7 +1487,7 @@
        "effects": [
         {
          "k": "tag",
-         "v": "schooled"
+         "v": "Finished school"
         }
        ],
        "short": "you pass and sleep badly"
@@ -2610,6 +2610,325 @@
          "k": "ptBonus",
          "v": 6,
          "for": 2
+        }
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "gaffer",
+   "family": "offpitch",
+   "weight": 10,
+   "repeat": "once",
+   "when": {
+    "blockMin": 1,
+    "blockMax": 5
+   },
+   "title": "A coach who rates you",
+   "body": "He stays behind after training with you twice a week and tells anyone who asks that you are the one.",
+   "options": [
+    {
+     "label": "Do everything he asks",
+     "note": "70% he builds the side around you · 30% he leaves in March",
+     "odds": [
+      [
+       "win",
+       0.7
+      ],
+      [
+       "lose",
+       0.3
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "Two years of being the first name on his teamsheet. You will not forget who did that.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 6,
+         "for": 2
+        },
+        {
+         "k": "growthMult",
+         "v": 1.12,
+         "for": 2
+        },
+        {
+         "k": "tag",
+         "v": "His player"
+        }
+       ],
+       "short": "he builds the side around you"
+      },
+      "lose": {
+       "copy": "He was gone by March and the new man had never heard of you.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": -3,
+         "for": 1
+        }
+       ],
+       "short": "he leaves in March"
+      }
+     }
+    },
+    {
+     "label": "Keep it professional",
+     "note": "certain — no favourite, no fallout",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You did the work and went home. Nobody built anything around you either.",
+       "effects": []
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "gafferback",
+   "family": "peak",
+   "weight": 16,
+   "repeat": "once",
+   "when": {
+    "blockMin": 5,
+    "blockMax": 9,
+    "requires": [
+     "His player"
+    ]
+   },
+   "title": "He is here",
+   "body": "The club have appointed a manager. It is him — the one who stayed behind after training, eight years ago.",
+   "options": [
+    {
+     "label": "Pick up where you left off",
+     "note": "certain — he knows exactly what you are",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "He put you straight back in and you played like you were twenty-four again.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 9,
+         "for": 3
+        },
+        {
+         "k": "declineMult",
+         "v": 0.8,
+         "for": 3
+        },
+        {
+         "k": "tag",
+         "v": "Reunited"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "label": "Tell him you are not that player any more",
+     "note": "55% he adapts to who you are now · 45% he wanted the old one",
+     "odds": [
+      [
+       "win",
+       0.55
+      ],
+      [
+       "lose",
+       0.45
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "He gave you a different job and it suited the legs you actually have.",
+       "effects": [
+        {
+         "k": "declineMult",
+         "v": 0.86,
+         "for": 3
+        }
+       ],
+       "short": "he adapts to who you are now"
+      },
+      "lose": {
+       "copy": "He kept waiting for a player who no longer existed, and dropped him when he did not appear.",
+       "effects": [
+        {
+         "k": "appsMult",
+         "v": 0.55,
+         "for": 2
+        }
+       ],
+       "short": "he wanted the old one"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "rival",
+   "family": "offpitch",
+   "weight": 10,
+   "repeat": "once",
+   "when": {
+    "blockMin": 2,
+    "blockMax": 6
+   },
+   "title": "The other one",
+   "body": "Nineteen, plays your position, and the academy staff have stopped pretending he is not after your shirt.",
+   "options": [
+    {
+     "label": "Show him nothing",
+     "note": "certain — your shirt, your business",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You froze him out of everything for a year. He signed for a rival that summer and did not forget it.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 4,
+         "for": 2
+        },
+        {
+         "k": "tag",
+         "v": "A rival made"
+        }
+       ]
+      }
+     }
+    },
+    {
+     "label": "Teach him everything",
+     "note": "certain — he gets better, and so do you",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You taught him the lot. He was in the side within a year, and he still calls you.",
+       "effects": [
+        {
+         "k": "growthMult",
+         "v": 1.1,
+         "for": 2
+        },
+        {
+         "k": "tag",
+         "v": "A rival made"
+        }
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "rivalfinal",
+   "family": "peak",
+   "weight": 15,
+   "repeat": "once",
+   "when": {
+    "blockMin": 6,
+    "blockMax": 10,
+    "requires": [
+     "A rival made"
+    ]
+   },
+   "title": "Him, in the other shirt",
+   "body": "A final, and the kid from the academy is wearing the other colours. He is very good now.",
+   "options": [
+    {
+     "label": "Play the game, not the man",
+     "note": "60% you win it · 40% he wins it",
+     "odds": [
+      [
+       "win",
+       0.6
+      ],
+      [
+       "lose",
+       0.4
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "You won, and you found him at the whistle before you found anyone else.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 7,
+         "for": 2
+        },
+        {
+         "k": "valueMult",
+         "v": 1.12,
+         "for": 2
+        },
+        {
+         "k": "tag",
+         "v": "Beat him in a final"
+        }
+       ],
+       "short": "you win it"
+      },
+      "lose": {
+       "copy": "He was the best player on the pitch and he came to find you.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": -3,
+         "for": 1
+        }
+       ],
+       "short": "he wins it"
+      }
+     }
+    },
+    {
+     "label": "Make it personal",
+     "note": "certain — a booking, and one of you is remembered for it",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You went through him in the ninth minute. Nobody remembers the score.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 2,
+         "for": 1
+        },
+        {
+         "k": "tag",
+         "v": "Made it personal"
         }
        ]
       }

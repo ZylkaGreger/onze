@@ -565,6 +565,57 @@ test('offers follow FORM, not just rating — a bench-warmer is not called by gi
   assert.equal(reachBand(50, 0, undefined, undefined).hi, reachBand(50, 0).hi);
 });
 
+test('a chained event cannot fire before the one that sets it up', () => {
+  // when.requires was supported by eligible() from the start and never used, so no event could
+  // ever refer back to an earlier one. These two arcs are how a career remembers its own cast.
+  const chained = EVENTS.filter(e => e.when && e.when.requires);
+  assert.ok(chained.length >= 2, `expected chained events, found ${chained.length}`);
+
+  for(const ev of chained){
+    for(const need of ev.when.requires){
+      // something must actually AWARD the tag, or the event is unreachable content
+      const awards = EVENTS.some(e => e.id !== ev.id && e.options.some(o =>
+        Object.values(o.outcomes).some(out =>
+          (out.effects || []).some(f => f.k === 'tag' && f.v === need))));
+      assert.ok(awards, `${ev.id} requires "${need}" but no event ever awards it`);
+    }
+    const base = { age: 30, ovr: 78, prestige: 80, minutes: 0.7, k: 7, blocksAtClub: 2, tier: 1,
+                   pos: 'MF', seen: [], seenFamilies: [], lastSeen: {} };
+    assert.equal(eligible(ev.when, { ...base, tags: [] }), false,
+      `${ev.id} fired without ${ev.when.requires}`);
+    assert.equal(eligible(ev.when, { ...base, tags: ev.when.requires.slice() }), true,
+      `${ev.id} did not fire with ${ev.when.requires}`);
+  }
+
+  // and end to end: the payoff never appears in a career that did not set it up
+  const CL = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/clubs.json'), 'utf8')).clubs;
+  let setups = 0, payoffs = 0;
+  for(let i = 0; i < 30; i++){
+    const date = new Date(Date.UTC(2026, 7, 3 + i)).toISOString().slice(0, 10);
+    for(const pos of ['GK','MF','FW']){
+      const route = ['P:' + pos];
+      let c;
+      for(let guard = 0; guard < 40; guard++){
+        c = simulateCareer(CL, date, route, EVENTS, 'story');
+        if(c.done) break;
+        if(c.event){ route.push('E0'); continue; }
+        if(!c.offers.length) break;
+        route.push(c.rows.length + 'B');
+      }
+      const ids = (c.log || []).map(l => l.id), tags = c.tags || [];
+      for(const ev of chained){
+        if(!ids.includes(ev.id)) continue;
+        payoffs++;
+        for(const need of ev.when.requires)
+          assert.ok(tags.includes(need), `${ev.id} fired on ${date}/${pos} without the tag "${need}"`);
+      }
+      if(tags.includes('His player') || tags.includes('A rival made')) setups++;
+    }
+  }
+  assert.ok(setups > 0, 'no arc was ever set up — the chain is unreachable in practice');
+  assert.ok(payoffs > 0, 'no arc ever paid off — the second act is dead content');
+});
+
 test('career badges are earned by the shape of a career, and stay rare', () => {
   const mk = rows => ({ start:{pos:'MF'}, rows, honours:[], caps:{total:0,goals:0}, peak:70 });
   const R = (name,country,tier,prestige,apps,ovrEnd) =>
