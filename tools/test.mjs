@@ -565,6 +565,47 @@ test('offers follow FORM, not just rating — a bench-warmer is not called by gi
   assert.equal(reachBand(50, 0, undefined, undefined).hi, reachBand(50, 0).hi);
 });
 
+test('a position-gated event is only ever drawn by that position', () => {
+  // positionIn was supported by eligible() from the start and the catalogue never used it, so a
+  // goalkeeper's career read identically to a striker's. Gating is also close to free: pickEvent
+  // filters by eligibility BEFORE weighting, so these compete only inside their own pool.
+  const gated = EVENTS.filter(e => e.when && e.when.positionIn);
+  assert.ok(gated.length >= 12, `expected position-gated events, found ${gated.length}`);
+  for(const pos of ['GK','DF','MF','FW'])
+    assert.ok(gated.some(e => e.when.positionIn.includes(pos)), `no events gated to ${pos}`);
+
+  const ctx = p => ({ age: 26, ovr: 72, prestige: 70, minutes: 0.7, k: 5, blocksAtClub: 2,
+                      tier: 1, pos: p, tags: [], seen: [], seenFamilies: [], lastSeen: {} });
+  for(const ev of gated)
+    for(const pos of ['GK','DF','MF','FW'])
+      assert.equal(eligible(ev.when, ctx(pos)), ev.when.positionIn.includes(pos),
+        `${ev.id} eligibility for ${pos} does not match its positionIn ${ev.when.positionIn}`);
+
+  // and over real draws, nobody ever sees another position's event
+  const byPos = { GK:new Set(), DF:new Set(), MF:new Set(), FW:new Set() };
+  const CL = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/clubs.json'), 'utf8')).clubs;
+  for(const pos of ['GK','DF','MF','FW']){
+    for(const date of ['2026-08-04','2026-08-09','2026-08-15']){
+      const route = ['P:' + pos];
+      let c;
+      for(let guard = 0; guard < 40; guard++){
+        c = simulateCareer(CL, date, route, EVENTS, 'story');
+        if(c.done) break;
+        if(c.event){ route.push('E' + (c.event.options.length - 1)); continue; }
+        if(!c.offers.length) break;
+        route.push(c.rows.length + 'A');
+      }
+      (c.log || []).forEach(l => l.id && byPos[pos].add(l.id));
+    }
+  }
+  for(const pos in byPos)
+    for(const id of byPos[pos]){
+      const ev = EVENTS.find(e => e.id === id);
+      if(ev && ev.when && ev.when.positionIn)
+        assert.ok(ev.when.positionIn.includes(pos), `${pos} drew ${id}, gated to ${ev.when.positionIn}`);
+    }
+});
+
 test('the shared path never lies about where a career went', () => {
   const mk = a => a.map(([name, prestige]) => ({ club: { name, prestige } }));
   // Peter's actual career: the old code sliced the first five DISTINCT names, so a run that went

@@ -1676,6 +1676,946 @@
      }
     }
    ]
+  },
+  {
+   "id": "howler",
+   "family": "setback",
+   "weight": 11,
+   "repeat": "once",
+   "when": {
+    "positionIn": [
+     "GK"
+    ],
+    "blockMin": 1,
+    "blockMax": 8
+   },
+   "title": "From his own half",
+   "body": "It bounced once, you were off your line, and it is on every highlights reel in the country.",
+   "options": [
+    {
+     "label": "Front up to the press",
+     "note": "60% they respect it · 40% it follows you anyway",
+     "odds": [
+      [
+       "win",
+       0.6
+      ],
+      [
+       "lose",
+       0.4
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "You stood there and answered all of it. The dressing room noticed.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 4,
+         "for": 2
+        }
+       ],
+       "short": "they respect it"
+      },
+      "lose": {
+       "copy": "Every away ground sang it at you for a year.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": -6,
+         "for": 2
+        }
+       ],
+       "short": "it follows you anyway"
+      }
+     }
+    },
+    {
+     "label": "Say nothing and train",
+     "note": "certain — it dies slower, but it dies",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You did extra sessions until the noise moved on to someone else.",
+       "effects": []
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "shootout",
+   "family": "peak",
+   "weight": 10,
+   "repeat": "once",
+   "when": {
+    "positionIn": [
+     "GK"
+    ],
+    "blockMin": 3,
+    "blockMax": 9,
+    "minutesMin": 0.4
+   },
+   "title": "Five kicks",
+   "body": "A cup semi-final, and it comes down to you and five men walking up alone.",
+   "options": [
+    {
+     "label": "Go early, guess big",
+     "note": "45% you save two · 55% you dive past all five",
+     "odds": [
+      [
+       "win",
+       0.45
+      ],
+      [
+       "lose",
+       0.55
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "Two saves. They carried you off and the town did not sleep.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 8,
+         "for": 3
+        },
+        {
+         "k": "valueMult",
+         "v": 1.15,
+         "for": 2
+        },
+        {
+         "k": "tag",
+         "v": "Shootout hero"
+        }
+       ],
+       "short": "you save two"
+      },
+      "lose": {
+       "copy": "Five went in and you touched none of them.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": -4,
+         "for": 1
+        }
+       ],
+       "short": "you dive past all five"
+      }
+     }
+    },
+    {
+     "label": "Stay big, stay late",
+     "note": "certain — no hero, no blame",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You got a hand to one and it went in anyway. Nobody blamed the keeper.",
+       "effects": []
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "youngkeeper",
+   "family": "setback",
+   "weight": 10,
+   "repeat": "once",
+   "when": {
+    "positionIn": [
+     "GK"
+    ],
+    "blockMin": 4,
+    "blockMax": 9
+   },
+   "title": "They have signed a keeper",
+   "body": "Twenty-one, expensive, and the manager keeps calling him 'the future' in front of you.",
+   "options": [
+    {
+     "label": "Make him wait",
+     "note": "55% he waits · 45% he does not",
+     "odds": [
+      [
+       "win",
+       0.55
+      ],
+      [
+       "lose",
+       0.45
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "He sat for two years and you played every week.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 5,
+         "for": 2
+        }
+       ],
+       "short": "he waits"
+      },
+      "lose": {
+       "copy": "He was in by Christmas and you were the one on the bench.",
+       "effects": [
+        {
+         "k": "appsMult",
+         "v": 0.45,
+         "for": 2
+        },
+        {
+         "k": "ptBonus",
+         "v": -7,
+         "for": 2
+        }
+       ],
+       "short": "he does not"
+      }
+     }
+    },
+    {
+     "label": "Ask to go somewhere you play",
+     "note": "certain — you will not be here in August",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You went where the shirt was yours. Smaller club, every Saturday.",
+       "effects": [
+        {
+         "k": "mustLeave",
+         "v": 1,
+         "for": 1
+        }
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "sentoff",
+   "family": "setback",
+   "weight": 11,
+   "repeat": "cooldown:4",
+   "when": {
+    "positionIn": [
+     "DF"
+    ],
+    "blockMin": 2,
+    "blockMax": 9
+   },
+   "title": "Red, and the derby lost",
+   "body": "Two yellows in eleven minutes. They scored both goals while you watched from the tunnel.",
+   "options": [
+    {
+     "label": "Take the ban and the fine",
+     "note": "certain — three games, and a quiet week",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You served it, said nothing, and were back in the side by the end of the month.",
+       "effects": [
+        {
+         "k": "appsMult",
+         "v": 0.88,
+         "for": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "label": "Blame the referee publicly",
+     "note": "30% the squad backs you · 70% the club fines you twice",
+     "odds": [
+      [
+       "win",
+       0.3
+      ],
+      [
+       "lose",
+       0.7
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "The captain agreed with you on camera and the manager quietly enjoyed it.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 3,
+         "for": 1
+        }
+       ],
+       "short": "the squad backs you"
+      },
+      "lose": {
+       "copy": "The club fined you again and the referees remembered your name.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": -6,
+         "for": 2
+        },
+        {
+         "k": "valueMult",
+         "v": 0.92,
+         "for": 1
+        }
+       ],
+       "short": "the club fines you twice"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "outofposition",
+   "family": "gamble",
+   "weight": 10,
+   "repeat": "once",
+   "when": {
+    "positionIn": [
+     "DF"
+    ],
+    "blockMin": 2,
+    "blockMax": 7
+   },
+   "title": "He wants you in midfield",
+   "body": "An injury crisis, and the manager thinks you can sit in front of the back four.",
+   "options": [
+    {
+     "label": "Learn the new job",
+     "note": "55% you can do both · 45% you belong in neither",
+     "odds": [
+      [
+       "win",
+       0.55
+      ],
+      [
+       "lose",
+       0.45
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "You could play both by Christmas, and a defender who can pass is worth more.",
+       "effects": [
+        {
+         "k": "growthMult",
+         "v": 1.22,
+         "for": 2
+        },
+        {
+         "k": "valueMult",
+         "v": 1.12,
+         "for": 2
+        },
+        {
+         "k": "tag",
+         "v": "Two positions"
+        }
+       ],
+       "short": "you can do both"
+      },
+      "lose": {
+       "copy": "You lost the timing of one job without ever learning the other.",
+       "effects": [
+        {
+         "k": "growthMult",
+         "v": 0.8,
+         "for": 2
+        }
+       ],
+       "short": "you belong in neither"
+      }
+     }
+    },
+    {
+     "label": "Tell him what you are",
+     "note": "certain — you keep your own game",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "He found someone else and you kept doing the thing you are good at.",
+       "effects": []
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "partner",
+   "family": "offpitch",
+   "weight": 9,
+   "repeat": "once",
+   "when": {
+    "positionIn": [
+     "DF"
+    ],
+    "blockMin": 3,
+    "blockMax": 9,
+    "blocksAtClubMin": 2
+   },
+   "title": "Your partner is sold",
+   "body": "Four years next to the same man. He goes on the Thursday and nobody tells you first.",
+   "options": [
+    {
+     "label": "Bring the young one through",
+     "note": "certain — slower, and it is on you now",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You talked him through a whole season. He was decent by spring and you were exhausted.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 4,
+         "for": 2
+        },
+        {
+         "k": "growthMult",
+         "v": 0.94,
+         "for": 1
+        }
+       ]
+      }
+     }
+    },
+    {
+     "label": "Ask them to buy someone",
+     "note": "certain — they buy experience, and it costs your minutes",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "They signed a thirty-year-old international and he played ahead of you for a season.",
+       "effects": [
+        {
+         "k": "appsMult",
+         "v": 0.72,
+         "for": 1
+        }
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "dropdeep",
+   "family": "gamble",
+   "weight": 10,
+   "repeat": "once",
+   "when": {
+    "positionIn": [
+     "MF"
+    ],
+    "blockMin": 4,
+    "blockMax": 8
+   },
+   "title": "Ten yards further back",
+   "body": "You do not run like you did at 22. The manager says the game is easier from deeper.",
+   "options": [
+    {
+     "label": "Reinvent the role",
+     "note": "62% you last five more years · 38% you are neither one thing nor the other",
+     "odds": [
+      [
+       "win",
+       0.62
+      ],
+      [
+       "lose",
+       0.38
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "You stopped running and started deciding. It bought you half a career.",
+       "effects": [
+        {
+         "k": "declineMult",
+         "v": 0.72,
+         "for": 4
+        },
+        {
+         "k": "tag",
+         "v": "Deep-lying"
+        }
+       ],
+       "short": "you last five more years"
+      },
+      "lose": {
+       "copy": "You lost the legs and never found the passes.",
+       "effects": [
+        {
+         "k": "growthMult",
+         "v": 0.82,
+         "for": 2
+        }
+       ],
+       "short": "you are neither one thing nor the other"
+      }
+     }
+    },
+    {
+     "label": "Play the way you always have",
+     "note": "certain — while it lasts",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You kept running box to box. It was glorious and it was not sustainable.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 3,
+         "for": 1
+        },
+        {
+         "k": "declineMult",
+         "v": 1.1,
+         "for": 3
+        }
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "deadball",
+   "family": "peak",
+   "weight": 9,
+   "repeat": "once",
+   "when": {
+    "positionIn": [
+     "MF"
+    ],
+    "blockMin": 2,
+    "blockMax": 8,
+    "minutesMin": 0.45
+   },
+   "title": "Who takes them?",
+   "body": "The free-kick specialist has left and two of you are standing over the ball.",
+   "options": [
+    {
+     "label": "Take it",
+     "note": "50% you score from 25 yards · 50% you hit the wall twice",
+     "odds": [
+      [
+       "win",
+       0.5
+      ],
+      [
+       "lose",
+       0.5
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "Three in a season from outside the box. They started calling you for them.",
+       "effects": [
+        {
+         "k": "valueMult",
+         "v": 1.14,
+         "for": 2
+        },
+        {
+         "k": "ptBonus",
+         "v": 4,
+         "for": 2
+        }
+       ],
+       "short": "you score from 25 yards"
+      },
+      "lose": {
+       "copy": "You put two into the wall and the captain took the next one.",
+       "effects": [],
+       "short": "you hit the wall twice"
+      }
+     }
+    },
+    {
+     "label": "Give him the ball",
+     "note": "certain — no glory, no wall",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "He scored one and you got the assist for the rebound.",
+       "effects": []
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "runin",
+   "family": "setback",
+   "weight": 10,
+   "repeat": "once",
+   "when": {
+    "positionIn": [
+     "MF"
+    ],
+    "blockMin": 3,
+    "blockMax": 9,
+    "minutesMin": 0.5
+   },
+   "title": "Nine games left",
+   "body": "A groin that will not settle, and the club are two points off the top with nine to play.",
+   "options": [
+    {
+     "label": "Play through it",
+     "note": "48% you get them over the line · 52% it turns into six months",
+     "odds": [
+      [
+       "win",
+       0.48
+      ],
+      [
+       "lose",
+       0.52
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "You played all nine. They went up, and everyone knew what it cost you.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 7,
+         "for": 2
+        },
+        {
+         "k": "tag",
+         "v": "Played hurt"
+        }
+       ],
+       "short": "you get them over the line"
+      },
+      "lose": {
+       "copy": "It tore properly in April and took the rest of the year with it.",
+       "effects": [
+        {
+         "k": "appsMult",
+         "v": 0.4,
+         "for": 2
+        },
+        {
+         "k": "ovrDelta",
+         "v": -2
+        }
+       ],
+       "short": "it turns into six months"
+      }
+     }
+    },
+    {
+     "label": "Six weeks off, now",
+     "note": "certain — you miss the run-in, you keep the leg",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You watched the last nine from a box and came back sound.",
+       "effects": [
+        {
+         "k": "appsMult",
+         "v": 0.75,
+         "for": 1
+        }
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "drought",
+   "family": "setback",
+   "weight": 12,
+   "repeat": "cooldown:4",
+   "when": {
+    "positionIn": [
+     "FW"
+    ],
+    "blockMin": 2,
+    "blockMax": 9
+   },
+   "title": "Nine games",
+   "body": "Nine without one. You are hitting the target and it is going straight at the keeper.",
+   "options": [
+    {
+     "label": "Keep shooting",
+     "note": "58% the tenth goes in · 42% it becomes a season",
+     "odds": [
+      [
+       "win",
+       0.58
+      ],
+      [
+       "lose",
+       0.42
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "Number ten went in off your shin and the next four were clean.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 5,
+         "for": 2
+        }
+       ],
+       "short": "the tenth goes in"
+      },
+      "lose": {
+       "copy": "It never came back that year. You finished with four.",
+       "effects": [
+        {
+         "k": "appsMult",
+         "v": 0.7,
+         "for": 1
+        },
+        {
+         "k": "growthMult",
+         "v": 0.85,
+         "for": 1
+        }
+       ],
+       "short": "it becomes a season"
+      }
+     }
+    },
+    {
+     "label": "Drop off and make them instead",
+     "note": "certain — fewer goals, more football",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You stopped chasing it and made eleven for other people.",
+       "effects": []
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "penalties",
+   "family": "gamble",
+   "weight": 9,
+   "repeat": "once",
+   "when": {
+    "positionIn": [
+     "FW"
+    ],
+    "blockMin": 2,
+    "blockMax": 8
+   },
+   "title": "The penalties",
+   "body": "You want them. So does the captain, and he has taken them for three years.",
+   "options": [
+    {
+     "label": "Take them off him",
+     "note": "55% you never miss · 45% you miss the one that mattered",
+     "odds": [
+      [
+       "win",
+       0.55
+      ],
+      [
+       "lose",
+       0.45
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "Twelve from twelve, and it made your season look like someone else's.",
+       "effects": [
+        {
+         "k": "valueMult",
+         "v": 1.18,
+         "for": 2
+        },
+        {
+         "k": "ptBonus",
+         "v": 4,
+         "for": 2
+        }
+       ],
+       "short": "you never miss"
+      },
+      "lose": {
+       "copy": "You missed in the last minute of the derby and he took them back.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": -5,
+         "for": 1
+        }
+       ],
+       "short": "you miss the one that mattered"
+      }
+     }
+    },
+    {
+     "label": "Let him keep them",
+     "note": "certain — his goals, your football",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "He finished top scorer on penalties and you outplayed him all year.",
+       "effects": []
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "newnine",
+   "family": "setback",
+   "weight": 11,
+   "repeat": "once",
+   "when": {
+    "positionIn": [
+     "FW"
+    ],
+    "blockMin": 3,
+    "blockMax": 9
+   },
+   "title": "They have bought a striker",
+   "body": "Club record fee, and the manager says there is 'absolutely room for both of you'.",
+   "options": [
+    {
+     "label": "Play alongside him",
+     "note": "52% you feed off each other · 48% one of you sits",
+     "odds": [
+      [
+       "win",
+       0.52
+      ],
+      [
+       "lose",
+       0.48
+      ]
+     ],
+     "outcomes": {
+      "win": {
+       "copy": "You got eleven assists and he got the headlines. It worked.",
+       "effects": [
+        {
+         "k": "ptBonus",
+         "v": 4,
+         "for": 2
+        }
+       ],
+       "short": "you feed off each other"
+      },
+      "lose": {
+       "copy": "He played and you did not. That was the whole season.",
+       "effects": [
+        {
+         "k": "appsMult",
+         "v": 0.45,
+         "for": 2
+        }
+       ],
+       "short": "one of you sits"
+      }
+     }
+    },
+    {
+     "label": "Go where you are the striker",
+     "note": "certain — smaller badge, your shirt",
+     "odds": [
+      [
+       "only",
+       1
+      ]
+     ],
+     "outcomes": {
+      "only": {
+       "copy": "You dropped a level and scored twenty.",
+       "effects": [
+        {
+         "k": "mustLeave",
+         "v": 1,
+         "for": 1
+        },
+        {
+         "k": "ptBonus",
+         "v": 6,
+         "for": 2
+        }
+       ]
+      }
+     }
+    }
+   ]
   }
  ]
 }
