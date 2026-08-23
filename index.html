@@ -430,7 +430,6 @@
     <h1><img src="assets/favicon.svg" alt="" class="logo" /> Onze</h1>
     <div class="sub">Name one player from each squad — that exact club, that exact season.</div>
     <div id="streak" style="margin-top:6px;font-size:13px;font-weight:600;color:var(--accent);display:none"></div>
-    <div style="margin-top:6px;font-size:16px"><a href="/nfl/" title="Onze NFL" style="text-decoration:none">🏈</a></div>
 
   </header>
 
@@ -1740,7 +1739,8 @@ function initModes(){
   // UI says so. It disappears for good on first open; no banner, no dismissal to hunt for.
   const seenCareer = localStorage.getItem('onze:seenCareer');
   wrap.innerHTML=modes.map(([v,l])=>`<button type="button" class="mbtn" data-mode="${v}">${l}`+
-    (v==='career' && !seenCareer ? '<span class="dot"></span>' : '')+`</button>`).join('');
+    (v==='career' && !seenCareer ? '<span class="dot"></span>' : '')+`</button>`).join('')+
+    `<a class="mbtn" href="/nfl/" title="Onze NFL" style="text-decoration:none">🏈</a>`;   // sister game
   wrap.querySelectorAll('.mbtn').forEach(b=>b.onclick=()=>{
     if(b.dataset.mode===MODE) return;
     MODE=b.dataset.mode; localStorage.setItem('onze:lastMode',MODE);
