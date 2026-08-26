@@ -49,7 +49,7 @@ UA = "OnzeSquadScraper/1.0 (https://onzedaily.com; petmyr67@gmail.com)"
 try:
     import certifi
     SSL_CTX = ssl.create_default_context(cafile=certifi.where())
-except Exception:  # pragma: no cover - falls back to system defaults
+except Exception:  # pragma: no cover - certifi absent, or no bundle: use system defaults
     SSL_CTX = ssl.create_default_context()
 
 # league key -> (Wikipedia league-page suffix, league_id used by the Onze build)
@@ -119,6 +119,19 @@ def get_wikitext(page):
     if "error" in data:
         return None
     return data.get("parse", {}).get("wikitext", "")
+
+
+def link_target(raw):
+    """'[[Vinícius Júnior|Vini Jr.]]' -> 'Vinícius Júnior'. The article title is the only stable
+    identity a squad list gives us: the piped display text is whatever THAT list happened to
+    write, which is why one player used to become three ("Vini Jr.", "Vinícius Jr.",
+    "Vinícius Júnior") and a guess that matched one of them was rejected by the others."""
+    m = re.search(r"\[\[([^\]]+)\]\]", (raw or "").strip())
+    if not m:
+        return None
+    title = m.group(1).split("|", 1)[0].strip()
+    title = title.split("#", 1)[0].strip()            # section links
+    return re.sub(r"\s+", " ", title) or None
 
 
 def clean_link(raw):
@@ -237,15 +250,16 @@ def extract_from(sec, tables=True):
     """
     names, seen = [], set()
 
-    def add(name):
+    def add(name, target=None):
         if name and is_player_name(name) and name.lower() not in seen:
             seen.add(name.lower())
-            names.append(name)
+            # {"n": display, "w": article title}. "w" is the identity; "n" is one of its spellings.
+            names.append({"n": name, "w": target} if target and target != name else {"n": name})
 
     for m in re.finditer(r"\|\s*name\s*=\s*(\[\[.*?\]\]|[^|}\n]+)", sec):
         ctx = sec[max(0, m.start() - 260):m.start()]
         if re.search(r"\{\{\s*(?:nat\s+)?(?:e?fs|football squad) player\d*\b", ctx, re.I):
-            add(clean_link(m.group(1)))
+            add(clean_link(m.group(1)), link_target(m.group(1)))
     if names:
         return names
 
@@ -256,7 +270,7 @@ def extract_from(sec, tables=True):
             continue
         pm = re.search(r"\|\s*p\s*=\s*([^|]+)", line)
         if pm:
-            add(clean_link(pm.group(1)))
+            add(clean_link(pm.group(1)), link_target(pm.group(1)))
     if names:
         return names
 
@@ -265,7 +279,7 @@ def extract_from(sec, tables=True):
     for line in re.findall(r"(?m)^\s*\*+\s*.*$", sec):
         lm = re.search(r"\[\[([^\]]+?)\]\]", line)
         if lm:
-            add(clean_link("[[" + lm.group(1) + "]]"))
+            add(clean_link("[[" + lm.group(1) + "]]"), link_target("[[" + lm.group(1) + "]]"))
     if names or not tables:
         return names
 
@@ -276,18 +290,18 @@ def extract_from(sec, tables=True):
         block = "\n".join(ln for ln in block.splitlines()
                           if not (ln.lstrip().startswith("!")
                                   and not re.match(r'!\s*scope\s*=\s*"?row', ln.lstrip(), re.I)))
-        best, best_pos = None, len(block) + 1
+        best, best_tgt, best_pos = None, None, len(block) + 1
         sn = re.search(r"\{\{\s*sortname\s*\|\s*([^|}]+?)\s*\|\s*([^|}]+?)\s*[|}]", block, flags=re.I)
         if sn:
-            best, best_pos = f"{sn.group(1)} {sn.group(2)}".strip(), sn.start()
+            best, best_tgt, best_pos = f"{sn.group(1)} {sn.group(2)}".strip(), None, sn.start()
         for lm in re.finditer(r"\[\[([^\]]+?)\]\]", block):
             name = clean_link("[[" + lm.group(1) + "]]")
             if is_player_name(name):
                 if lm.start() < best_pos:
-                    best = name
+                    best, best_tgt = name, link_target("[[" + lm.group(1) + "]]")
                 break
         if best:
-            add(best)
+            add(best, best_tgt)
     return names
 
 
@@ -372,6 +386,7 @@ def scrape(league_key, season, sleep=0.4, min_squad=12):
         print(f"  ok  {club}: {len(squad)} players", file=sys.stderr)
 
     return {
+        "_format": "clubs[club] = [{n: display name, w: wikipedia article title (identity)}]",
         "_source": "en.wikipedia.org via MediaWiki API (action=parse, full wikitext); "
                     "clubs from league standings, players from {{fs player}} templates",
         "league": suffix,

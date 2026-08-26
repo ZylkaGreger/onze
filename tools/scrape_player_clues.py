@@ -13,10 +13,14 @@ No difficulty levels (per request) — one ordered clue list per player.
 Usage:  python3 tools/scrape_player_clues.py [N]      # default N=20
 """
 import json, os, re, ssl, sys, time, unicodedata, urllib.error, urllib.parse, urllib.request
-import certifi
+try:
+    import certifi
+    _CAFILE = certifi.where()
+except ModuleNotFoundError:      # certifi is a convenience, not a requirement
+    _CAFILE = None
 
 HERE = os.path.dirname(__file__)
-SSL_CTX = ssl.create_default_context(cafile=certifi.where())
+SSL_CTX = ssl.create_default_context(cafile=_CAFILE)
 UA = "OnzeBot/1.0 (https://onzedaily.com; petmyr67@gmail.com) player-clue prototype"
 API = "https://en.wikipedia.org/w/api.php"
 N = int(sys.argv[1]) if len(sys.argv) > 1 else 20
@@ -100,7 +104,7 @@ def infobox(w):
 def senior_career(f):
     """Ordered [(years, club, loan)] from clubsN/yearsN (skip youth/national)."""
     out = []
-    for n in range(1, 12):
+    for n in range(1, 40):          # was 12: Acerbi has clubs14, so Lazio and Inter were silently dropped
         c = f.get(f"clubs{n}")
         if not c: continue
         loan = "→" in c or "loan" in c.lower()
@@ -204,7 +208,7 @@ def pick_honour(bullets):
             return f"Has won the {t}."
     return None
 
-def make_clues(nat, role, by, career, bullets):
+def make_clues(nat, role, by, career, bullets, nat2=None):
     """A pool of attribute clues (game.js shuffles them per day and always pins the club-path LAST,
     so generation order only matters for keeping 'Club path:' as the final giveaway). Each clue is a
     single fact that narrows the field without being a one-player giveaway on its own."""
@@ -220,10 +224,15 @@ def make_clues(nat, role, by, career, bullets):
     # first senior club (specific, often non-obvious)
     if seniors:
         clues.append(f"Began his senior career at {seniors[0]}.")
-    # nationality, on its own
-    demo = DEMONYM.get(nat)
+    # Nationality. nationalteam1 is often a state that no longer exists — East Germany,
+    # Yugoslavia, the USSR, Czechoslovakia — which had no demonym here, so those players simply
+    # got no nationality clue at all. Fall back to the later team, and when a player represented
+    # two different countries say so: it is rare, it is true, and it is a good clue on its own.
+    demo = DEMONYM.get(nat) or DEMONYM.get(nat2)
     if demo:
         clues.append(f"He's {demo}.")
+    if nat and nat2 and nat != nat2:
+        clues.append(f"Played for two national teams: {nat}, then {nat2}.")
     # career shape: one-club loyalty or a well-travelled journeyman
     if len(seniors) == 1:
         clues.append("A one-club man.")
@@ -265,7 +274,8 @@ def main():
         f = infobox(w); bullets = honours(w)
         nat = info[disp].get("nat") or clean(f.get("nationalteam1", ""))
         role = position_from_text(clean(f.get("position", ""))) or position_word(info[disp].get("pos") or "")
-        clues = make_clues(nat, role, birth_year(f), senior_career(f), bullets)
+        clues = make_clues(nat, role, birth_year(f), senior_career(f), bullets,
+                           clean(f.get("nationalteam2", "")))
         out.append({"answer": title, "ourName": disp, "overall": info[disp]["o"], "clues": clues})
         used += 1
         print(f"\n● {title}  (our: {disp}, ovr {info[disp]['o']})")

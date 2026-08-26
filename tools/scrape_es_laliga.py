@@ -28,10 +28,14 @@ import urllib.parse
 import urllib.request
 import importlib.util
 
-import certifi
+try:
+    import certifi
+    _CAFILE = certifi.where()
+except ModuleNotFoundError:      # certifi is a convenience, not a requirement
+    _CAFILE = None
 
 HERE = os.path.dirname(__file__)
-SSL_CTX = ssl.create_default_context(cafile=certifi.where())
+SSL_CTX = ssl.create_default_context(cafile=_CAFILE)
 UA = "OnzeBot/1.0 (https://onzedaily.com; petmyr67@gmail.com) squad-data research"
 API = "https://es.wikipedia.org/w/api.php"
 

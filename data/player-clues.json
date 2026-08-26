@@ -8,6 +8,7 @@
    "Began his senior career at Barcelona.",
    "He's Argentine.",
    "Also had a spell at Paris Saint-Germain.",
+   "Won the Ballon d'Or.",
    "Club path: Barcelona → Paris Saint-Germain → Inter Miami."
   ]
  },
@@ -126,9 +127,10 @@
    "A winger, born in the 1990s.",
    "Began his senior career at Al-Mokawloon.",
    "He's Egyptian.",
-   "Also had a spell at Chelsea.",
+   "Well-travelled — 6 senior clubs.",
+   "Also had a spell at Roma.",
    "Won the Premier League Golden Boot.",
-   "Club path: Al-Mokawloon → Basel → Chelsea → Roma → Liverpool."
+   "Club path: Al-Mokawloon → Basel → Chelsea → Roma → Liverpool → Trabzonspor."
   ]
  },
  {
@@ -304,16 +306,16 @@
   ]
  },
  {
-  "answer": "Rodri (footballer, born 1996)",
+  "answer": "Rodri",
   "ourName": "Rodri",
   "overall": 90,
   "clues": [
    "A midfielder, born in the 1990s.",
    "Began his senior career at Villarreal.",
    "He's Spanish.",
-   "Also had a spell at Atlético Madrid.",
+   "Also had a spell at Manchester City.",
    "Won the Ballon d'Or.",
-   "Club path: Villarreal → Atlético Madrid → Manchester City."
+   "Club path: Villarreal → Atlético Madrid → Manchester City → Barcelona."
   ]
  },
  {
@@ -546,10 +548,10 @@
   "clues": [
    "A forward, born in the 1980s.",
    "Began his senior career at AC Milan.",
-   "Well-travelled — 7 senior clubs.",
-   "Also had a spell at Arsenal.",
+   "Well-travelled — 10 senior clubs.",
+   "Also had a spell at Chelsea.",
    "Won the Premier League Golden Boot.",
-   "Club path: AC Milan → Saint-Étienne → Borussia Dortmund → Arsenal → Barcelona → Chelsea → Marseille."
+   "Club path: AC Milan → Saint-Étienne → Borussia Dortmund → Arsenal → Barcelona → Chelsea → Marseille → Al-Qadsiah → Marseille → Deportivo A Coruña."
   ]
  },
  {
@@ -559,10 +561,10 @@
   "clues": [
    "A winger, born in the 1980s.",
    "Began his senior career at Cobreloa.",
-   "Well-travelled — 8 senior clubs.",
-   "Also had a spell at Manchester United.",
+   "Well-travelled — 11 senior clubs.",
+   "Also had a spell at Inter Milan.",
    "Has won the Copa América.",
-   "Club path: Cobreloa → Udinese → Barcelona → Arsenal → Manchester United → Inter Milan → Marseille → Inter Milan."
+   "Club path: Cobreloa → Udinese → Barcelona → Arsenal → Manchester United → Inter Milan → Marseille → Inter Milan → Udinese → Sevilla → CF Montréal."
   ]
  },
  {
@@ -637,10 +639,10 @@
    "A forward, born in the 1990s.",
    "Began his senior career at Anderlecht.",
    "He's Belgian.",
-   "Well-travelled — 7 senior clubs.",
-   "Also had a spell at Manchester United.",
+   "Well-travelled — 8 senior clubs.",
+   "Also had a spell at Inter Milan.",
    "Has won the Serie A.",
-   "Club path: Anderlecht → Chelsea → Everton → Manchester United → Inter Milan → Chelsea → Napoli."
+   "Club path: Anderlecht → Chelsea → Everton → Manchester United → Inter Milan → Chelsea → Napoli → Fenerbahçe."
   ]
  },
  {
@@ -691,9 +693,10 @@
    "A defender, born in the 1990s.",
    "Began his senior career at Benfica.",
    "He's Portuguese.",
-   "Also had a spell at Juventus.",
+   "Well-travelled — 6 senior clubs.",
+   "Also had a spell at Manchester City.",
    "Has won the UEFA Champions League.",
-   "Club path: Benfica → Valencia → Juventus → Manchester City → Al Hilal."
+   "Club path: Benfica → Valencia → Juventus → Manchester City → Al Hilal → Barcelona."
   ]
  },
  {
@@ -795,10 +798,10 @@
    "A forward, born in the 1990s.",
    "Began his senior career at Sorrento.",
    "He's Italian.",
-   "Well-travelled — 6 senior clubs.",
-   "Also had a spell at Torino.",
+   "Well-travelled — 10 senior clubs.",
+   "Also had a spell at Sevilla.",
    "Won the European Golden Shoe.",
-   "Club path: Sorrento → Juventus → Genoa → Torino → Borussia Dortmund → Sevilla."
+   "Club path: Sorrento → Juventus → Genoa → Torino → Borussia Dortmund → Sevilla → Lazio → Beşiktaş → Bologna → Paris FC."
   ]
  },
  {
@@ -835,10 +838,10 @@
    "A defender, born in the 1980s.",
    "Began his senior career at Viterbese.",
    "He's Italian.",
-   "Well-travelled — 7 senior clubs.",
-   "Also had a spell at Bari.",
+   "Well-travelled — 9 senior clubs.",
+   "Also had a spell at Juventus.",
    "Has won the UEFA Champions League.",
-   "Club path: Viterbese → Inter Milan → Genoa → Bari → Juventus → AC Milan → Juventus."
+   "Club path: Viterbese → Inter Milan → Genoa → Bari → Juventus → AC Milan → Juventus → Union Berlin → Fenerbahçe."
   ]
  },
  {
@@ -939,10 +942,10 @@
    "A winger, born in the 1990s.",
    "Began his senior career at Envigado.",
    "He's Colombian.",
-   "Well-travelled — 10 senior clubs.",
-   "Also had a spell at Everton.",
+   "Well-travelled — 12 senior clubs.",
+   "Also had a spell at Al-Rayyan.",
    "Has won the UEFA Champions League.",
-   "Club path: Envigado → Banfield → Porto → Monaco → Real Madrid → Everton → Al-Rayyan → Olympiacos → São Paulo → Rayo Vallecano."
+   "Club path: Envigado → Banfield → Porto → Monaco → Real Madrid → Everton → Al-Rayyan → Olympiacos → São Paulo → Rayo Vallecano → León → Minnesota United."
   ]
  },
  {
@@ -965,9 +968,10 @@
   "clues": [
    "A forward, born in the 1990s.",
    "Began his senior career at Laval.",
-   "Also had a spell at 1. FC Köln.",
+   "Well-travelled — 7 senior clubs.",
+   "Also had a spell at Amiens.",
    "Won the UEFA Champions League top scorer.",
-   "Club path: Laval → Lille → 1. FC Köln → Amiens → Rennes."
+   "Club path: Laval → Lille → 1. FC Köln → Amiens → Rennes → VfB Stuttgart → Borussia Dortmund."
   ]
  },
  {
@@ -1171,7 +1175,7 @@
    "Began his senior career at Metz.",
    "Well-travelled — 7 senior clubs.",
    "Also had a spell at Juventus.",
-   "Has won the Serie A.",
+   "Has won the La Liga.",
    "Club path: Metz → Lyon → Roma → Juventus → Barcelona → Sharjah → CSKA Moscow."
   ]
  },
@@ -1183,10 +1187,10 @@
    "A forward, born in the 1980s.",
    "Began his senior career at Braga.",
    "He's Spanish.",
-   "Well-travelled — 6 senior clubs.",
+   "Well-travelled — 10 senior clubs.",
    "Also had a spell at Atlético Madrid.",
    "Has won the Premier League.",
-   "Club path: Braga → Atlético Madrid → Valladolid → Atlético Madrid → Chelsea → Atlético Madrid."
+   "Club path: Braga → Atlético Madrid → Valladolid → Atlético Madrid → Chelsea → Atlético Madrid → Atlético Mineiro → Wolverhampton Wanderers → Botafogo → Grêmio."
   ]
  },
  {
@@ -1299,10 +1303,10 @@
    "A midfielder, born in the 1980s.",
    "Began his senior career at Piacenza.",
    "He's Belgian.",
-   "Well-travelled — 7 senior clubs.",
-   "Also had a spell at Inter Milan.",
+   "Well-travelled — 9 senior clubs.",
+   "Also had a spell at Antwerp.",
    "Has won the Serie A.",
-   "Club path: Piacenza → Cagliari → Roma → Inter Milan → Antwerp → SPAL → Bhayangkara."
+   "Club path: Piacenza → Cagliari → Roma → Inter Milan → Antwerp → SPAL → Bhayangkara → Lokeren → Patro Eisden."
   ]
  },
  {
@@ -1364,9 +1368,10 @@
    "A midfielder, born in the 1990s.",
    "Began his senior career at Sunderland.",
    "He's English.",
-   "Also had a spell at Al-Ettifaq.",
+   "Well-travelled — 6 senior clubs.",
+   "Also had a spell at Ajax.",
    "Has won the UEFA Champions League.",
-   "Club path: Sunderland → Liverpool → Al-Ettifaq → Ajax → Brentford."
+   "Club path: Sunderland → Liverpool → Al-Ettifaq → Ajax → Brentford → Chelsea."
   ]
  },
  {
@@ -1466,8 +1471,9 @@
    "A midfielder, born in the 1990s.",
    "Began his senior career at PEC Zwolle.",
    "He's Dutch.",
-   "Also had a spell at AZ.",
-   "Club path: PEC Zwolle → Jong AZ → AZ → AC Milan → Manchester City."
+   "Well-travelled — 6 senior clubs.",
+   "Also had a spell at AC Milan.",
+   "Club path: PEC Zwolle → Jong AZ → AZ → AC Milan → Manchester City → Al-Qadsiah."
   ]
  },
  {
@@ -1612,8 +1618,8 @@
   "clues": [
    "A goalkeeper, born in the 1990s.",
    "Began his senior career at Liverpool.",
-   "Also had a spell at Red Bull Salzburg.",
-   "Club path: Liverpool → Red Bull Salzburg → RB Leipzig."
+   "Also had a spell at RB Leipzig.",
+   "Club path: Liverpool → Red Bull Salzburg → RB Leipzig → Villarreal."
   ]
  },
  {
@@ -1756,10 +1762,10 @@
    "A winger, born in the 1990s.",
    "Began his senior career at Radnički Kragujevac.",
    "He's Serbian.",
-   "Well-travelled — 6 senior clubs.",
+   "Well-travelled — 7 senior clubs.",
    "Also had a spell at Hamburger SV.",
    "Has won the UEFA Europa League.",
-   "Club path: Radnički Kragujevac → Groningen → VfB Stuttgart → Hamburger SV → Eintracht Frankfurt → Juventus."
+   "Club path: Radnički Kragujevac → Groningen → VfB Stuttgart → Hamburger SV → Eintracht Frankfurt → Juventus → PSV."
   ]
  },
  {
@@ -1893,18 +1899,6 @@
   ]
  },
  {
-  "answer": "Emiliano Martínez",
-  "ourName": "E. Martínez",
-  "overall": 85,
-  "clues": [
-   "A goalkeeper, born in the 1990s.",
-   "Began his senior career at Arsenal.",
-   "He's Argentine.",
-   "Has won the FIFA World Cup.",
-   "Club path: Arsenal → Aston Villa."
-  ]
- },
- {
   "answer": "Arthur Melo",
   "ourName": "Arthur",
   "overall": 85,
@@ -1925,9 +1919,9 @@
    "A defender, born in the 1980s.",
    "Began his senior career at Standard Liège.",
    "He's Belgian.",
-   "Well-travelled — 7 senior clubs.",
-   "Also had a spell at Tianjin Quanjian.",
-   "Club path: Standard Liège → Benfica → Zenit Saint Petersburg → Tianjin Quanjian → Borussia Dortmund → Atlético Madrid → Girona."
+   "Well-travelled — 8 senior clubs.",
+   "Also had a spell at Borussia Dortmund.",
+   "Club path: Standard Liège → Benfica → Zenit Saint Petersburg → Tianjin Quanjian → Borussia Dortmund → Atlético Madrid → Girona → Nice."
   ]
  },
  {
@@ -2225,10 +2219,10 @@
    "A midfielder, born in the 1980s.",
    "Began his senior career at Diambars.",
    "He's Senegalese.",
-   "Well-travelled — 6 senior clubs.",
+   "Well-travelled — 7 senior clubs.",
    "Also had a spell at Everton.",
    "Has won the Ligue 1.",
-   "Club path: Diambars → Lille → Aston Villa → Everton → Paris Saint-Germain → Everton."
+   "Club path: Diambars → Lille → Aston Villa → Everton → Paris Saint-Germain → Everton → Al-Diriyah."
   ]
  },
  {
@@ -2280,10 +2274,10 @@
    "A forward, born in the 1990s.",
    "Began his senior career at Real Madrid.",
    "He's Spanish.",
-   "Well-travelled — 6 senior clubs.",
+   "Well-travelled — 7 senior clubs.",
    "Also had a spell at Chelsea.",
    "Has won the UEFA Champions League.",
-   "Club path: Real Madrid → Juventus → Real Madrid → Chelsea → Atlético Madrid → AC Milan."
+   "Club path: Real Madrid → Juventus → Real Madrid → Chelsea → Atlético Madrid → AC Milan → Como."
   ]
  },
  {
@@ -2323,7 +2317,6 @@
    "He's Polish.",
    "Well-travelled — 7 senior clubs.",
    "Also had a spell at Torino.",
-   "Has won the Ligue 1.",
    "Club path: Horadada → Piast Gliwice → Palermo → Torino → Monaco → Benevento → Cracovia."
   ]
  },
@@ -2362,9 +2355,10 @@
    "A defender, born in the 1990s.",
    "Began his senior career at Lille.",
    "He's French.",
-   "Also had a spell at Barcelona.",
+   "Well-travelled — 6 senior clubs.",
+   "Also had a spell at Everton.",
    "Has won the La Liga.",
-   "Club path: Lille → Paris Saint-Germain → Barcelona → Everton → Aston Villa."
+   "Club path: Lille → Paris Saint-Germain → Barcelona → Everton → Aston Villa → Paris Saint-Germain."
   ]
  },
  {
@@ -2375,10 +2369,10 @@
    "A defender, born in the 1980s.",
    "Began his senior career at Pavia.",
    "He's Italian.",
-   "Well-travelled — 7 senior clubs.",
-   "Also had a spell at Chievo.",
+   "Well-travelled — 9 senior clubs.",
+   "Also had a spell at AC Milan.",
    "Has won the UEFA European Championship.",
-   "Club path: Pavia → Reggina → Genoa → Chievo → AC Milan → Genoa → Sassuolo."
+   "Club path: Pavia → Reggina → Genoa → Chievo → AC Milan → Genoa → Sassuolo → Lazio → Inter Milan."
   ]
  },
  {
@@ -2465,7 +2459,8 @@
    "A winger, born in the 1990s.",
    "Began his senior career at Bayer Leverkusen.",
    "He's German.",
-   "Club path: Bayer Leverkusen → Borussia Dortmund."
+   "Also had a spell at Borussia Dortmund.",
+   "Club path: Bayer Leverkusen → Borussia Dortmund → Ajax."
   ]
  },
  {
@@ -2552,9 +2547,9 @@
    "A midfielder, born in the 1990s.",
    "Began his senior career at Atlético Madrid.",
    "He's Ghanaian.",
-   "Also had a spell at Arsenal.",
+   "Also had a spell at Villarreal.",
    "Has won the La Liga.",
-   "Club path: Atlético Madrid → Arsenal → Villarreal."
+   "Club path: Atlético Madrid → Arsenal → Villarreal → Al-Shabab."
   ]
  },
  {
@@ -2742,10 +2737,10 @@
    "A winger, born in the 1980s.",
    "Began his senior career at Boca Juniors.",
    "He's Argentine.",
-   "Well-travelled — 10 senior clubs.",
+   "Well-travelled — 11 senior clubs.",
    "Also had a spell at Lille.",
    "Has won the UEFA Europa League.",
-   "Club path: Boca Juniors → Benfica → Atlético Madrid → Dalian Yifang → Chicago Fire → Lille → Braga → Peñarol → Paços de Ferreira → Sarmiento."
+   "Club path: Boca Juniors → Benfica → Atlético Madrid → Dalian Yifang → Chicago Fire → Lille → Braga → Peñarol → Paços de Ferreira → Sarmiento → Aldosivi."
   ]
  },
  {
@@ -2808,10 +2803,10 @@
    "A goalkeeper, born in the 1980s.",
    "Began his senior career at Palermo.",
    "He's Italian.",
-   "Well-travelled — 7 senior clubs.",
-   "Also had a spell at Genoa.",
+   "Well-travelled — 9 senior clubs.",
+   "Also had a spell at Napoli.",
    "Has won the UEFA European Championship.",
-   "Club path: Palermo → Paris Saint-Germain → Torino → Genoa → Napoli → Fiorentina → Nice."
+   "Club path: Palermo → Paris Saint-Germain → Torino → Genoa → Napoli → Fiorentina → Nice → Fatih Karagümrük → Palermo."
   ]
  },
  {
@@ -2874,9 +2869,9 @@
    "A winger, born in the 1990s.",
    "Began his senior career at Rosenborg 2.",
    "He's Norwegian.",
-   "Well-travelled — 7 senior clubs.",
-   "Also had a spell at Midtjylland.",
-   "Club path: Rosenborg 2 → Rosenborg → Groningen → Midtjylland → Crystal Palace → RB Leipzig → Villarreal."
+   "Well-travelled — 8 senior clubs.",
+   "Also had a spell at Crystal Palace.",
+   "Club path: Rosenborg 2 → Rosenborg → Groningen → Midtjylland → Crystal Palace → RB Leipzig → Villarreal → Atlético Madrid."
   ]
  },
  {
@@ -2926,8 +2921,8 @@
    "A forward, born in the 2000s.",
    "Began his senior career at Partizan.",
    "He's Serbian.",
-   "Also had a spell at Fiorentina.",
-   "Club path: Partizan → Fiorentina → Juventus."
+   "Also had a spell at Juventus.",
+   "Club path: Partizan → Fiorentina → Juventus → Beşiktaş."
   ]
  },
  {
@@ -2960,7 +2955,7 @@
   "ourName": "Omar Marmoush",
   "overall": 84,
   "clues": [
-   "A forward, born in the 1990s.",
+   "A winger, born in the 1990s.",
    "Began his senior career at Wadi Degla.",
    "He's Egyptian.",
    "Also had a spell at Eintracht Frankfurt.",
@@ -3024,8 +3019,9 @@
    "A winger, born in the 1980s.",
    "Began his senior career at Getafe.",
    "He's Spanish.",
-   "Also had a spell at Betis.",
-   "Club path: Getafe → Real Madrid → Betis → Watford → Deportivo La Coruña."
+   "Well-travelled — 8 senior clubs.",
+   "Also had a spell at Deportivo La Coruña.",
+   "Club path: Getafe → Real Madrid → Betis → Watford → Deportivo La Coruña → Alanyaspor → Málaga → Oviedo."
   ]
  },
  {
@@ -3050,10 +3046,10 @@
    "A goalkeeper, born in the 1980s.",
    "Began his senior career at Barcelona.",
    "He's Spanish.",
-   "Well-travelled — 7 senior clubs.",
-   "Also had a spell at Bayern Munich.",
+   "Well-travelled — 9 senior clubs.",
+   "Also had a spell at Napoli.",
    "Has won the FIFA World Cup.",
-   "Club path: Barcelona → Villarreal → Liverpool → Bayern Munich → Napoli → AC Milan → Lazio."
+   "Club path: Barcelona → Villarreal → Liverpool → Bayern Munich → Napoli → AC Milan → Lazio → Villarreal → Como."
   ]
  },
  {
@@ -3115,7 +3111,7 @@
    "Began his senior career at Benfica.",
    "He's Spanish.",
    "Also had a spell at Leeds United.",
-   "Club path: Benfica → Valencia → Leeds United → Al-Rayyan → Lusail SC."
+   "Club path: Benfica → Valencia → Leeds United → Al-Rayyan → Lusail."
   ]
  },
  {
@@ -3126,9 +3122,8 @@
    "A midfielder, born in the 1980s.",
    "Began his senior career at Werder Bremen.",
    "He's German.",
-   "Well-travelled — 9 senior clubs.",
-   "Also had a spell at VfL Wolfsburg.",
-   "Club path: Werder Bremen → FC St. Pauli → SC Freiburg → Borussia Mönchengladbach → VfL Wolfsburg → Werder Bremen → Fenerbahçe → Union Berlin → VfL Wolfsburg."
+   "Well-travelled — 10 senior clubs.",
+   "Club path: Werder Bremen → FC St. Pauli → SC Freiburg → Borussia Mönchengladbach → VfL Wolfsburg → Werder Bremen → Fenerbahçe → Union Berlin → VfL Wolfsburg → SC Paderborn."
   ]
  },
  {
@@ -3217,9 +3212,10 @@
    "A winger, born in the 1980s.",
    "Began his senior career at Sporting CP.",
    "He's Portuguese.",
-   "Well-travelled — 9 senior clubs.",
+   "Well-travelled — 11 senior clubs.",
+   "Also had a spell at Orlando City.",
    "Has won the UEFA Champions League.",
-   "Club path: Sporting CP → Manchester United → Fenerbahçe → Valencia → Sporting CP → Orlando City → Venezia → Melbourne Victory → Adana Demirspor."
+   "Club path: Sporting CP → Manchester United → Fenerbahçe → Valencia → Sporting CP → Orlando City → Venezia → Melbourne Victory → Adana Demirspor → Estrela da Amadora → Aktobe."
   ]
  },
  {
@@ -3229,9 +3225,10 @@
   "clues": [
    "A goalkeeper, born in the 1980s.",
    "Began his senior career at Portsmouth.",
-   "Also had a spell at Chelsea.",
+   "Well-travelled — 8 senior clubs.",
+   "Also had a spell at Everton.",
    "Has won the Premier League.",
-   "Club path: Portsmouth → Stoke City → Chelsea → AFC Bournemouth."
+   "Club path: Portsmouth → Stoke City → Chelsea → AFC Bournemouth → Everton → QPR → Everton → Leicester City."
   ]
  },
  {
@@ -3242,10 +3239,10 @@
    "A goalkeeper, born in the 1980s.",
    "Began his senior career at Manchester City.",
    "He's Danish.",
-   "Well-travelled — 6 senior clubs.",
+   "Well-travelled — 7 senior clubs.",
    "Also had a spell at Leicester City.",
    "Has won the Premier League.",
-   "Club path: Manchester City → Notts County → Leeds United → Leicester City → Nice → Anderlecht."
+   "Club path: Manchester City → Notts County → Leeds United → Leicester City → Nice → Anderlecht → Celtic."
   ]
  },
  {
@@ -3256,10 +3253,10 @@
    "A forward, born in the 1990s.",
    "Began his senior career at Lumezzane.",
    "He's Italian.",
-   "Well-travelled — 10 senior clubs.",
-   "Also had a spell at Nice.",
+   "Well-travelled — 14 senior clubs.",
+   "Also had a spell at Brescia.",
    "Has won the UEFA Champions League.",
-   "Club path: Lumezzane → Inter Milan → Manchester City → AC Milan → Liverpool → Nice → Marseille → Brescia → Monza → Adana Demirspor."
+   "Club path: Lumezzane → Inter Milan → Manchester City → AC Milan → Liverpool → Nice → Marseille → Brescia → Monza → Adana Demirspor → Sion → Adana Demirspor → Genoa → Al-Ittifaq."
   ]
  },
  {
@@ -3387,10 +3384,10 @@
    "A midfielder, born in the 1980s.",
    "Began his senior career at Amiens.",
    "He's French.",
-   "Well-travelled — 9 senior clubs.",
-   "Also had a spell at Roma.",
+   "Well-travelled — 10 senior clubs.",
+   "Also had a spell at Al-Rayyan.",
    "Has won the FIFA World Cup.",
-   "Club path: Amiens → Blackburn Rovers → Stoke City → Sevilla → Roma → Al-Rayyan → Konyaspor → Sepahan → Stoke City."
+   "Club path: Amiens → Blackburn Rovers → Stoke City → Sevilla → Roma → Al-Rayyan → Konyaspor → Sepahan → Stoke City → Dunkerque."
   ]
  },
  {
@@ -3479,9 +3476,9 @@
    "A forward, born in the 1980s.",
    "Began his senior career at Nice.",
    "He's French.",
-   "Well-travelled — 7 senior clubs.",
-   "Also had a spell at 1. FC Köln.",
-   "Club path: Nice → Bordeaux → 1899 Hoffenheim → 1. FC Köln → Tianjin Quanjian → 1. FC Köln → Borussia Dortmund."
+   "Well-travelled — 9 senior clubs.",
+   "Also had a spell at Tianjin Quanjian.",
+   "Club path: Nice → Bordeaux → 1899 Hoffenheim → 1. FC Köln → Tianjin Quanjian → 1. FC Köln → Borussia Dortmund → Al Ahly → Intercity."
   ]
  },
  {
@@ -3636,9 +3633,9 @@
    "A defender, born in the 1990s.",
    "Began his senior career at Barnsley.",
    "He's English.",
-   "Also had a spell at Everton.",
+   "Also had a spell at Manchester City.",
    "Has won the UEFA Champions League.",
-   "Club path: Barnsley → Everton → Manchester City."
+   "Club path: Barnsley → Everton → Manchester City → Inter Milan."
   ]
  },
  {
@@ -3699,8 +3696,9 @@
    "A defender, born in the 1990s.",
    "Began his senior career at Barcelona.",
    "He's Spanish.",
+   "Also had a spell at Como.",
    "Has won the UEFA Champions League.",
-   "Club path: Barcelona → Como."
+   "Club path: Barcelona → Como → LA Galaxy."
   ]
  },
  {
@@ -3724,10 +3722,10 @@
    "A forward, born in the 1980s.",
    "Began his senior career at Atlético Junior.",
    "He's Colombian.",
-   "Well-travelled — 7 senior clubs.",
-   "Also had a spell at AC Milan.",
+   "Well-travelled — 8 senior clubs.",
+   "Also had a spell at Villarreal.",
    "Has won the UEFA Europa League.",
-   "Club path: Atlético Junior → Club Brugge → Sevilla → AC Milan → Villarreal → Granada → Atlético Junior."
+   "Club path: Atlético Junior → Club Brugge → Sevilla → AC Milan → Villarreal → Granada → Atlético Junior → Deportivo Cali."
   ]
  },
  {
@@ -3813,10 +3811,10 @@
    "A goalkeeper, born in the 1990s.",
    "Began his senior career at Estudiantes.",
    "He's Argentine.",
-   "Well-travelled — 8 senior clubs.",
+   "Well-travelled — 9 senior clubs.",
    "Also had a spell at Villarreal.",
    "Has won the FIFA World Cup.",
-   "Club path: Estudiantes → Deportivo Maldonado → Manchester City → Real Sociedad → Villarreal → Ajax → Jong Ajax → Marseille."
+   "Club path: Estudiantes → Deportivo Maldonado → Manchester City → Real Sociedad → Villarreal → Ajax → Jong Ajax → Marseille → Manchester City."
   ]
  },
  {
@@ -3894,6 +3892,18 @@
    "Also had a spell at Lille.",
    "Won the Capocannoniere.",
    "Club path: VfL Wolfsburg → Charleroi → Lille → Napoli → Galatasaray."
+  ]
+ },
+ {
+  "answer": "Boubacar Kamara",
+  "ourName": "Boubacar Kamara",
+  "overall": 83,
+  "clues": [
+   "A midfielder, born in the 1990s.",
+   "Began his senior career at Marseille.",
+   "He's French.",
+   "Has won the UEFA Europa League.",
+   "Club path: Marseille → Aston Villa."
   ]
  }
 ]
