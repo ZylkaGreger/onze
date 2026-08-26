@@ -50,8 +50,8 @@ export function liveStreak(s){ return (s && (s.last === todayStr() || s.last ===
 // cuts/board, no help), 1.3 = ~1 deep cut/board, 1.8 = mostly all-giants (too soft). Tune with real
 // win-rate data when it exists.
 const MEDIUM_BIAS = 1.3;
-export function buildPuzzle(DATA, league, diff){
-  const date = todayStr();
+export function buildPuzzle(DATA, league, diff, forceDate){
+  const date = forceDate || todayStr();
   const rnd = mulberry32(hashStr(date+'|'+league+'|'+diff));
   let pool = [];
   for(const season of DATA.seasons){
@@ -75,6 +75,13 @@ export function buildPuzzle(DATA, league, diff){
   }
   // weighted sample of 5 distinct clubs
   const chosen=[]; const usedClub=new Set(); let guard=0;
+  // a pinned cell first, if today has one and it is in this league's pool
+  const pin = FEATURED_SQUAD[date];
+  if(pin){
+    const hit = pool.find(p => p.club && p.club.name === pin.club
+                            && (!pin.season || p.season === pin.season));
+    if(hit){ usedClub.add(hit.cid); chosen.push(hit); }
+  }
   while(chosen.length<5 && pool.length && guard++<5000){
     let tot=0; for(const p of pool) tot+= usedClub.has(p.cid)?0:p.w;
     if(tot<=0) break;
@@ -130,9 +137,19 @@ export function buildGridPuzzle(DATA, diff){
 // Editorial overrides: force a specific player on a given UTC date, no matter the seeded pick.
 // Used to spotlight a name for an occasion (World Cup Final day → Messi). name must exist in the pool.
 // Optional `opener` is pinned as the FIRST clue that day only — a one-off flourish, not in the dossier.
+// Pin one squad cell to a specific club-season on a given day. Same idea as FEATURED_PLAYER:
+// the daily draw is weighted by club fame, so a smaller club (Bochum's weight is 38 against a
+// giant's several hundred) would otherwise essentially never come up. The pinned cell takes one
+// of the five slots; the other four are drawn normally, so the day still feels dealt rather than
+// arranged. Ignored when the pinned club is not in the league being played.
+export const FEATURED_SQUAD = {
+  '2026-08-28': { club: 'VfL Bochum', season: '2006/07' },   // Bochum day — pairs with Wosz in Mystery
+};
+
 export const FEATURED_PLAYER = {
   '2026-07-19': { name: 'Lionel Messi', opener: 'HE IS THE GOAT 🐐' },
   '2026-07-26': { name: 'Scott McTominay' },   // pin the day the no-repeat cycle shipped — no mid-day player flip
+  '2026-08-28': { name: 'Dariusz Wosz' },      // Bochum day — pairs with the pinned Bochum 2006/07 squad
 };
 
 // Mystery player: one player a day, clues revealed one at a time (no difficulty tiers). CLUES is the
