@@ -510,7 +510,7 @@
 // game.js is versioned like the data files. Without this a browser can run a CACHED module
 // against fresh data after a deploy — which during development produced a NaN rating, and in
 // production would silently give some players a different career. Bump APP_V with game.js.
-const APP_V = '2026-10-31';
+const APP_V = '2026-10-31b';
 const { norm, matchKey, hashStr, mulberry32, todayStr, bumpStreak, liveStreak,
          buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, cellRarity,
          simulateCareer, careerStart, scoreCareer, CAREER, CAREER_POSITIONS, parScore, roadNotTaken,
@@ -520,7 +520,7 @@ const MAX_GUESSES = 6;
 // DATA_V: cache-buster for the data files. BUMP THIS whenever data/*.json changes, or players with
 // a cached copy see a DIFFERENT daily puzzle than everyone else (the mystery-player pick depends on
 // pool size — the 150→300 pool change split users onto two different daily players).
-const DATA_V = '2026-10-31';
+const DATA_V = '2026-10-31b';
 const MODES = [
   ['squad','📋 Squads'],
   // ['link','🔗 Find the link'],   // hidden Jun 2026 (kept in code/data — re-add this line to bring it back)
@@ -1396,6 +1396,15 @@ function render(){ if(STATE.mode==='link') renderLink(); else if(STATE.mode==='g
 
 function renderPlayer(){
   const p=STATE.puzzle, cellsEl=document.getElementById('cells'); cellsEl.innerHTML='';
+  if(p.label){
+    // Legends Sunday: a weekly ritual, and itself a hint — today's answer is one of the greats.
+    const b=document.createElement('div');
+    b.style.cssText='text-align:center;font-size:var(--t-xs);font-weight:800;letter-spacing:.12em;'+
+      'text-transform:uppercase;color:var(--gold);background:rgba(216,162,58,.08);'+
+      'border:1px solid rgba(216,162,58,.3);border-radius:10px;padding:8px 10px;margin:0 0 10px';
+    b.textContent='🏛️ '+p.label+' · one of the greats';
+    cellsEl.appendChild(b);
+  }
   p.clues.forEach((clue,i)=>{
     const open = i<STATE.shown || STATE.done;
     const el=document.createElement('div'); el.className='cell'+(open?'':'');
@@ -1624,7 +1633,7 @@ function shareText(){
   if(STATE.mode==='player'){
     const sq=STATE.guesses.map(g=>g.hit?'🟩':'🟥').join('');
     const score=STATE.win?`in ${STATE.shown} clue${STATE.shown===1?'':'s'}`:'X';
-    return `🕵️ Onze Mystery — ${dd}\n${sq}\nGuessed ${score}${stag}\n${url}`;
+    return `🕵️ Onze Mystery — ${dd}${STATE.puzzle.label?' · 🏛️ '+STATE.puzzle.label:''}\n${sq}\nGuessed ${score}${stag}\n${url}`;
   }
   if(STATE.mode==='link'){
     const won=!!STATE.answer; const score=won?STATE.guesses.length+'/'+MAX_GUESSES:'X/'+MAX_GUESSES;

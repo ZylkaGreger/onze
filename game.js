@@ -186,21 +186,63 @@ const shuffledIdx = (n, seed) => {
 };
 const dayIndex = date => Math.round((Date.parse(date + 'T00:00:00Z') - PLAYER_EPOCH) / 864e5);
 const mod = (a, n) => ((a % n) + n) % n;
+// One fixed rotation over a clock (a count of the days it serves). fold() merges a batch in at
+// clock position `at`: the cycle in progress keeps what it has already shown, the rest and the batch
+// are shuffled once, and that order is the rotation from then on.
+function fold(rot, at, batch, seed){
+  if(!batch.length) return rot;
+  if(!rot.seq.length) return { seq: shuffledIdx(batch.length, seed).map(i => batch[i]), start: at };
+  const start = rot.start + Math.floor((at - rot.start) / rot.seq.length) * rot.seq.length;
+  const shown = at - start, rest = rot.seq.slice(shown).concat(batch);
+  return { seq: rot.seq.slice(0, shown).concat(shuffledIdx(rest.length, seed).map(i => rest[i])), start };
+}
+const at = (rot, clock) => rot.seq[mod(clock - rot.start, rot.seq.length)];
+
+// LEGENDS SUNDAY. From this Sunday on, Sundays draw only from players marked `legend` (born 1983 or
+// earlier, or retired by 2021) and the other six days only from everyone else, as two separate
+// rotations. At the split each keeps the players not yet shown in the cycle in progress first, so
+// nobody shown before it comes back until their whole group has been. Must be a Sunday.
+export const LEGENDS_FROM = '2026-11-08';
+const legendsDay = () => dayIndex(LEGENDS_FROM);
+export const isLegendsSunday = date =>
+  date >= LEGENDS_FROM && mod(dayIndex(date) - legendsDay(), 7) === 0;
+
 export function rotationPick(CLUES, date){
   const base = CLUES.filter(c => !c.added);
-  let seq = shuffledIdx(base.length, 'onze|player|cycle|v1').map(i => base[i]);
-  let start = 0;                                     // day the current cycle began
-  const day = dayIndex(date);
-  for(const batch of [...new Set(CLUES.filter(c => c.added).map(c => c.added))].sort()){
-    const cut = dayIndex(batch);
-    if(day < cut) break;
-    start += Math.floor((cut - start) / seq.length) * seq.length;
-    const shown = cut - start;
-    const rest = seq.slice(shown).concat(CLUES.filter(c => c.added === batch));
-    seq = seq.slice(0, shown).concat(shuffledIdx(rest.length, 'onze|player|cycle|' + batch).map(i => rest[i]));
+  const batches = [...new Set(CLUES.filter(c => c.added).map(c => c.added))].sort();
+  const inBatch = b => CLUES.filter(c => c.added === b);
+  const day = dayIndex(date), L = legendsDay();
+  const split = CLUES.some(c => c.legend) && day >= L;
+  let rot = { seq: shuffledIdx(base.length, 'onze|player|cycle|v1').map(i => base[i]), start: 0 };
+  for(const b of batches){
+    const cut = dayIndex(b);
+    if(cut > day || (split && cut >= L)) break;
+    rot = fold(rot, cut, inBatch(b), 'onze|player|cycle|' + b);
   }
-  return seq[mod(day - start, seq.length)];
+  if(!split) return at(rot, day);
+
+  const cycle = rot.start + Math.floor((L - rot.start) / rot.seq.length) * rot.seq.length;
+  const shown = rot.seq.slice(0, L - cycle), unshown = rot.seq.slice(L - cycle);
+  const group = (keep, seed) => {
+    const u = unshown.filter(keep);
+    return { seq: shuffledIdx(u.length, seed).map(i => u[i]).concat(shown.filter(keep)), start: 0 };
+  };
+  let sun = group(c => c.legend, 'onze|player|legends'), week = group(c => !c.legend, 'onze|player|weekdays');
+  const sunClock = d => Math.floor((d - L + 6) / 7);          // Sundays in [L, d)
+  const weekClock = d => (d - L) - sunClock(d);                // the other days in [L, d)
+  for(const b of batches){
+    const cut = dayIndex(b);
+    if(cut < L) continue;
+    if(cut > day) break;
+    sun = fold(sun, sunClock(cut), inBatch(b).filter(c => c.legend), 'onze|player|legends|' + b);
+    week = fold(week, weekClock(cut), inBatch(b).filter(c => !c.legend), 'onze|player|weekdays|' + b);
+  }
+  return mod(day - L, 7) === 0 ? at(sun, sunClock(day)) : at(week, weekClock(day));
 }
+
+// The second generation of clues (later managed, youth academy, league goals, birthplace, shirt
+// number) lives in `clues2` and takes over from this date, so no puzzle changes while in play.
+export const CLUES2_FROM = '2026-11-02';
 
 export function buildPlayerPuzzle(CLUES, forceDate){
   const date = forceDate || todayStr();
@@ -210,14 +252,15 @@ export function buildPlayerPuzzle(CLUES, forceDate){
   const pick = want && CLUES.find(c => (c.answer || c.a || '') === want.name);
   const p = pick || rotationPick(CLUES, date);
   const answer = (p.answer || p.a || '').replace(/\s*\(.*\)$/, '');   // strip wiki disambiguation suffix
-  const raw = p.clues || p.c || [];
+  const raw = (date >= CLUES2_FROM && p.clues2) || p.clues || p.c || [];
   const path = raw.filter(c => /^Club path:/i.test(c));
   const rest = raw.filter(c => !/^Club path:/i.test(c));
   for(let i = rest.length - 1; i > 0; i--){                          // seeded Fisher–Yates
     const j = Math.floor(rnd() * (i + 1)); [rest[i], rest[j]] = [rest[j], rest[i]];
   }
   const opener = (pick && want.opener) ? [want.opener] : [];        // featured-day flourish, pinned first
-  return { date, answer, clues: [...opener, ...rest, ...path], sig: 'player|' + answer };
+  const label = !pick && isLegendsSunday(date) && p.legend ? 'Legends Sunday' : '';
+  return { date, answer, clues: [...opener, ...rest, ...path], sig: 'player|' + answer, label };
 }
 // acceptable guesses for a mystery answer: full name, surname, particle-surname phrase, surname-only.
 // All routed through matchKey (token-sorted) so word order and accents don't matter.

@@ -61,6 +61,36 @@ def ckey(name):  # club match key (≈ build-data matchClub): strip accents/affi
     return " ".join(t for t in n.split() if t and not t.isdigit() and t not in drop)
 
 
+_UNDERSCORED = {"youthclubs": "youth_clubs", "youthyears": "youth_years", "managerclubs": "manager_clubs",
+                "manageryears": "manager_years", "nationalteam": "national_team", "nationalyears": "national_years",
+                "nationalcaps": "national_caps", "nationalgoals": "national_goals", "currentclub": "current_club",
+                "clubnumber": "club_number"}
+
+
+def field(f, name):
+    """An infobox field under either spelling. Older articles write 'nationalteam1', newer ones
+    'national_team1'; reading only the old spelling silently lost the field on most current articles."""
+    if f.get(name):
+        return f[name]
+    m = re.match(r"([a-z]+?)(\d*)$", name)
+    alt = _UNDERSCORED.get(m.group(1)) if m else None
+    return f.get(alt + m.group(2), "") if alt else ""
+
+
+_YOUTH_NT = re.compile(r"\bU-?\d\d\b|under-?\d\d|youth|olympic|\bB\b|amateur", re.I)
+
+
+def senior_nations(f):
+    """Senior national teams in order, youth sides excluded. Without this, Saka 'played for two
+    national teams: England U16, then England U17'."""
+    out = []
+    for n in range(1, 30):
+        t = re.sub(r"\s*\(.*?\)\s*", "", clean(field(f, f"nationalteam{n}"))).strip()
+        if t and not _YOUTH_NT.search(t) and t not in out:
+            out.append(t)
+    return out
+
+
 def clean(s):  # wiki value -> plain text
     s = re.sub(r"<ref[^>]*>.*?</ref>", "", s, flags=re.S)
     s = re.sub(r"<ref[^>]*/>", "", s)
@@ -277,10 +307,10 @@ def main():
             print(f"  ⚠ no confident article for {disp} (o={info[disp]['o']}) — skipped")
             continue
         f = infobox(w); bullets = honours(w)
-        nat = info[disp].get("nat") or clean(f.get("nationalteam1", ""))
+        ns = senior_nations(f)
+        nat = ns[0] if ns else (info[disp].get("nat") or "")
         role = position_from_text(clean(f.get("position", ""))) or position_word(info[disp].get("pos") or "")
-        clues = make_clues(nat, role, birth_year(f), senior_career(f), bullets,
-                           clean(f.get("nationalteam2", "")))
+        clues = make_clues(nat, role, birth_year(f), senior_career(f), bullets, ns[1] if len(ns) > 1 else None)
         out.append({"answer": title, "ourName": disp, "overall": info[disp]["o"], "clues": clues})
         used += 1
         print(f"\n● {title}  (our: {disp}, ovr {info[disp]['o']})")

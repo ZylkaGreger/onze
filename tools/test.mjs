@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { mulberry32, hashStr, norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
          careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS, buildOffers,
          validateCatalogue, pickEvent, resolveEvent, applyMods, eligible, titleOdds, SCORE_VERSION, EFFECT_KEYS,
-         nationStrength, blockCaps, parScore, POS_MOD, roadNotTaken, sharePath, careerBadges, rotationPick } from '../game.js';
+         nationStrength, blockCaps, parScore, POS_MOD, roadNotTaken, sharePath, careerBadges, rotationPick, LEGENDS_FROM, isLegendsSunday, CLUES2_FROM } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -226,10 +226,11 @@ test('mystery-player mode: deterministic daily pick + lenient answer matching', 
     // (no "other days differ" check: with the rotation, every pool player legitimately appears on
     // their own cycle day — the featured mechanism pins a date, it doesn't ban the player elsewhere)
   }
-  // no-repeat rotation: across a full pool-length run of consecutive days, every non-featured
-  // day must produce a DIFFERENT player (the cycle only restarts after the whole pool has run)
+  // no-repeat rotation. Since Legends Sunday the pool runs as two groups, legends on Sundays and
+  // everyone else on the other days, so the guarantee is per group: nobody comes back within
+  // eight months (39 legends make a 39-week cycle; the weekday cycle is over a year).
   const seen = new Map();
-  for(let i = 0; i < REAL_CLUES.length; i++){
+  for(let i = 0; i < 250; i++){
     const d = new Date(Date.UTC(2026, 7, 1) + i * 864e5).toISOString().slice(0, 10);
     if (FEATURED_PLAYER[d]) continue;                          // featured days interrupt the cycle by design
     const a = buildPlayerPuzzle(REAL_CLUES, d).answer;
@@ -584,6 +585,46 @@ test('growing the Mystery pool never reshuffles the past or repeats a player', (
     last.set(a, i);
   }
   assert.equal(last.size, two.length, 'every player, original and added, appears');
+});
+
+test('Legends Sunday: legends on Sundays only, history untouched, no repeats in either group', () => {
+  const day = (d, n) => new Date(Date.parse(d + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10);
+  assert.equal(new Date(LEGENDS_FROM + 'T00:00:00Z').getUTCDay(), 0, 'LEGENDS_FROM must be a Sunday');
+  const mk = (n, pre, legend) => Array.from({ length: n }, (_, i) => ({ answer: pre + i, legend }));
+  const flagged = mk(60, 'L', true).concat(mk(140, 'W', false), mk(9, 'NL', true).map(c => ({ ...c, added: day(LEGENDS_FROM, 30) })),
+                                           mk(20, 'NW', false).map(c => ({ ...c, added: day(LEGENDS_FROM, 30) })));
+  const plain = flagged.map(({ legend, ...c }) => c);
+  // before the split nothing changes
+  for(let d = '2026-06-18'; d < LEGENDS_FROM; d = day(d, 1))
+    assert.equal(rotationPick(flagged, d).answer, rotationPick(plain, d).answer, `${d} changed`);
+  // from the split: Sundays are legends, other days never; nobody repeats within their group's cycle
+  const seen = { sun: new Map(), week: new Map() };
+  for(let i = 0; i < 700; i++){
+    const d = day(LEGENDS_FROM, i), c = rotationPick(flagged, d), sunday = i % 7 === 0;
+    assert.equal(isLegendsSunday(d), sunday);
+    assert.equal(!!c.legend, sunday, `${d}: ${c.answer} on a ${sunday ? 'Sunday' : 'weekday'}`);
+    const g = sunday ? seen.sun : seen.week, size = flagged.filter(x => !!x.legend === sunday).length;
+    if(g.has(c.answer)) assert.ok(g.size >= size, `${c.answer} repeated on ${d} before all ${size} of its group were shown`);
+    g.set(c.answer, d);
+  }
+  assert.ok(seen.sun.has('NL0') && seen.week.has('NW0'), 'a batch added after the split reaches both groups');
+});
+
+test('second-generation clues take over on their date and keep the puzzle fair', () => {
+  const REAL_CLUES = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/player-clues.json'), 'utf8'));
+  const pool = REAL_CLUES.filter(c => c.clues2);
+  assert.ok(pool.length === REAL_CLUES.length, `every pool entry needs clues2 (${pool.length}/${REAL_CLUES.length})`);
+  for(const c of pool){
+    assert.ok(c.clues2.length >= 3 && c.clues2.length <= 7, `${c.answer}: ${c.clues2.length} clues`);
+    assert.ok(/^Club path:/.test(c.clues2[c.clues2.length - 1]), `${c.answer}: club path must stay the giveaway`);
+    assert.equal(new Set(c.clues2).size, c.clues2.length, `${c.answer}: duplicate clue`);
+    assert.ok(!c.clues2.some(x => /\bundefined\b|\bnull\b|\[\[|\{\{/.test(x)), `${c.answer}: unclean clue ${c.clues2}`);
+  }
+  const before = new Date(Date.parse(CLUES2_FROM) - 864e5).toISOString().slice(0, 10);
+  const p0 = buildPlayerPuzzle(REAL_CLUES, before), src0 = REAL_CLUES.find(c => c.answer.replace(/\s*\(.*\)$/, '') === p0.answer);
+  assert.deepEqual([...p0.clues].sort(), [...src0.clues].sort(), 'before the switch the old clues are used');
+  const p1 = buildPlayerPuzzle(REAL_CLUES, CLUES2_FROM), src1 = REAL_CLUES.find(c => c.answer.replace(/\s*\(.*\)$/, '') === p1.answer);
+  assert.deepEqual([...p1.clues].sort(), [...src1.clues2].sort(), 'from the switch clues2 is used');
 });
 
 test('a chained event cannot fire before the one that sets it up', () => {

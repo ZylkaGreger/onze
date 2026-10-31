@@ -167,9 +167,10 @@ def build(ranked, want, dry, pool, pool_path, have_titles, info, clubs_of, stint
         if not same_era(career, stints_of[name]):
             print(f"  ✗ {name} → {title}: right clubs, wrong years — skipped", file=sys.stderr)
             continue
-        nat = C.clean(f.get("nationalteam1", "")) or (info.get(name) or {}).get("nat") or ""
+        ns = C.senior_nations(f)
+        nat = ns[0] if ns else ((info.get(name) or {}).get("nat") or "")
         role = C.position_from_text(C.clean(f.get("position", ""))) or C.position_word((info.get(name) or {}).get("pos") or "")
-        clues = C.make_clues(nat, role, C.birth_year(f), career, C.honours(w), C.clean(f.get("nationalteam2", "")))
+        clues = C.make_clues(nat, role, C.birth_year(f), career, C.honours(w), ns[1] if len(ns) > 1 else None)
         if not any(c.startswith("Club path:") for c in clues) or len(clues) < 4:
             print(f"  ✗ {title}: too few clues to be fair ({len(clues)}) — skipped", file=sys.stderr)
             continue
