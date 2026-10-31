@@ -1,0 +1,1518 @@
+{
+  "_format": "clubs[club] = [{n: display name, w: wikipedia article title (identity)}]",
+  "_source": "en.wikipedia.org via MediaWiki API (action=parse, full wikitext); clubs from league standings, players from {{fs player}} templates",
+  "league": "Ligue 1",
+  "league_id": 16,
+  "season": "2026/27",
+  "clubs": {
+    "Angers SCO": [
+      {
+        "n": "Anthony Lopes"
+      },
+      {
+        "n": "Carlens Arcus"
+      },
+      {
+        "n": "Ousmane Camara",
+        "w": "Ousmane Camara (footballer, born 2003)"
+      },
+      {
+        "n": "Louis Mouton"
+      },
+      {
+        "n": "Usman Simbakoli"
+      },
+      {
+        "n": "Branco van den Boomen"
+      },
+      {
+        "n": "Prosper Peter"
+      },
+      {
+        "n": "Amine Sbaï"
+      },
+      {
+        "n": "Harouna Djibirin"
+      },
+      {
+        "n": "Yassin Belkhdim"
+      },
+      {
+        "n": "Melvin Zinga"
+      },
+      {
+        "n": "Joseph Kalulu"
+      },
+      {
+        "n": "Jim Allevinah"
+      },
+      {
+        "n": "Amine El Ouazzani"
+      },
+      {
+        "n": "Marius Louër"
+      },
+      {
+        "n": "Jordan Lefort"
+      },
+      {
+        "n": "Emmanuel Biumla"
+      },
+      {
+        "n": "Anthony Bermont"
+      },
+      {
+        "n": "Lilian Raolisoa"
+      },
+      {
+        "n": "Maël Gernigon"
+      },
+      {
+        "n": "Bané Diatta"
+      },
+      {
+        "n": "Jules Bouffandeau"
+      },
+      {
+        "n": "Oumar Pona"
+      },
+      {
+        "n": "Haris Belkebla"
+      }
+    ],
+    "AJ Auxerre": [
+      {
+        "n": "Paul Nardi"
+      },
+      {
+        "n": "Rémy Labeau Lascary"
+      },
+      {
+        "n": "Axel Tuanzebe"
+      },
+      {
+        "n": "Kévin Danois"
+      },
+      {
+        "n": "Naouirou Ahamada"
+      },
+      {
+        "n": "Cameron Archer"
+      },
+      {
+        "n": "Eros Maddy"
+      },
+      {
+        "n": "Telli Siwe"
+      },
+      {
+        "n": "Christ Makosso"
+      },
+      {
+        "n": "Pierre Ekwah"
+      },
+      {
+        "n": "Assane Dioussé"
+      },
+      {
+        "n": "Danny Namaso"
+      },
+      {
+        "n": "Sinaly Diomandé"
+      },
+      {
+        "n": "Fredrik Oppegård"
+      },
+      {
+        "n": "Mamadou Diop",
+        "w": "Mamadou Diop (footballer)"
+      },
+      {
+        "n": "Bryan Okoh"
+      },
+      {
+        "n": "Lamine Sy"
+      },
+      {
+        "n": "Romain Faivre"
+      },
+      {
+        "n": "Marvin Senaya"
+      },
+      {
+        "n": "Ryan Rodin"
+      },
+      {
+        "n": "Rayan Mandengue"
+      },
+      {
+        "n": "Lamfia Dioubaté"
+      },
+      {
+        "n": "Elikya Legros"
+      },
+      {
+        "n": "Tidiane Devernois"
+      },
+      {
+        "n": "Louis Mezerette"
+      },
+      {
+        "n": "Salimou Danfakha"
+      },
+      {
+        "n": "Arthur Piedfort"
+      },
+      {
+        "n": "Wei Xiangxin"
+      },
+      {
+        "n": "Aristide Zossou"
+      },
+      {
+        "n": "Clément Akpa"
+      },
+      {
+        "n": "Sékou Fofana",
+        "w": "Sékou Fofana (footballer, born 2003)"
+      }
+    ],
+    "Stade Brestois 29": [
+      {
+        "n": "Egil Selvik"
+      },
+      {
+        "n": "Bradley Locko"
+      },
+      {
+        "n": "Gautier Lloris"
+      },
+      {
+        "n": "Brendan Chardonnet"
+      },
+      {
+        "n": "Mamady Diambou"
+      },
+      {
+        "n": "Joseph Nonge"
+      },
+      {
+        "n": "Hugo Magnetti"
+      },
+      {
+        "n": "Giovani Versini"
+      },
+      {
+        "n": "Noah Edjouma"
+      },
+      {
+        "n": "Luck Zogbé"
+      },
+      {
+        "n": "Joris Chotard"
+      },
+      {
+        "n": "Noé Poillion"
+      },
+      {
+        "n": "Mama Baldé"
+      },
+      {
+        "n": "Justin Bourgault"
+      },
+      {
+        "n": "Ludovic Ajorque"
+      },
+      {
+        "n": "Kamory Doumbia"
+      },
+      {
+        "n": "Lucas Tousart"
+      },
+      {
+        "n": "Mathieu Patouillet"
+      },
+      {
+        "n": "Mathis Lainé"
+      },
+      {
+        "n": "Djylian NGuessan",
+        "w": "Djylian N'Guessan"
+      },
+      {
+        "n": "Romain Cagnon"
+      },
+      {
+        "n": "Raphaël Le Guen"
+      },
+      {
+        "n": "Kenny Lala"
+      },
+      {
+        "n": "Pathé Mboup"
+      }
+    ],
+    "Le Havre AC": [
+      {
+        "n": "Ahmed Touba"
+      },
+      {
+        "n": "Junior Mwanga"
+      },
+      {
+        "n": "Amir Richardson"
+      },
+      {
+        "n": "Josh Maja"
+      },
+      {
+        "n": "Felix Mambimbi"
+      },
+      {
+        "n": "Elias Jelert"
+      },
+      {
+        "n": "Rassoul Ndiaye"
+      },
+      {
+        "n": "Ayumu Seko"
+      },
+      {
+        "n": "Arnaud Bodart"
+      },
+      {
+        "n": "Kaito Mizuta"
+      },
+      {
+        "n": "Joan Tincres"
+      },
+      {
+        "n": "Djibril Ouziad"
+      },
+      {
+        "n": "Vincent Sasso"
+      },
+      {
+        "n": "Guy-Noël Zohouri"
+      },
+      {
+        "n": "Mbwana Samatta"
+      },
+      {
+        "n": "Simon Ebonog"
+      },
+      {
+        "n": "Enzo Koffi"
+      },
+      {
+        "n": "Stephan Zagadou"
+      },
+      {
+        "n": "Sōta Nakamura"
+      },
+      {
+        "n": "Timothée Pembélé"
+      },
+      {
+        "n": "Rayan Fofana"
+      },
+      {
+        "n": "Ismaïl Bouneb"
+      },
+      {
+        "n": "Paul Argney"
+      },
+      {
+        "n": "Lionel Mpasi"
+      },
+      {
+        "n": "Daren Mosengo"
+      },
+      {
+        "n": "Gauthier Gallon"
+      },
+      {
+        "n": "Élysée Logbo"
+      }
+    ],
+    "Le Mans FC": [
+      {
+        "n": "Ewan Hatfout"
+      },
+      {
+        "n": "Harold Voyer"
+      },
+      {
+        "n": "Edwin Quarshie"
+      },
+      {
+        "n": "Billal Brahimi"
+      },
+      {
+        "n": "Alexandre Lauray"
+      },
+      {
+        "n": "Antoine Rabillard"
+      },
+      {
+        "n": "Jean Vercruysse"
+      },
+      {
+        "n": "Adil Bourabaa"
+      },
+      {
+        "n": "João Almeida",
+        "w": "João Almeida (footballer, born 2006)"
+      },
+      {
+        "n": "Habib Diallo"
+      },
+      {
+        "n": "Louis Mafouta"
+      },
+      {
+        "n": "Noa Boissé"
+      },
+      {
+        "n": "Raúl Torrente"
+      },
+      {
+        "n": "Samuel Yohou"
+      },
+      {
+        "n": "Lucas Buades",
+        "w": "Lucas Buadés"
+      },
+      {
+        "n": "Djibril Sidibé",
+        "w": "Djibril Sidibé (footballer, born 1992)"
+      },
+      {
+        "n": "William Harhouz"
+      },
+      {
+        "n": "Théo Eyoum"
+      },
+      {
+        "n": "Lucas Calodat"
+      },
+      {
+        "n": "Daouda Traoré"
+      },
+      {
+        "n": "Dame Gueye"
+      },
+      {
+        "n": "Rayan Bamba"
+      },
+      {
+        "n": "Martin Rossignol"
+      },
+      {
+        "n": "Erwan Colas"
+      },
+      {
+        "n": "Lucas Bretelle"
+      },
+      {
+        "n": "Augustin Delbecque"
+      },
+      {
+        "n": "Yasser Larouci"
+      },
+      {
+        "n": "Nicolas Kocik"
+      },
+      {
+        "n": "Enzo Vagner"
+      }
+    ],
+    "RC Lens": [
+      {
+        "n": "Régis Gurtner"
+      },
+      {
+        "n": "Ruben Aguilar"
+      },
+      {
+        "n": "Maik Nawrocki"
+      },
+      {
+        "n": "Nidal Čelik"
+      },
+      {
+        "n": "Andrija Bulatović"
+      },
+      {
+        "n": "Samson Baidoo"
+      },
+      {
+        "n": "Florian Sotoca"
+      },
+      {
+        "n": "Yacine Titraoui"
+      },
+      {
+        "n": "Thorgan Hazard"
+      },
+      {
+        "n": "Florian Thauvin"
+      },
+      {
+        "n": "Odsonne Édouard"
+      },
+      {
+        "n": "Jhoanner Chávez"
+      },
+      {
+        "n": "Matthieu Udol"
+      },
+      {
+        "n": "Mathieu Gorgelin"
+      },
+      {
+        "n": "Abdallah Sima"
+      },
+      {
+        "n": "Jean-Clair Todibo"
+      },
+      {
+        "n": "Amadou Haidara"
+      },
+      {
+        "n": "Michał Skóraś"
+      },
+      {
+        "n": "Saud Abdulhamid"
+      },
+      {
+        "n": "Jonathan Gradit"
+      },
+      {
+        "n": "Ismaëlo Ganiou"
+      },
+      {
+        "n": "Michaël Cuisance"
+      },
+      {
+        "n": "Junior Kadile"
+      },
+      {
+        "n": "Franjo Ivanović"
+      },
+      {
+        "n": "Souleymane Sagnan"
+      },
+      {
+        "n": "Kyllian Antonio"
+      },
+      {
+        "n": "Mezian Mesloub"
+      },
+      {
+        "n": "Robin Risser"
+      },
+      {
+        "n": "Ilan Jourdren"
+      }
+    ],
+    "Lille OSC": [
+      {
+        "n": "Berke Özer"
+      },
+      {
+        "n": "Loun Srdanović"
+      },
+      {
+        "n": "Nathan Ngoy"
+      },
+      {
+        "n": "Alexsandro",
+        "w": "Alexsandro (footballer, born 1999)"
+      },
+      {
+        "n": "Nabil Bentaleb"
+      },
+      {
+        "n": "Dilane Bakwa"
+      },
+      {
+        "n": "Ethan Mbappé"
+      },
+      {
+        "n": "Olivier Giroud"
+      },
+      {
+        "n": "Hákon Haraldsson"
+      },
+      {
+        "n": "Osame Sahraoui"
+      },
+      {
+        "n": "Orlando Gill"
+      },
+      {
+        "n": "Maurits Kjærgaard"
+      },
+      {
+        "n": "Romain Perraud"
+      },
+      {
+        "n": "Ngalayel Mukau",
+        "w": "Ngal'ayel Mukau"
+      },
+      {
+        "n": "Ayase Ueda"
+      },
+      {
+        "n": "Başar Önal"
+      },
+      {
+        "n": "Benjamin André"
+      },
+      {
+        "n": "Tiago Santos"
+      },
+      {
+        "n": "Tanguy Nianzou"
+      },
+      {
+        "n": "Calvin Verdonk"
+      },
+      {
+        "n": "Isaac Cossier"
+      },
+      {
+        "n": "Gaëtan Perrin"
+      },
+      {
+        "n": "Hamza Igamane"
+      },
+      {
+        "n": "Soriba Diaoune"
+      },
+      {
+        "n": "Maxima Goffi"
+      }
+    ],
+    "FC Lorient": [
+      {
+        "n": "Benjamin Leroy"
+      },
+      {
+        "n": "Alec Georgen"
+      },
+      {
+        "n": "Montassar Talbi"
+      },
+      {
+        "n": "Formose Mendy",
+        "w": "Formose Mendy (footballer, born 2001)"
+      },
+      {
+        "n": "Bandiougou Fadiga"
+      },
+      {
+        "n": "Noah Cadiou"
+      },
+      {
+        "n": "Mohamed Bamba",
+        "w": "Mohamed Bamba (footballer, born 2001)"
+      },
+      {
+        "n": "Isak Jensen"
+      },
+      {
+        "n": "Théo Le Bris"
+      },
+      {
+        "n": "Aiyegun Tosin"
+      },
+      {
+        "n": "Jean-Victor Makengo"
+      },
+      {
+        "n": "Ibrahima Baldé",
+        "w": "Ibrahima Baldé (footballer, born 2003)"
+      },
+      {
+        "n": "Souleymane Faye",
+        "w": "Souleymane Faye (footballer)"
+      },
+      {
+        "n": "Dembo Sylla"
+      },
+      {
+        "n": "Bingourou Kamara"
+      },
+      {
+        "n": "Daniel Semedo"
+      },
+      {
+        "n": "Srđan Kuzmić"
+      },
+      {
+        "n": "Nathaniel Adjei"
+      },
+      {
+        "n": "Gabin Bernardeau"
+      },
+      {
+        "n": "Yvon Mvogo"
+      },
+      {
+        "n": "Mamadou Koné",
+        "w": "Mamadou Koné (footballer, born 2006)"
+      },
+      {
+        "n": "Arsène Kouassi"
+      },
+      {
+        "n": "Nosa Edward Obaretin"
+      },
+      {
+        "n": "Arthur Avom"
+      },
+      {
+        "n": "Noah Mbamba"
+      },
+      {
+        "n": "Panos Katseris"
+      },
+      {
+        "n": "Isaak Touré"
+      }
+    ],
+    "Olympique Lyonnais": [
+      {
+        "n": "Dominik Greif"
+      },
+      {
+        "n": "Mads Bidstrup"
+      },
+      {
+        "n": "Nicolás Tagliafico"
+      },
+      {
+        "n": "Tanner Tessmann"
+      },
+      {
+        "n": "Ernest Nuamah"
+      },
+      {
+        "n": "Corentin Tolisso"
+      },
+      {
+        "n": "Pavel Šulc"
+      },
+      {
+        "n": "Keito Nakamura"
+      },
+      {
+        "n": "Zachary Athekame"
+      },
+      {
+        "n": "Abner",
+        "w": "Abner Vinícius"
+      },
+      {
+        "n": "Loïs Openda"
+      },
+      {
+        "n": "Khalis Merah"
+      },
+      {
+        "n": "Moussa Niakhaté"
+      },
+      {
+        "n": "Felix Bacher"
+      },
+      {
+        "n": "Ruben Kluivert"
+      },
+      {
+        "n": "Clinton Mata"
+      },
+      {
+        "n": "Tyler Morton"
+      },
+      {
+        "n": "Julien Duranville"
+      },
+      {
+        "n": "Justin Bengui"
+      },
+      {
+        "n": "Kaïl Boudache"
+      },
+      {
+        "n": "Rémy Descamps"
+      },
+      {
+        "n": "Rémi Himbert"
+      },
+      {
+        "n": "Lassine Diarra"
+      },
+      {
+        "n": "Mohamed Ouédraogo"
+      },
+      {
+        "n": "Noham Kamara"
+      },
+      {
+        "n": "Noah Nartey"
+      }
+    ],
+    "Olympique de Marseille": [
+      {
+        "n": "Jeffrey de Lange"
+      },
+      {
+        "n": "CJ Egan-Riley"
+      },
+      {
+        "n": "Tochukwu Nnadi"
+      },
+      {
+        "n": "Angel Gomes"
+      },
+      {
+        "n": "Himad Abdelli"
+      },
+      {
+        "n": "Amine Gouiri"
+      },
+      {
+        "n": "Neal Maupay"
+      },
+      {
+        "n": "Derek Cornelius"
+      },
+      {
+        "n": "Igor Paixão"
+      },
+      {
+        "n": "Bamo Meïté"
+      },
+      {
+        "n": "Geoffrey Kondogbia"
+      },
+      {
+        "n": "Nayef Aguerd"
+      },
+      {
+        "n": "Timothy Weah"
+      },
+      {
+        "n": "Pierre-Emile Højbjerg"
+      },
+      {
+        "n": "Ulisses Garcia"
+      },
+      {
+        "n": "Faris Moumbagna"
+      },
+      {
+        "n": "Emerson Palmieri"
+      },
+      {
+        "n": "Jelle Van Neck"
+      },
+      {
+        "n": "Tadjidine Mmadi"
+      },
+      {
+        "n": "Keyliane Abdallah"
+      },
+      {
+        "n": "Amine Harit"
+      },
+      {
+        "n": "Théo Vermot"
+      }
+    ],
+    "AS Monaco FC": [
+      {
+        "n": "Lukas Hradecky"
+      },
+      {
+        "n": "Vanderson",
+        "w": "Vanderson (footballer, born 2001)"
+      },
+      {
+        "n": "Jordan Teze"
+      },
+      {
+        "n": "Denis Zakaria"
+      },
+      {
+        "n": "Mathys Detourbet"
+      },
+      {
+        "n": "Lamine Camara"
+      },
+      {
+        "n": "Folarin Balogun"
+      },
+      {
+        "n": "Aleksandr Golovin",
+        "w": "Aleksandr Golovin (footballer)"
+      },
+      {
+        "n": "Matthis Abline"
+      },
+      {
+        "n": "Christian Mawissa"
+      },
+      {
+        "n": "Mika Biereth"
+      },
+      {
+        "n": "Eric Dier"
+      },
+      {
+        "n": "Philipp Köhn"
+      },
+      {
+        "n": "Stanis Idumbo"
+      },
+      {
+        "n": "Takumi Minamino"
+      },
+      {
+        "n": "Pape Cabral"
+      },
+      {
+        "n": "Flávio Nazinho"
+      },
+      {
+        "n": "Mohammed Salisu"
+      },
+      {
+        "n": "Mamadou Coulibaly",
+        "w": "Mamadou Coulibaly (footballer, born 2004)"
+      },
+      {
+        "n": "Paris Brunner"
+      },
+      {
+        "n": "Ansu Fati"
+      },
+      {
+        "n": "Edan Diop"
+      },
+      {
+        "n": "Jules Stawiecki"
+      },
+      {
+        "n": "Aymen Assab"
+      },
+      {
+        "n": "Oumar Konaté"
+      },
+      {
+        "n": "Samuel Nibombé"
+      },
+      {
+        "n": "Anis Soubeir"
+      },
+      {
+        "n": "Safouane Benzahra"
+      },
+      {
+        "n": "Ilane Touré"
+      },
+      {
+        "n": "Sadibou Sané"
+      }
+    ],
+    "OGC Nice": [
+      {
+        "n": "Ali Abdi",
+        "w": "Ali Abdi (footballer)"
+      },
+      {
+        "n": "Mohamed Abdelmonem"
+      },
+      {
+        "n": "Hicham Boudaoui"
+      },
+      {
+        "n": "Gauthier Hein"
+      },
+      {
+        "n": "Morgan Sanson"
+      },
+      {
+        "n": "Mohamed Amoura"
+      },
+      {
+        "n": "Sofiane Diop"
+      },
+      {
+        "n": "Elye Wahi"
+      },
+      {
+        "n": "Laurent Abergel"
+      },
+      {
+        "n": "Isak Jansson"
+      },
+      {
+        "n": "Issiaga Camara"
+      },
+      {
+        "n": "Yehvann Diouf"
+      },
+      {
+        "n": "Niels Nkounkou"
+      },
+      {
+        "n": "Axel Witsel"
+      },
+      {
+        "n": "Nathan Ngoumou"
+      },
+      {
+        "n": "Antoine Mendy",
+        "w": "Antoine Mendy (footballer)"
+      },
+      {
+        "n": "Nassim Laarej"
+      },
+      {
+        "n": "Xavier Mandza"
+      },
+      {
+        "n": "Alidu Seidu"
+      },
+      {
+        "n": "Djibril Coulibaly",
+        "w": "Djibril Coulibaly (footballer, born 2008)"
+      },
+      {
+        "n": "Zoumana Diallo"
+      },
+      {
+        "n": "Youssouf Ndayishimiye"
+      },
+      {
+        "n": "Martin Ponsot"
+      },
+      {
+        "n": "Moïse Bombito"
+      },
+      {
+        "n": "Teddy Boulhendi"
+      },
+      {
+        "n": "Hamza Koutoune"
+      },
+      {
+        "n": "Everton Pereira",
+        "w": "Everton Pereira (footballer)"
+      },
+      {
+        "n": "Jonathan Clauss"
+      },
+      {
+        "n": "Salis Abdul Samed"
+      }
+    ],
+    "Paris FC": [
+      {
+        "n": "Kevin Trapp"
+      },
+      {
+        "n": "Emmanuel Mbemba"
+      },
+      {
+        "n": "Vincent Marchetti"
+      },
+      {
+        "n": "Moustapha Mbow"
+      },
+      {
+        "n": "Otávio",
+        "w": "Otávio (footballer, born 2002)"
+      },
+      {
+        "n": "Pablo Pagis"
+      },
+      {
+        "n": "Patrick Zabi"
+      },
+      {
+        "n": "Lassine Sinayoko"
+      },
+      {
+        "n": "Ilan Kebbal"
+      },
+      {
+        "n": "Jean-Philippe Krasso"
+      },
+      {
+        "n": "Hamari Traoré"
+      },
+      {
+        "n": "Luca Koleosho"
+      },
+      {
+        "n": "Obed Nkambadio"
+      },
+      {
+        "n": "Adama Camara"
+      },
+      {
+        "n": "Omar Sissoko"
+      },
+      {
+        "n": "Nhoa Sangui"
+      },
+      {
+        "n": "Maxime Lopez"
+      },
+      {
+        "n": "Rudy Matondo"
+      },
+      {
+        "n": "Yoan Koré"
+      },
+      {
+        "n": "Moses Simon"
+      },
+      {
+        "n": "Thibault De Smet"
+      },
+      {
+        "n": "Samir Chergui"
+      },
+      {
+        "n": "Pierre Lees-Melou"
+      },
+      {
+        "n": "Diego Coppola"
+      },
+      {
+        "n": "Jonathan Ikoné"
+      }
+    ],
+    "Paris Saint-Germain FC": [
+      {
+        "n": "Achraf Hakimi"
+      },
+      {
+        "n": "Lucas Beraldo"
+      },
+      {
+        "n": "Marquinhos"
+      },
+      {
+        "n": "Illia Zabarnyi"
+      },
+      {
+        "n": "Khvicha Kvaratskhelia"
+      },
+      {
+        "n": "Fabián Ruiz"
+      },
+      {
+        "n": "Ferran Torres"
+      },
+      {
+        "n": "Ousmane Dembélé"
+      },
+      {
+        "n": "Maghnes Akliouche"
+      },
+      {
+        "n": "Lucas Digne"
+      },
+      {
+        "n": "Désiré Doué"
+      },
+      {
+        "n": "Alessandro Longoni"
+      },
+      {
+        "n": "Vitinha"
+      },
+      {
+        "n": "Lucas Hernandez"
+      },
+      {
+        "n": "Mika Godts"
+      },
+      {
+        "n": "Senny Mayulu"
+      },
+      {
+        "n": "Nuno Mendes",
+        "w": "Nuno Mendes (footballer, born 2002)"
+      },
+      {
+        "n": "Dro Fernández"
+      },
+      {
+        "n": "Lucas Chevalier"
+      },
+      {
+        "n": "Warren Zaïre-Emery"
+      },
+      {
+        "n": "Matvey Safonov"
+      },
+      {
+        "n": "Quentin Ndjantou"
+      },
+      {
+        "n": "Willian Pacho"
+      },
+      {
+        "n": "João Neves"
+      }
+    ],
+    "Stade Rennais FC": [
+      {
+        "n": "Charlie Cresswell"
+      },
+      {
+        "n": "Gonçalo Oliveira",
+        "w": "Gonçalo Oliveira (footballer)"
+      },
+      {
+        "n": "Djaoui Cissé"
+      },
+      {
+        "n": "Esteban Lepaul"
+      },
+      {
+        "n": "Ludovic Blas"
+      },
+      {
+        "n": "Musa Al-Taamari"
+      },
+      {
+        "n": "Eliezer Mayenda"
+      },
+      {
+        "n": "Bryan Reynolds",
+        "w": "Bryan Reynolds (soccer)"
+      },
+      {
+        "n": "Nicolas Lemaître"
+      },
+      {
+        "n": "Sebastian Szymański"
+      },
+      {
+        "n": "Aboubakar Nagida"
+      },
+      {
+        "n": "Valentin Rongier"
+      },
+      {
+        "n": "Boulaye Dia"
+      },
+      {
+        "n": "Anthony Rouault"
+      },
+      {
+        "n": "Quentin Merlin"
+      },
+      {
+        "n": "Adrien Thomasson"
+      },
+      {
+        "n": "Brice Samba"
+      },
+      {
+        "n": "Elías Legendre"
+      },
+      {
+        "n": "Mahdi Camara"
+      },
+      {
+        "n": "Abdelhamid Aït Boudlal"
+      },
+      {
+        "n": "Kilian Belazzoug"
+      },
+      {
+        "n": "Henrick Do Marcolino"
+      },
+      {
+        "n": "Arnaud Nordin"
+      },
+      {
+        "n": "Issa Soumaré"
+      },
+      {
+        "n": "Przemysław Frankowski"
+      },
+      {
+        "n": "Ayanda Sishuba"
+      }
+    ],
+    "RC Strasbourg Alsace": [
+      {
+        "n": "Filip Jörgensen"
+      },
+      {
+        "n": "Jeyland Mitchell"
+      },
+      {
+        "n": "Ismaël Doukouré"
+      },
+      {
+        "n": "Sam Amo-Ameyaw"
+      },
+      {
+        "n": "Maxi Oyedele"
+      },
+      {
+        "n": "Joaquín Panichelli"
+      },
+      {
+        "n": "Gio Reyna"
+      },
+      {
+        "n": "Sebastian Nanasi"
+      },
+      {
+        "n": "Miłosz Piekutowski"
+      },
+      {
+        "n": "Dário Essugo"
+      },
+      {
+        "n": "Mateo Del Blanco"
+      },
+      {
+        "n": "Genesis Antwi"
+      },
+      {
+        "n": "Fábio Baldé"
+      },
+      {
+        "n": "Martial Godo"
+      },
+      {
+        "n": "Pape Demba Diop"
+      },
+      {
+        "n": "Diogo Sousa",
+        "w": "Diogo Sousa (footballer, born 2006)"
+      },
+      {
+        "n": "Lucas Høgsberg"
+      },
+      {
+        "n": "Omari Kellyman"
+      },
+      {
+        "n": "Tyrese Noubissie"
+      },
+      {
+        "n": "Samir El Mourabet"
+      },
+      {
+        "n": "Jacobo Ortega"
+      },
+      {
+        "n": "Karim Coulibaly",
+        "w": "Karim Coulibaly (footballer, born 2007)"
+      },
+      {
+        "n": "Oso",
+        "w": "Oso (footballer)"
+      },
+      {
+        "n": "Ghianny Kodia"
+      },
+      {
+        "n": "Conrad Harder"
+      },
+      {
+        "n": "Deivid Washington"
+      },
+      {
+        "n": "Benjamin Brantlind"
+      },
+      {
+        "n": "Gessime Yassine"
+      },
+      {
+        "n": "Hermann Malonga"
+      },
+      {
+        "n": "Sékou Mara"
+      }
+    ],
+    "Toulouse FC": [
+      {
+        "n": "Rasmus Nicolaisen"
+      },
+      {
+        "n": "Seny Koumbassa"
+      },
+      {
+        "n": "Alexis Vossah"
+      },
+      {
+        "n": "Julián Vignolo"
+      },
+      {
+        "n": "Thomas Jørgensen"
+      },
+      {
+        "n": "Santiago Hidalgo"
+      },
+      {
+        "n": "Sion Oppong"
+      },
+      {
+        "n": "Christ Tapé"
+      },
+      {
+        "n": "Jacen Russell-Rowe"
+      },
+      {
+        "n": "Niko Sigur"
+      },
+      {
+        "n": "Aron Dønnum"
+      },
+      {
+        "n": "Guillaume Restes"
+      },
+      {
+        "n": "Abu Francis"
+      },
+      {
+        "n": "Mathis Amougou"
+      },
+      {
+        "n": "David Odogu"
+      },
+      {
+        "n": "Casper Tengstedt"
+      },
+      {
+        "n": "Rafik Messali"
+      },
+      {
+        "n": "Cristian Cásseres",
+        "w": "Cristian Cásseres Jr."
+      },
+      {
+        "n": "Naïme Saïd Mchindra"
+      },
+      {
+        "n": "Niklas Schmidt"
+      },
+      {
+        "n": "Ilyas Azizi"
+      },
+      {
+        "n": "Aymen Amaaouch"
+      },
+      {
+        "n": "Mathys Niflore"
+      },
+      {
+        "n": "Ismaïl Diallo"
+      }
+    ],
+    "ES Troyes AC": [
+      {
+        "n": "Zacharie Boucher"
+      },
+      {
+        "n": "Lucas Maronnier"
+      },
+      {
+        "n": "Anis Ouzenadji"
+      },
+      {
+        "n": "Junior Diaz",
+        "w": "Junior Diaz (footballer, born 2003)"
+      },
+      {
+        "n": "Paolo Gozzi"
+      },
+      {
+        "n": "Adrien Monfray"
+      },
+      {
+        "n": "Kandet Diawara"
+      },
+      {
+        "n": "Mouhamed Diop",
+        "w": "Mouhamed Diop (footballer)"
+      },
+      {
+        "n": "Jérémy Le Douaron"
+      },
+      {
+        "n": "Merwan Ifnaoui"
+      },
+      {
+        "n": "Iron Gomis"
+      },
+      {
+        "n": "Ismaël Boura"
+      },
+      {
+        "n": "Antoine Mille"
+      },
+      {
+        "n": "Renaud Ripart"
+      },
+      {
+        "n": "Hugo Picard"
+      },
+      {
+        "n": "Timothé Nkada"
+      },
+      {
+        "n": "Alexandre Phliponeau"
+      },
+      {
+        "n": "Dermane Karim"
+      },
+      {
+        "n": "Patrick Beach"
+      },
+      {
+        "n": "Noah Donkor"
+      },
+      {
+        "n": "Ibrahim Traoré"
+      },
+      {
+        "n": "Roman Murcy"
+      },
+      {
+        "n": "Idrissa Soukouna"
+      },
+      {
+        "n": "Christ Batola"
+      },
+      {
+        "n": "Yacouba Koné"
+      },
+      {
+        "n": "Hillel Konaté"
+      },
+      {
+        "n": "Enisio Carneiro"
+      },
+      {
+        "n": "Yvann Titi"
+      }
+    ]
+  },
+  "_failures": []
+}

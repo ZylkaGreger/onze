@@ -1,0 +1,1824 @@
+{
+  "_format": "clubs[club] = [{n: display name, w: wikipedia article title (identity)}]",
+  "_source": "en.wikipedia.org via MediaWiki API (action=parse, full wikitext); clubs from league standings, players from {{fs player}} templates",
+  "league": "Serie A",
+  "league_id": 31,
+  "season": "2026/27",
+  "clubs": {
+    "Atalanta BC": [
+      {
+        "n": "Odilon Kossounou"
+      },
+      {
+        "n": "Isak Hien"
+      },
+      {
+        "n": "Kamaldeen Sulemana"
+      },
+      {
+        "n": "Mario Pašalić"
+      },
+      {
+        "n": "Gianluca Scamacca"
+      },
+      {
+        "n": "Lazar Samardžić"
+      },
+      {
+        "n": "Jonathan Rowe",
+        "w": "Jonathan Rowe (footballer, born 2003)"
+      },
+      {
+        "n": "Éderson",
+        "w": "Éderson (footballer, born 1999)"
+      },
+      {
+        "n": "Raoul Bellanova"
+      },
+      {
+        "n": "Charles De Ketelaere"
+      },
+      {
+        "n": "Giacomo Raspadori"
+      },
+      {
+        "n": "Franck Kessié"
+      },
+      {
+        "n": "Thomas Pompei"
+      },
+      {
+        "n": "Sead Kolašinac"
+      },
+      {
+        "n": "Marco Carnesecchi"
+      },
+      {
+        "n": "Thomas Kristensen",
+        "w": "Thomas Thiesson Kristensen"
+      },
+      {
+        "n": "Relja Obrić"
+      },
+      {
+        "n": "Giorgio Scalvini"
+      },
+      {
+        "n": "Lorenzo Bernasconi"
+      },
+      {
+        "n": "Marco Sportiello"
+      },
+      {
+        "n": "Nicola Zalewski"
+      },
+      {
+        "n": "Gianluca Gaetano"
+      },
+      {
+        "n": "Davide Zappacosta"
+      },
+      {
+        "n": "Nikola Krstović"
+      },
+      {
+        "n": "Eljif Elmas"
+      }
+    ],
+    "Bologna FC 1909": [
+      {
+        "n": "Łukasz Skorupski"
+      },
+      {
+        "n": "Emil Holm",
+        "w": "Emil Holm (footballer)"
+      },
+      {
+        "n": "Arthur Theate"
+      },
+      {
+        "n": "Tommaso Pobega"
+      },
+      {
+        "n": "Eivind Helland"
+      },
+      {
+        "n": "Nikola Moro"
+      },
+      {
+        "n": "Riccardo Orsolini"
+      },
+      {
+        "n": "Mikel Amondarain"
+      },
+      {
+        "n": "Artem Dovbyk"
+      },
+      {
+        "n": "Federico Bernardeschi"
+      },
+      {
+        "n": "Samuel Mbangula"
+      },
+      {
+        "n": "Torbjørn Heggem"
+      },
+      {
+        "n": "Nicolò Casale"
+      },
+      {
+        "n": "Oussama El Azzouzi"
+      },
+      {
+        "n": "Marco Libra"
+      },
+      {
+        "n": "Lewis Ferguson"
+      },
+      {
+        "n": "Nadir Zortea"
+      },
+      {
+        "n": "Jens Odgaard"
+      },
+      {
+        "n": "Jay Enem"
+      },
+      {
+        "n": "Rahim Alhassane"
+      },
+      {
+        "n": "Massimo Pessina"
+      },
+      {
+        "n": "Nicolò Cambiaghi"
+      },
+      {
+        "n": "Lorenzo De Silvestri"
+      },
+      {
+        "n": "Juan Miranda",
+        "w": "Juan Miranda (footballer)"
+      },
+      {
+        "n": "Matteo Darmian"
+      },
+      {
+        "n": "Martin Vitík"
+      },
+      {
+        "n": "Ukko Happonen"
+      },
+      {
+        "n": "Roberto Piccoli"
+      }
+    ],
+    "Cagliari Calcio": [
+      {
+        "n": "Elia Caprile"
+      },
+      {
+        "n": "Zé Pedro",
+        "w": "Zé Pedro (footballer, born June 1997)"
+      },
+      {
+        "n": "Riyad Idrissi"
+      },
+      {
+        "n": "Alessandro Romano",
+        "w": "Alessandro Romano (footballer, born 2006)"
+      },
+      {
+        "n": "Harry Winks"
+      },
+      {
+        "n": "Michel Adopo",
+        "w": "Michel Ndary Adopo"
+      },
+      {
+        "n": "Kevin Carlos"
+      },
+      {
+        "n": "Jacopo Fazzini"
+      },
+      {
+        "n": "Alen Sherri"
+      },
+      {
+        "n": "Alessandro Deiola"
+      },
+      {
+        "n": "Juan Rodríguez",
+        "w": "Juan Rodríguez (footballer, born 2005)"
+      },
+      {
+        "n": "Mattia Felici"
+      },
+      {
+        "n": "MBala Nzola",
+        "w": "M'Bala Nzola"
+      },
+      {
+        "n": "Yael Trepy"
+      },
+      {
+        "n": "Riccardo Ciervo"
+      },
+      {
+        "n": "Roberto Gagliardini"
+      },
+      {
+        "n": "Raphael Kofler"
+      },
+      {
+        "n": "Boris Radunović"
+      },
+      {
+        "n": "Giuseppe Aurelio"
+      },
+      {
+        "n": "Yerry Mina"
+      },
+      {
+        "n": "Joseph Liteta"
+      },
+      {
+        "n": "Yukinari Sugawara"
+      },
+      {
+        "n": "Demi Akarakiri"
+      },
+      {
+        "n": "Paul Mendy"
+      },
+      {
+        "n": "Ivan Sulev"
+      },
+      {
+        "n": "Adam Obert"
+      },
+      {
+        "n": "Alessandro Sugamele"
+      },
+      {
+        "n": "Nicola Grandu"
+      },
+      {
+        "n": "Alieu Fadera"
+      },
+      {
+        "n": "Daniel Maldini"
+      },
+      {
+        "n": "Yanis Massolin"
+      }
+    ],
+    "Como 1907": [
+      {
+        "n": "Jean Butez"
+      },
+      {
+        "n": "Marc-Oliver Kempf"
+      },
+      {
+        "n": "Álex Valle"
+      },
+      {
+        "n": "Jacobo Ramón"
+      },
+      {
+        "n": "Máximo Perrone"
+      },
+      {
+        "n": "Luis Milla",
+        "w": "Luis Milla (footballer, born 1994)"
+      },
+      {
+        "n": "Lucas Da Cunha"
+      },
+      {
+        "n": "Maxence Caqueret"
+      },
+      {
+        "n": "Anastasios Douvikas"
+      },
+      {
+        "n": "Nico Paz"
+      },
+      {
+        "n": "Assane Diao"
+      },
+      {
+        "n": "Alberto Dossena"
+      },
+      {
+        "n": "Adrian Lahdo"
+      },
+      {
+        "n": "Kaiki Bruno"
+      },
+      {
+        "n": "Jesús Rodríguez",
+        "w": "Jesús Rodríguez (footballer, born 2005)"
+      },
+      {
+        "n": "Edoardo Goldaniga"
+      },
+      {
+        "n": "Martin Baturina"
+      },
+      {
+        "n": "Samuele Ricci"
+      },
+      {
+        "n": "Mauro Vigorito"
+      },
+      {
+        "n": "Yan Couto"
+      },
+      {
+        "n": "Ivan Smolčić"
+      },
+      {
+        "n": "Mattia Liberali"
+      },
+      {
+        "n": "Jayden Addai"
+      },
+      {
+        "n": "Willy Kambwala"
+      },
+      {
+        "n": "Moise Kean"
+      },
+      {
+        "n": "Robert Sánchez"
+      },
+      {
+        "n": "Trevoh Chalobah"
+      }
+    ],
+    "ACF Fiorentina": [
+      {
+        "n": "Dodô",
+        "w": "Dodô (footballer, born 1998)"
+      },
+      {
+        "n": "Radu Drăgușin"
+      },
+      {
+        "n": "Marco Brescianini"
+      },
+      {
+        "n": "Marin Pongračić"
+      },
+      {
+        "n": "Luca Ranieri"
+      },
+      {
+        "n": "Arthur Atta"
+      },
+      {
+        "n": "João Mário",
+        "w": "João Mário (footballer, born 2000)"
+      },
+      {
+        "n": "Luca Lezzerini"
+      },
+      {
+        "n": "Álex Jiménez",
+        "w": "Álex Jiménez (footballer, born 2005)"
+      },
+      {
+        "n": "Víctor Valdepeñas"
+      },
+      {
+        "n": "Beto",
+        "w": "Beto (footballer, born 1998)"
+      },
+      {
+        "n": "Alieu Njie",
+        "w": "Alieu Njie (footballer, born 2005)"
+      },
+      {
+        "n": "Cher Ndour"
+      },
+      {
+        "n": "Pedro Gonçalves"
+      },
+      {
+        "n": "Wilfried Gnonto"
+      },
+      {
+        "n": "Franco Mastantuono"
+      },
+      {
+        "n": "Mateo Pellegrino"
+      },
+      {
+        "n": "Viery"
+      },
+      {
+        "n": "Christ Inao Oulaï"
+      },
+      {
+        "n": "David de Gea"
+      },
+      {
+        "n": "Nicolò Fagioli"
+      },
+      {
+        "n": "Oliver Christensen"
+      },
+      {
+        "n": "Fabiano Parisi"
+      }
+    ],
+    "Frosinone Calcio": [
+      {
+        "n": "Giorgio Cittadini"
+      },
+      {
+        "n": "Gabriele Calvani"
+      },
+      {
+        "n": "Ben Lhassine Kone"
+      },
+      {
+        "n": "Wisdom Amey"
+      },
+      {
+        "n": "Farès Ghedjemis"
+      },
+      {
+        "n": "Antonio Raimondo"
+      },
+      {
+        "n": "Romano Schmid"
+      },
+      {
+        "n": "Daniel Bîrligea"
+      },
+      {
+        "n": "Matteo Pisseri"
+      },
+      {
+        "n": "Giacomo Calò"
+      },
+      {
+        "n": "Matteo Cichella"
+      },
+      {
+        "n": "Giorgi Kvernadze"
+      },
+      {
+        "n": "Anthony Oyono"
+      },
+      {
+        "n": "Lorenzo Palmisani"
+      },
+      {
+        "n": "Alessio Zerbin"
+      },
+      {
+        "n": "Kevin Akpoguma"
+      },
+      {
+        "n": "Florian Grillitsch"
+      },
+      {
+        "n": "Ilario Monterisi"
+      },
+      {
+        "n": "Anouar El Azzouzi"
+      },
+      {
+        "n": "Seydou Fini"
+      },
+      {
+        "n": "Luis Hasa"
+      },
+      {
+        "n": "Aleksa Terzić"
+      },
+      {
+        "n": "Patrizio Masini"
+      },
+      {
+        "n": "Omar Fayed",
+        "w": "Omar Fayed (footballer)"
+      },
+      {
+        "n": "Gabriele Bracaglia"
+      },
+      {
+        "n": "Tomáš Bobček"
+      },
+      {
+        "n": "Enzo Tchato"
+      },
+      {
+        "n": "Sebastiano Desplanches"
+      },
+      {
+        "n": "Francesco Gelli"
+      },
+      {
+        "n": "Eldin Lolić"
+      }
+    ],
+    "Genoa CFC": [
+      {
+        "n": "Justin Bijlow"
+      },
+      {
+        "n": "Mario Mitaj"
+      },
+      {
+        "n": "Kingsley Ehizibue"
+      },
+      {
+        "n": "Alex Amorim"
+      },
+      {
+        "n": "Leo Østigård"
+      },
+      {
+        "n": "Tommaso Baldanzi"
+      },
+      {
+        "n": "Vitinha",
+        "w": "Vitinha (footballer, born March 2000)"
+      },
+      {
+        "n": "Júnior Messias",
+        "w": "Junior Messias"
+      },
+      {
+        "n": "Ethan Meichtry"
+      },
+      {
+        "n": "Cody Drameh"
+      },
+      {
+        "n": "Elias Havel"
+      },
+      {
+        "n": "Milutin Osmajić"
+      },
+      {
+        "n": "Joi Nuredini"
+      },
+      {
+        "n": "Stefano Sabelli"
+      },
+      {
+        "n": "Johan Vásquez",
+        "w": "Johan Vásquez (footballer, born 1998)"
+      },
+      {
+        "n": "Hamed Traorè"
+      },
+      {
+        "n": "Alessandro Marcandalli"
+      },
+      {
+        "n": "Lorenzo Colombo"
+      },
+      {
+        "n": "David Puczka"
+      },
+      {
+        "n": "Morten Frendrup"
+      },
+      {
+        "n": "Sebastian Otoa"
+      },
+      {
+        "n": "Daniele Sommariva"
+      },
+      {
+        "n": "Samuel Wiafe"
+      },
+      {
+        "n": "Lorenzo Venturino"
+      },
+      {
+        "n": "Mikael Egill Ellertsson"
+      },
+      {
+        "n": "Stephan El Shaarawy"
+      },
+      {
+        "n": "Djibril Sow"
+      },
+      {
+        "n": "Franz Stolz"
+      }
+    ],
+    "Inter Milan": [
+      {
+        "n": "Josep Martínez"
+      },
+      {
+        "n": "Aleksandar Stanković",
+        "w": "Aleksandar Stanković (footballer, born 2005)"
+      },
+      {
+        "n": "John Stones"
+      },
+      {
+        "n": "Piotr Zieliński"
+      },
+      {
+        "n": "Petar Sučić"
+      },
+      {
+        "n": "Marcus Thuram"
+      },
+      {
+        "n": "Lautaro Martínez"
+      },
+      {
+        "n": "Luis Henrique",
+        "w": "Luis Henrique (footballer, born 2001)"
+      },
+      {
+        "n": "Raffaele Di Gennaro"
+      },
+      {
+        "n": "Ange-Yoan Bonny"
+      },
+      {
+        "n": "Andy Diouf"
+      },
+      {
+        "n": "Hakan Çalhanoğlu"
+      },
+      {
+        "n": "Curtis Jones",
+        "w": "Curtis Jones (footballer, born 2001)"
+      },
+      {
+        "n": "Henrikh Mkhitaryan"
+      },
+      {
+        "n": "Nicolò Barella"
+      },
+      {
+        "n": "Manuel Akanji"
+      },
+      {
+        "n": "Benjamin Pavard"
+      },
+      {
+        "n": "Carlos Augusto",
+        "w": "Carlos Augusto (footballer)"
+      },
+      {
+        "n": "Yann Bisseck",
+        "w": "Yann Aurel Bisseck"
+      },
+      {
+        "n": "Federico Dimarco"
+      },
+      {
+        "n": "Ivan Provedel"
+      },
+      {
+        "n": "Pio Esposito"
+      },
+      {
+        "n": "Alessandro Bastoni"
+      },
+      {
+        "n": "Djed Spence"
+      }
+    ],
+    "Juventus FC": [
+      {
+        "n": "Kamil Grabara"
+      },
+      {
+        "n": "Zeki Çelik"
+      },
+      {
+        "n": "Bremer",
+        "w": "Gleison Bremer"
+      },
+      {
+        "n": "Federico Gatti"
+      },
+      {
+        "n": "Manuel Locatelli"
+      },
+      {
+        "n": "Lloyd Kelly"
+      },
+      {
+        "n": "Francisco Conceição"
+      },
+      {
+        "n": "Teun Koopmeiners"
+      },
+      {
+        "n": "Randal Kolo Muani"
+      },
+      {
+        "n": "Kenan Yıldız"
+      },
+      {
+        "n": "Edon Zhegrova"
+      },
+      {
+        "n": "Douglas Luiz"
+      },
+      {
+        "n": "Jérémie Boga"
+      },
+      {
+        "n": "Arkadiusz Milik"
+      },
+      {
+        "n": "Pierre Kalulu"
+      },
+      {
+        "n": "Kerim Alajbegović"
+      },
+      {
+        "n": "Jeff Ekhator"
+      },
+      {
+        "n": "Khéphren Thuram"
+      },
+      {
+        "n": "Andrea Cambiaso"
+      },
+      {
+        "n": "Weston McKennie"
+      },
+      {
+        "n": "Carlo Pinsoglio"
+      },
+      {
+        "n": "Daniele Rugani"
+      },
+      {
+        "n": "Guglielmo Vicario"
+      },
+      {
+        "n": "Jhon Lucumí"
+      },
+      {
+        "n": "Nick Woltemade"
+      },
+      {
+        "n": "Pape Matar Sarr"
+      },
+      {
+        "n": "Nico González",
+        "w": "Nicolás González (footballer, born 1998)"
+      },
+      {
+        "n": "Juan Cabal"
+      },
+      {
+        "n": "Neto",
+        "w": "Neto (footballer, born 1989)"
+      }
+    ],
+    "SS Lazio": [
+      {
+        "n": "Diogo Leite",
+        "w": "Diogo Leite (footballer, born 1999)"
+      },
+      {
+        "n": "Luca Pellegrini",
+        "w": "Luca Pellegrini (footballer, born 1999)"
+      },
+      {
+        "n": "Danilho Doekhi"
+      },
+      {
+        "n": "Nicolò Rovella"
+      },
+      {
+        "n": "Fisayo Dele-Bashiru"
+      },
+      {
+        "n": "Bruno Galassi"
+      },
+      {
+        "n": "Andrea Pinamonti"
+      },
+      {
+        "n": "Mattia Zaccagni"
+      },
+      {
+        "n": "Gustav Isaksen"
+      },
+      {
+        "n": "Tijjani Noslin"
+      },
+      {
+        "n": "Romano Floriani Mussolini"
+      },
+      {
+        "n": "Davide Frattesi"
+      },
+      {
+        "n": "Nuno Tavares"
+      },
+      {
+        "n": "Reda Belahyane"
+      },
+      {
+        "n": "Matteo Cancellieri"
+      },
+      {
+        "n": "Alfonso Pedraza"
+      },
+      {
+        "n": "Kenneth Taylor",
+        "w": "Kenneth Taylor (footballer, born 2002)"
+      },
+      {
+        "n": "Oliver Provstgaard"
+      },
+      {
+        "n": "Adrian Przyborek"
+      },
+      {
+        "n": "Manuel Lazzari"
+      },
+      {
+        "n": "Danilo Cataldi"
+      },
+      {
+        "n": "Christos Mandas"
+      },
+      {
+        "n": "Josip Šutalo"
+      },
+      {
+        "n": "Edoardo Motta"
+      },
+      {
+        "n": "Alessio Furlanetto"
+      },
+      {
+        "n": "Davide Renzetti"
+      },
+      {
+        "n": "Federico Serra",
+        "w": "Federico Serra (footballer, born 2006)"
+      },
+      {
+        "n": "Valerio Farcomeni"
+      },
+      {
+        "n": "Filipe Bordon"
+      },
+      {
+        "n": "Adam Marušić"
+      },
+      {
+        "n": "Albert Guðmundsson",
+        "w": "Albert Guðmundsson (footballer, born 1997)"
+      }
+    ],
+    "US Lecce": [
+      {
+        "n": "Marco Bleve"
+      },
+      {
+        "n": "Ali Dembélé"
+      },
+      {
+        "n": "Corrie Ndaba"
+      },
+      {
+        "n": "Kialonda Gaspar"
+      },
+      {
+        "n": "Jamil Siebert"
+      },
+      {
+        "n": "Amar Fatah"
+      },
+      {
+        "n": "Sadik Fofana"
+      },
+      {
+        "n": "Nikola Štulić"
+      },
+      {
+        "n": "Medon Berisha"
+      },
+      {
+        "n": "Konan NDri",
+        "w": "Konan N'Dri"
+      },
+      {
+        "n": "Youssef Maleh"
+      },
+      {
+        "n": "Omri Gandelman"
+      },
+      {
+        "n": "Danilo Veiga"
+      },
+      {
+        "n": "Gaby Jean"
+      },
+      {
+        "n": "Ivan Ilić",
+        "w": "Ivan Ilić (footballer, born 2001)"
+      },
+      {
+        "n": "Paco Esteban",
+        "w": "Paco Esteban (footballer, born 2006)"
+      },
+      {
+        "n": "Antonino Gallo"
+      },
+      {
+        "n": "Olaf Gorter"
+      },
+      {
+        "n": "Lassana Coulibaly"
+      },
+      {
+        "n": "Wladimiro Falcone"
+      },
+      {
+        "n": "Elijah Scott"
+      },
+      {
+        "n": "Alexandru Borbei"
+      },
+      {
+        "n": "Plamen Penev",
+        "w": "Plamen Penev (footballer born 2008)"
+      },
+      {
+        "n": "Hjalte Lærke"
+      },
+      {
+        "n": "Marlon Ubani"
+      },
+      {
+        "n": "Tiago Gabriel"
+      },
+      {
+        "n": "Santiago Pierotti"
+      },
+      {
+        "n": "Willem Geubbels"
+      },
+      {
+        "n": "Mohamed Kaba"
+      },
+      {
+        "n": "Oumar Ngom"
+      },
+      {
+        "n": "Niko Kovač",
+        "w": "Niko Kovač (footballer born 2005)"
+      },
+      {
+        "n": "Joël Monteiro"
+      }
+    ],
+    "AC Milan": [
+      {
+        "n": "Pietro Terracciano"
+      },
+      {
+        "n": "Pervis Estupiñán"
+      },
+      {
+        "n": "Koni De Winter"
+      },
+      {
+        "n": "Ruben Loftus-Cheek"
+      },
+      {
+        "n": "Gonçalo Ramos"
+      },
+      {
+        "n": "Christian Pulisic"
+      },
+      {
+        "n": "Adrien Rabiot"
+      },
+      {
+        "n": "Sankhoun Diawara"
+      },
+      {
+        "n": "Luka Modrić"
+      },
+      {
+        "n": "Mike Maignan"
+      },
+      {
+        "n": "Omari Hutchinson"
+      },
+      {
+        "n": "Samuel Chukwueze"
+      },
+      {
+        "n": "Diego Moreira"
+      },
+      {
+        "n": "Fikayo Tomori"
+      },
+      {
+        "n": "Christian Comotto"
+      },
+      {
+        "n": "Ardon Jashari"
+      },
+      {
+        "n": "Strahinja Pavlović"
+      },
+      {
+        "n": "Davide Bartesaghi"
+      },
+      {
+        "n": "Mario Gila"
+      },
+      {
+        "n": "Valeri Vladimirov"
+      },
+      {
+        "n": "Filippo Terracciano"
+      },
+      {
+        "n": "Matteo Gabbia"
+      },
+      {
+        "n": "Alexis Saelemaekers"
+      },
+      {
+        "n": "Alphadjo Cisse"
+      },
+      {
+        "n": "Francesco Camarda"
+      },
+      {
+        "n": "Yunus Musah"
+      },
+      {
+        "n": "Lorenzo Torriani"
+      }
+    ],
+    "AC Monza": [
+      {
+        "n": "Noel Törnqvist"
+      },
+      {
+        "n": "Saba Goglichidze"
+      },
+      {
+        "n": "Lorenzo Lucchesi"
+      },
+      {
+        "n": "Jan Ziółkowski"
+      },
+      {
+        "n": "Yvan Maye"
+      },
+      {
+        "n": "Valentin Antov"
+      },
+      {
+        "n": "Ricardo Mangas"
+      },
+      {
+        "n": "Manga Foe Ondoa"
+      },
+      {
+        "n": "Gustavo Varela",
+        "w": "Gustavo Varela (footballer, born 2005)"
+      },
+      {
+        "n": "Patrick Cutrone"
+      },
+      {
+        "n": "Omari Forson"
+      },
+      {
+        "n": "Ebenezer Akinsanmiro"
+      },
+      {
+        "n": "Cyril Ngonge"
+      },
+      {
+        "n": "Keita Baldé"
+      },
+      {
+        "n": "Samuele Birindelli"
+      },
+      {
+        "n": "Demba Thiam",
+        "w": "Demba Thiam (footballer, born 1998)"
+      },
+      {
+        "n": "Leonardo Colombo"
+      },
+      {
+        "n": "Exequiel Zeballos"
+      },
+      {
+        "n": "Adam Bakoune"
+      },
+      {
+        "n": "Patrick Ciurria"
+      },
+      {
+        "n": "Idrissa Touré"
+      },
+      {
+        "n": "Andrea Colpani"
+      },
+      {
+        "n": "Matteo Pessina"
+      },
+      {
+        "n": "Aljaž Strajnar"
+      },
+      {
+        "n": "Andrea Carboni"
+      },
+      {
+        "n": "Jay Robinson",
+        "w": "Jay Robinson (footballer)"
+      },
+      {
+        "n": "Dany Mota"
+      },
+      {
+        "n": "Eddy Kouadio"
+      },
+      {
+        "n": "Kevin Martins"
+      },
+      {
+        "n": "Mathis Mout"
+      },
+      {
+        "n": "Michael Folorunsho"
+      }
+    ],
+    "SSC Napoli": [
+      {
+        "n": "Alex Meret"
+      },
+      {
+        "n": "Costantino Favasuli"
+      },
+      {
+        "n": "Alessandro Buongiorno"
+      },
+      {
+        "n": "Benoît Badiashile"
+      },
+      {
+        "n": "Billy Gilmour"
+      },
+      {
+        "n": "David Neres"
+      },
+      {
+        "n": "Scott McTominay"
+      },
+      {
+        "n": "Kevin De Bruyne"
+      },
+      {
+        "n": "Claudio Pugliese"
+      },
+      {
+        "n": "Amir Rrahmani"
+      },
+      {
+        "n": "Nikita Contini"
+      },
+      {
+        "n": "Rafa Marín"
+      },
+      {
+        "n": "Mathías Olivera"
+      },
+      {
+        "n": "Rasmus Højlund"
+      },
+      {
+        "n": "Lorenzo Lucca"
+      },
+      {
+        "n": "Matteo Politano"
+      },
+      {
+        "n": "Giovanni Di Lorenzo"
+      },
+      {
+        "n": "Giovane",
+        "w": "Giovane (footballer, born 2003)"
+      },
+      {
+        "n": "Antonio Vergara"
+      },
+      {
+        "n": "Alisson Santos"
+      },
+      {
+        "n": "Sam Beukema"
+      },
+      {
+        "n": "Vanja Milinković-Savić"
+      },
+      {
+        "n": "Luca Marianucci"
+      },
+      {
+        "n": "Leonardo Spinazzola"
+      },
+      {
+        "n": "Stanislav Lobotka"
+      },
+      {
+        "n": "Noa Lang"
+      },
+      {
+        "n": "Frank Anguissa"
+      }
+    ],
+    "Parma Calcio 1913": [
+      {
+        "n": "Abdoulaye Ndiaye",
+        "w": "Abdoulaye Ndiaye (footballer)"
+      },
+      {
+        "n": "Vincent Sierro"
+      },
+      {
+        "n": "Lautaro Valenti"
+      },
+      {
+        "n": "Ousmane Diallo",
+        "w": "Ousmane Diallo (footballer)"
+      },
+      {
+        "n": "Benjamin Cremaschi"
+      },
+      {
+        "n": "David Romero",
+        "w": "David Romero (footballer)"
+      },
+      {
+        "n": "Adrián Bernabé"
+      },
+      {
+        "n": "Pontus Almqvist"
+      },
+      {
+        "n": "Emanuele Valeri"
+      },
+      {
+        "n": "Enrico Delprato"
+      },
+      {
+        "n": "Mandela Keita"
+      },
+      {
+        "n": "El Bilal Touré"
+      },
+      {
+        "n": "Matija Frigan"
+      },
+      {
+        "n": "Simone Ghidotti"
+      },
+      {
+        "n": "Nesta Elphege"
+      },
+      {
+        "n": "Thomás de Martis"
+      },
+      {
+        "n": "Sascha Britschgi"
+      },
+      {
+        "n": "Franco Carboni"
+      },
+      {
+        "n": "Giovanni Daffara"
+      },
+      {
+        "n": "Christian Ordóñez"
+      },
+      {
+        "n": "Diego Carlos",
+        "w": "Diego Carlos (footballer, born 1993)"
+      },
+      {
+        "n": "Mariano Troilo"
+      },
+      {
+        "n": "Edoardo Corvi"
+      },
+      {
+        "n": "Hans Nicolussi Caviglia"
+      },
+      {
+        "n": "Abdou-Salam Konate"
+      },
+      {
+        "n": "Dominik Drobnič"
+      },
+      {
+        "n": "Simone Lontani"
+      },
+      {
+        "n": "Giovanni Fabbian"
+      }
+    ],
+    "AS Roma": [
+      {
+        "n": "Devyne Rensch"
+      },
+      {
+        "n": "Konstantinos Koulierakis"
+      },
+      {
+        "n": "Bryan Cristante"
+      },
+      {
+        "n": "Evan Ndicka"
+      },
+      {
+        "n": "Lorenzo Pellegrini"
+      },
+      {
+        "n": "Santiago Castro",
+        "w": "Santiago Castro (footballer, born 2004)"
+      },
+      {
+        "n": "Donyell Malen"
+      },
+      {
+        "n": "Marten de Roon"
+      },
+      {
+        "n": "Manu Koné"
+      },
+      {
+        "n": "Matías Soulé"
+      },
+      {
+        "n": "Nahuel Molina"
+      },
+      {
+        "n": "Paulo Dybala"
+      },
+      {
+        "n": "Mario Hermoso"
+      },
+      {
+        "n": "Gianluca Mancini"
+      },
+      {
+        "n": "Leonardo Balerdi"
+      },
+      {
+        "n": "Devis Vásquez"
+      },
+      {
+        "n": "Wesley",
+        "w": "Wesley França"
+      },
+      {
+        "n": "Niccolò Pisilli"
+      },
+      {
+        "n": "Antonio Arena"
+      },
+      {
+        "n": "Giorgio De Marzi"
+      },
+      {
+        "n": "Emanuele Lulli"
+      },
+      {
+        "n": "Rodrigo Mora",
+        "w": "Rodrigo Mora (footballer, born 2007)"
+      },
+      {
+        "n": "Daniele Ghilardi"
+      },
+      {
+        "n": "Pierluigi Gollini"
+      },
+      {
+        "n": "Mile Svilar"
+      }
+    ],
+    "US Sassuolo Calcio": [
+      {
+        "n": "Josh Doig"
+      },
+      {
+        "n": "Fali Candé"
+      },
+      {
+        "n": "Sebastian Walukiewicz"
+      },
+      {
+        "n": "Cristian Volpato"
+      },
+      {
+        "n": "Andrea Ghion"
+      },
+      {
+        "n": "Kieron Bowie"
+      },
+      {
+        "n": "Domenico Berardi"
+      },
+      {
+        "n": "Daniel Boloca"
+      },
+      {
+        "n": "Giacomo Satalino"
+      },
+      {
+        "n": "Duje Ćaleta-Car"
+      },
+      {
+        "n": "Fedde Leysen"
+      },
+      {
+        "n": "Vasilije Adžić"
+      },
+      {
+        "n": "Nemanja Matić"
+      },
+      {
+        "n": "Laurs Skjellerup"
+      },
+      {
+        "n": "Ignace Van Der Brempt"
+      },
+      {
+        "n": "Jay Idzes"
+      },
+      {
+        "n": "Lorenzo Nyarko"
+      },
+      {
+        "n": "Benja Domínguez",
+        "w": "Benjamín Domínguez"
+      },
+      {
+        "n": "Cas Odenthal"
+      },
+      {
+        "n": "Yeferson Paz"
+      },
+      {
+        "n": "Rafa Obrador",
+        "w": "Rafael Obrador"
+      },
+      {
+        "n": "Luca Lipani"
+      },
+      {
+        "n": "Giorgio Vezzosi"
+      },
+      {
+        "n": "Kristian Thorstvedt"
+      },
+      {
+        "n": "Armand Laurienté"
+      },
+      {
+        "n": "Simone Cinquegrano"
+      },
+      {
+        "n": "Arijanet Muric"
+      },
+      {
+        "n": "Darryl Bakola"
+      },
+      {
+        "n": "Ibrahim Sulemana",
+        "w": "Ibrahim Sulemana (footballer, born 2003)"
+      },
+      {
+        "n": "Nicholas Pierini"
+      },
+      {
+        "n": "Stefano Turati"
+      },
+      {
+        "n": "Ismaël Koné"
+      },
+      {
+        "n": "Sebastiano Esposito"
+      }
+    ],
+    "Torino FC": [
+      {
+        "n": "Nathan Patterson",
+        "w": "Nathan Patterson (footballer)"
+      },
+      {
+        "n": "Cristiano Biraghi"
+      },
+      {
+        "n": "Eray Cömert"
+      },
+      {
+        "n": "Emirhan İlkhan"
+      },
+      {
+        "n": "Zakaria Aboukhlal"
+      },
+      {
+        "n": "Rolando Mandragora"
+      },
+      {
+        "n": "Pietro Pellegri"
+      },
+      {
+        "n": "Nikola Vlašić"
+      },
+      {
+        "n": "Gaetano Oristanio"
+      },
+      {
+        "n": "Ricardo Rodriguez",
+        "w": "Ricardo Rodriguez (footballer)"
+      },
+      {
+        "n": "Pietro Comuzzo"
+      },
+      {
+        "n": "Sandro Kulenović"
+      },
+      {
+        "n": "Giovanni Simeone"
+      },
+      {
+        "n": "Ché Adams"
+      },
+      {
+        "n": "Lucas Perri"
+      },
+      {
+        "n": "Daniel Bragança"
+      },
+      {
+        "n": "Cesare Casadei"
+      },
+      {
+        "n": "Saúl Coco"
+      },
+      {
+        "n": "Diego Mascardi"
+      },
+      {
+        "n": "Kian Fitz-Jim"
+      },
+      {
+        "n": "Niccolò Fortini"
+      },
+      {
+        "n": "Ardian Ismajli"
+      },
+      {
+        "n": "Rafik Belghali"
+      },
+      {
+        "n": "Gvidas Gineitis"
+      },
+      {
+        "n": "Lapo Siviero"
+      },
+      {
+        "n": "Alessio Cacciamani"
+      },
+      {
+        "n": "Andrea Luongo"
+      },
+      {
+        "n": "Franco Israel"
+      },
+      {
+        "n": "Duván Zapata"
+      }
+    ],
+    "Udinese Calcio": [
+      {
+        "n": "Sandi Lovrić"
+      },
+      {
+        "n": "David Alaba"
+      },
+      {
+        "n": "Oier Zarraga"
+      },
+      {
+        "n": "Idrissa Gueye",
+        "w": "Idrissa Gueye (footballer, born 2006)"
+      },
+      {
+        "n": "Jesper Karlström"
+      },
+      {
+        "n": "Keinan Davis"
+      },
+      {
+        "n": "Nicolò Zaniolo"
+      },
+      {
+        "n": "Hassane Kamara"
+      },
+      {
+        "n": "Nicolò Bertola"
+      },
+      {
+        "n": "James Abankwah"
+      },
+      {
+        "n": "Vakoun Bayo",
+        "w": "Vakoun Issouf Bayo"
+      },
+      {
+        "n": "Matteo Palma"
+      },
+      {
+        "n": "Juan David Arizala"
+      },
+      {
+        "n": "Mërgim Vojvoda"
+      },
+      {
+        "n": "Jakub Piotrowski"
+      },
+      {
+        "n": "Christian Kabasele"
+      },
+      {
+        "n": "Oumar Solet"
+      },
+      {
+        "n": "Giorgi Chakvetadze"
+      },
+      {
+        "n": "Jurgen Ekkelenkamp"
+      },
+      {
+        "n": "Lennon Miller"
+      },
+      {
+        "n": "Maduka Okoye"
+      },
+      {
+        "n": "Bartosz Mrozek"
+      },
+      {
+        "n": "Giulio Vinciati"
+      },
+      {
+        "n": "Unai Gómez"
+      },
+      {
+        "n": "Alessandro Zanoli"
+      },
+      {
+        "n": "Enzo Ebosse"
+      },
+      {
+        "n": "Lazar Jovanović",
+        "w": "Lazar Jovanović (footballer, born 2006)"
+      },
+      {
+        "n": "Daniele Padelli"
+      }
+    ],
+    "Venezia FC": [
+      {
+        "n": "Filip Stanković",
+        "w": "Filip Stanković (footballer, born 2002)"
+      },
+      {
+        "n": "Matías Moreno",
+        "w": "Matías Moreno (footballer)"
+      },
+      {
+        "n": "Joël Schingtienne"
+      },
+      {
+        "n": "Bartol Franjić"
+      },
+      {
+        "n": "Ridgeciano Haps"
+      },
+      {
+        "n": "Gianluca Busio"
+      },
+      {
+        "n": "Albion Rrahmani"
+      },
+      {
+        "n": "Lamine Fanne"
+      },
+      {
+        "n": "Andrea Adorante"
+      },
+      {
+        "n": "John Yeboah"
+      },
+      {
+        "n": "Thierry Correia"
+      },
+      {
+        "n": "Juan Jesus"
+      },
+      {
+        "n": "Rufai Mohammed"
+      },
+      {
+        "n": "Armel Bella-Kotchap"
+      },
+      {
+        "n": "Antoine Hainaut"
+      },
+      {
+        "n": "Simon Sohm"
+      },
+      {
+        "n": "Richie Sagrado"
+      },
+      {
+        "n": "Þórir Jóhann Helgason"
+      },
+      {
+        "n": "Matteo Grandi"
+      },
+      {
+        "n": "Redouane Halhal"
+      },
+      {
+        "n": "Toma Bašić"
+      },
+      {
+        "n": "Alessio Pozzi",
+        "w": "Alessio Pozzi (footballer)"
+      },
+      {
+        "n": "Lion Lauberbach"
+      },
+      {
+        "n": "Matteo Dagasso"
+      },
+      {
+        "n": "Alfred Duncan"
+      },
+      {
+        "n": "Marin Šverko"
+      },
+      {
+        "n": "Lorenzo Berardi"
+      },
+      {
+        "n": "Akor Adams"
+      },
+      {
+        "n": "Simone Panada"
+      },
+      {
+        "n": "Kornel Lisman"
+      },
+      {
+        "n": "Pasquale Mazzocchi"
+      },
+      {
+        "n": "Kike Pérez"
+      },
+      {
+        "n": "Toni Fernández"
+      },
+      {
+        "n": "Ale Gomes"
+      },
+      {
+        "n": "Lorenzo Montipò"
+      }
+    ]
+  },
+  "_failures": []
+}

@@ -1,0 +1,1681 @@
+{
+  "_format": "clubs[club] = [{n: display name, w: wikipedia article title (identity)}]",
+  "_source": "en.wikipedia.org via MediaWiki API (action=parse, full wikitext); clubs from league standings, players from {{fs player}} templates",
+  "league": "La Liga",
+  "league_id": 53,
+  "season": "2026/27",
+  "clubs": {
+    "Deportivo Alavés": [
+      {
+        "n": "Antonio Sivera"
+      },
+      {
+        "n": "Nicolás Valentini"
+      },
+      {
+        "n": "Youssef Enríquez",
+        "w": "Yusi (footballer)"
+      },
+      {
+        "n": "Denis Suárez"
+      },
+      {
+        "n": "Facundo Garcés"
+      },
+      {
+        "n": "Ander Guevara"
+      },
+      {
+        "n": "Ángel Pérez",
+        "w": "Ángel Pérez (footballer, born 2002)"
+      },
+      {
+        "n": "Antonio Blanco",
+        "w": "Antonio Blanco (footballer)"
+      },
+      {
+        "n": "Mariano Díaz"
+      },
+      {
+        "n": "Carles Aleñá"
+      },
+      {
+        "n": "Toni Martínez"
+      },
+      {
+        "n": "Hugo Novoa"
+      },
+      {
+        "n": "Adrián Rodríguez",
+        "w": "Adrián Rodríguez (footballer, born 2000)"
+      },
+      {
+        "n": "Nahuel Tenaglia"
+      },
+      {
+        "n": "Lucas Boyé"
+      },
+      {
+        "n": "Ville Koski"
+      },
+      {
+        "n": "Jonny Otto"
+      },
+      {
+        "n": "Mikel Rodríguez"
+      },
+      {
+        "n": "Pablo Ibáñez",
+        "w": "Pablo Ibáñez (footballer, born 1998)"
+      },
+      {
+        "n": "Aitor Mañas"
+      },
+      {
+        "n": "Abde Rebbach"
+      },
+      {
+        "n": "Miguel Rodríguez",
+        "w": "Miguel Rodríguez (footballer, born April 2003)"
+      },
+      {
+        "n": "Carlos Protesoni"
+      },
+      {
+        "n": "Selu Diallo"
+      },
+      {
+        "n": "Xanet Olaiz",
+        "w": "Xanet Olaiz Ibarzabal"
+      },
+      {
+        "n": "Izei Hernández",
+        "w": "Izei Hernández Cañas"
+      },
+      {
+        "n": "Grégoire Świderski"
+      }
+    ],
+    "Athletic Bilbao": [
+      {
+        "n": "Unai Simón"
+      },
+      {
+        "n": "Dani Vivian",
+        "w": "Daniel Vivian"
+      },
+      {
+        "n": "Aitor Paredes"
+      },
+      {
+        "n": "Yeray Álvarez"
+      },
+      {
+        "n": "Beñat Prados"
+      },
+      {
+        "n": "Álex Berenguer"
+      },
+      {
+        "n": "Oihan Sancet"
+      },
+      {
+        "n": "Iñaki Williams"
+      },
+      {
+        "n": "Nico Williams"
+      },
+      {
+        "n": "Gorka Guruzeta"
+      },
+      {
+        "n": "Jesús Areso"
+      },
+      {
+        "n": "Álex Padilla",
+        "w": "Alex Padilla (footballer)"
+      },
+      {
+        "n": "Aymeric Laporte"
+      },
+      {
+        "n": "Hugo Rincón"
+      },
+      {
+        "n": "Iñigo Ruiz de Galarreta"
+      },
+      {
+        "n": "Yuri Berchiche"
+      },
+      {
+        "n": "Mikel Jauregizar"
+      },
+      {
+        "n": "Alejandro Rego"
+      },
+      {
+        "n": "Maroan Sannadi"
+      },
+      {
+        "n": "Nico Serrano"
+      },
+      {
+        "n": "Robert Navarro",
+        "w": "Robert Navarro (footballer)"
+      },
+      {
+        "n": "Beñat Gerenabarrena"
+      },
+      {
+        "n": "Álvaro Djaló"
+      },
+      {
+        "n": "Peio Canales"
+      },
+      {
+        "n": "Johaneko Louis-Jean"
+      },
+      {
+        "n": "Christian Imga"
+      },
+      {
+        "n": "Txus Vizcay"
+      },
+      {
+        "n": "Unai Egiluz"
+      }
+    ],
+    "Atlético Madrid": [
+      {
+        "n": "Juan Musso"
+      },
+      {
+        "n": "Obed Vargas"
+      },
+      {
+        "n": "Rodrigo Mendoza"
+      },
+      {
+        "n": "Johnny Cardoso"
+      },
+      {
+        "n": "Koke",
+        "w": "Koke (footballer, born 1992)"
+      },
+      {
+        "n": "Lee Kang-in"
+      },
+      {
+        "n": "Pablo Barrios",
+        "w": "Pablo Barrios (footballer)"
+      },
+      {
+        "n": "Alexander Sørloth"
+      },
+      {
+        "n": "Álex Baena"
+      },
+      {
+        "n": "Ademola Lookman"
+      },
+      {
+        "n": "Jan Oblak"
+      },
+      {
+        "n": "Marcos Llorente"
+      },
+      {
+        "n": "Jonathan David"
+      },
+      {
+        "n": "Arnau Ortiz"
+      },
+      {
+        "n": "Dávid Hancko"
+      },
+      {
+        "n": "Marc Pubill"
+      },
+      {
+        "n": "Julián Alvarez"
+      },
+      {
+        "n": "Giuliano Simeone"
+      },
+      {
+        "n": "Cristian Romero"
+      },
+      {
+        "n": "Alejandro Grimaldo"
+      },
+      {
+        "n": "Morten Hjulmand"
+      },
+      {
+        "n": "Robin Le Normand"
+      },
+      {
+        "n": "Salvi Esquivel"
+      },
+      {
+        "n": "Dani Martínez"
+      }
+    ],
+    "FC Barcelona": [
+      {
+        "n": "Joan Garcia"
+      },
+      {
+        "n": "João Cancelo"
+      },
+      {
+        "n": "Alejandro Balde"
+      },
+      {
+        "n": "Brian Fariñas"
+      },
+      {
+        "n": "Pau Cubarsí"
+      },
+      {
+        "n": "Gavi",
+        "w": "Gavi (footballer)"
+      },
+      {
+        "n": "Fermín López"
+      },
+      {
+        "n": "Pedri"
+      },
+      {
+        "n": "Gabriel Jesus"
+      },
+      {
+        "n": "Lamine Yamal"
+      },
+      {
+        "n": "Raphinha"
+      },
+      {
+        "n": "Xavi Espart"
+      },
+      {
+        "n": "Wojciech Szczęsny"
+      },
+      {
+        "n": "Karim Adeyemi"
+      },
+      {
+        "n": "Andreas Christensen"
+      },
+      {
+        "n": "Rodri"
+      },
+      {
+        "n": "Anthony Gordon",
+        "w": "Anthony Gordon (footballer)"
+      },
+      {
+        "n": "Gerard Martín",
+        "w": "Gerard Martín (footballer)"
+      },
+      {
+        "n": "Roony Bardghji"
+      },
+      {
+        "n": "Dani Olmo"
+      },
+      {
+        "n": "Frenkie de Jong"
+      },
+      {
+        "n": "Marc Bernal"
+      },
+      {
+        "n": "Jules Koundé"
+      },
+      {
+        "n": "Eric Garcia",
+        "w": "Eric Garcia (footballer, born 2001)"
+      },
+      {
+        "n": "Dominik Livaković"
+      },
+      {
+        "n": "Jesse Bisiwu"
+      },
+      {
+        "n": "Hamza Abdelkarim"
+      }
+    ],
+    "RC Celta de Vigo": [
+      {
+        "n": "Altay Bayındır"
+      },
+      {
+        "n": "Carl Starfelt"
+      },
+      {
+        "n": "Marcos Alonso",
+        "w": "Marcos Alonso (footballer, born 1990)"
+      },
+      {
+        "n": "Abdoulaye Faye",
+        "w": "Abdoulaye Faye (footballer, born 2004)"
+      },
+      {
+        "n": "Sergio Carreira"
+      },
+      {
+        "n": "Ilaix Moriba"
+      },
+      {
+        "n": "Borja Iglesias"
+      },
+      {
+        "n": "Miguel Román",
+        "w": "Miguel Román (footballer)"
+      },
+      {
+        "n": "Ferran Jutglà"
+      },
+      {
+        "n": "Iago Aspas"
+      },
+      {
+        "n": "Pablo Durán"
+      },
+      {
+        "n": "Ionuț Radu"
+      },
+      {
+        "n": "Aleix Febas"
+      },
+      {
+        "n": "Álvaro Núñez",
+        "w": "Álvaro Núñez (footballer, born 2000)"
+      },
+      {
+        "n": "Hugo González",
+        "w": "Hugo González (Spanish footballer)"
+      },
+      {
+        "n": "Javi Rueda"
+      },
+      {
+        "n": "Yoel Lago"
+      },
+      {
+        "n": "Williot Swedberg"
+      },
+      {
+        "n": "Javi Rodríguez",
+        "w": "Javi Rodríguez (footballer)"
+      },
+      {
+        "n": "Sebastián Cáceres"
+      },
+      {
+        "n": "Javi Galán"
+      },
+      {
+        "n": "Hugo Álvarez",
+        "w": "Hugo Álvarez (footballer, born 2003)"
+      },
+      {
+        "n": "Couhaib Driouech"
+      },
+      {
+        "n": "Iván Villar"
+      },
+      {
+        "n": "Jones El-Abdellaoui"
+      }
+    ],
+    "Deportivo de A Coruña": [
+      {
+        "n": "Germán Parreño"
+      },
+      {
+        "n": "Adrià Altimira"
+      },
+      {
+        "n": "Arnau Comas"
+      },
+      {
+        "n": "Lucas Noubi"
+      },
+      {
+        "n": "Dani Barcia"
+      },
+      {
+        "n": "Marc Casadó"
+      },
+      {
+        "n": "Pierre-Emerick Aubameyang"
+      },
+      {
+        "n": "Diego Villares"
+      },
+      {
+        "n": "Zakaria Eddahchouri"
+      },
+      {
+        "n": "Yeremay Hernández"
+      },
+      {
+        "n": "David Mella"
+      },
+      {
+        "n": "Giacomo Quagliata"
+      },
+      {
+        "n": "Leo Román"
+      },
+      {
+        "n": "Riki Rodríguez",
+        "w": "Riki (footballer, born 1997)"
+      },
+      {
+        "n": "Miguel Loureiro"
+      },
+      {
+        "n": "Lorenzo Amatucci"
+      },
+      {
+        "n": "Angeliño"
+      },
+      {
+        "n": "Jonathan Asp Jensen"
+      },
+      {
+        "n": "Luismi Cruz"
+      },
+      {
+        "n": "José María Giménez"
+      },
+      {
+        "n": "Mario Soriano"
+      },
+      {
+        "n": "Bright Ede"
+      },
+      {
+        "n": "Ximo Navarro",
+        "w": "Ximo Navarro (footballer, born 1990)"
+      },
+      {
+        "n": "Adama Traoré",
+        "w": "Adama Traoré (footballer, born 1996)"
+      },
+      {
+        "n": "Álvaro Fernández",
+        "w": "Álvaro Fernández (footballer, born 1998)"
+      },
+      {
+        "n": "Bil Nsongo"
+      }
+    ],
+    "Elche CF": [
+      {
+        "n": "Matías Dituro"
+      },
+      {
+        "n": "Buba Sangaré"
+      },
+      {
+        "n": "Roy Revivo"
+      },
+      {
+        "n": "Bambo Diaby"
+      },
+      {
+        "n": "Federico Redondo"
+      },
+      {
+        "n": "Pedro Bigas"
+      },
+      {
+        "n": "Yago Santiago"
+      },
+      {
+        "n": "Marc Aguado"
+      },
+      {
+        "n": "Ezequiel Ponce"
+      },
+      {
+        "n": "Facundo Buonanotte"
+      },
+      {
+        "n": "Germán Valera"
+      },
+      {
+        "n": "Gonzalo Villar",
+        "w": "Gonzalo Villar (footballer)"
+      },
+      {
+        "n": "Alejandro Iturbe"
+      },
+      {
+        "n": "Fer Niño"
+      },
+      {
+        "n": "Kevin Lomónaco"
+      },
+      {
+        "n": "Martim Neto"
+      },
+      {
+        "n": "Josan",
+        "w": "Josan (footballer)"
+      },
+      {
+        "n": "Thomas Lemar"
+      },
+      {
+        "n": "Grady Diangana"
+      },
+      {
+        "n": "Tete Morente"
+      },
+      {
+        "n": "Lucas Cepeda"
+      },
+      {
+        "n": "Rubén Sánchez",
+        "w": "Rubén Sánchez (footballer, born 2001)"
+      },
+      {
+        "n": "Víctor Chust"
+      },
+      {
+        "n": "Abiel Osorio"
+      },
+      {
+        "n": "Matía Barzić",
+        "w": "Matía Barzic"
+      },
+      {
+        "n": "Ali Houary"
+      },
+      {
+        "n": "Adam Boayar"
+      },
+      {
+        "n": "Javi Morcillo"
+      }
+    ],
+    "RCD Espanyol": [
+      {
+        "n": "Ángel Fortuño"
+      },
+      {
+        "n": "Andoni Gorosabel"
+      },
+      {
+        "n": "Quilindschy Hartman"
+      },
+      {
+        "n": "Urko González de Zárate"
+      },
+      {
+        "n": "Clemens Riedel"
+      },
+      {
+        "n": "Leandro Cabrera"
+      },
+      {
+        "n": "Javi Puado"
+      },
+      {
+        "n": "Edu Expósito"
+      },
+      {
+        "n": "Roberto Fernández",
+        "w": "Roberto Fernández (footballer, born 2002)"
+      },
+      {
+        "n": "Pol Lozano"
+      },
+      {
+        "n": "Pere Milla"
+      },
+      {
+        "n": "Marko Dmitrović"
+      },
+      {
+        "n": "Unai Nuñez"
+      },
+      {
+        "n": "Bryan Zaragoza"
+      },
+      {
+        "n": "Vanja Drkušić"
+      },
+      {
+        "n": "Jofre Carreras"
+      },
+      {
+        "n": "Marcos Fernández",
+        "w": "Marcos Fernández (footballer, born May 2003)"
+      },
+      {
+        "n": "Kike García",
+        "w": "Kike García (Spanish footballer)"
+      },
+      {
+        "n": "Gabriel Moscardo"
+      },
+      {
+        "n": "Roger Hinojo"
+      },
+      {
+        "n": "Álex Calatrava",
+        "w": "Álex Calatrava (footballer)"
+      },
+      {
+        "n": "Omar El Hilali"
+      },
+      {
+        "n": "Tyrhys Dolan"
+      },
+      {
+        "n": "Rafel Bauzà"
+      },
+      {
+        "n": "Javi Hernández",
+        "w": "Javi Hernández (footballer, born 2004)"
+      }
+    ],
+    "Getafe CF": [
+      {
+        "n": "Jiří Letáček"
+      },
+      {
+        "n": "Dakonam Djené"
+      },
+      {
+        "n": "Davinchi"
+      },
+      {
+        "n": "Saba Sazonov"
+      },
+      {
+        "n": "Abdel Abqar"
+      },
+      {
+        "n": "Mario Martín"
+      },
+      {
+        "n": "Juanmi",
+        "w": "Juanmi (footballer, born 1993)"
+      },
+      {
+        "n": "Nemanja Gudelj"
+      },
+      {
+        "n": "Borja Mayoral"
+      },
+      {
+        "n": "Martín Satriano"
+      },
+      {
+        "n": "Ramon Terrats"
+      },
+      {
+        "n": "David Soria"
+      },
+      {
+        "n": "Dani Carvajal"
+      },
+      {
+        "n": "Sebastián Boselli"
+      },
+      {
+        "n": "Francho Serrano"
+      },
+      {
+        "n": "Kiko Femenía"
+      },
+      {
+        "n": "Christantus Uche"
+      },
+      {
+        "n": "Enes Ünal"
+      },
+      {
+        "n": "Iván Azón"
+      },
+      {
+        "n": "Andrés García",
+        "w": "Andrés García (footballer, born 2003)"
+      },
+      {
+        "n": "Johan Mojica"
+      },
+      {
+        "n": "Orel Mangala"
+      },
+      {
+        "n": "Zaid Romero"
+      },
+      {
+        "n": "Jean Ives Valou"
+      }
+    ],
+    "Levante UD": [
+      {
+        "n": "Pablo Campos",
+        "w": "Pablo Campos (Spanish footballer)"
+      },
+      {
+        "n": "Aïssa Mandi"
+      },
+      {
+        "n": "Ifeanyi Ndukwe"
+      },
+      {
+        "n": "Adrián Dela",
+        "w": "Adrián de la Fuente"
+      },
+      {
+        "n": "Hugo Sotelo"
+      },
+      {
+        "n": "Dani Requena"
+      },
+      {
+        "n": "Roger Brugué"
+      },
+      {
+        "n": "Jon Ander Olasagasti"
+      },
+      {
+        "n": "Iván Romero",
+        "w": "Iván Romero (footballer, born 2001)"
+      },
+      {
+        "n": "Petar Ratkov"
+      },
+      {
+        "n": "Yanis Musuayi"
+      },
+      {
+        "n": "Mathew Ryan"
+      },
+      {
+        "n": "Jorge Cabello"
+      },
+      {
+        "n": "Axel Tape"
+      },
+      {
+        "n": "Víctor García",
+        "w": "Víctor García (footballer, born 1997)"
+      },
+      {
+        "n": "Enzo Bardeli"
+      },
+      {
+        "n": "Oriol Rey"
+      },
+      {
+        "n": "Karl Etta Eyong"
+      },
+      {
+        "n": "Jeremy Toljan"
+      },
+      {
+        "n": "Manu Sánchez",
+        "w": "Manu Sánchez (footballer, born 2000)"
+      },
+      {
+        "n": "Thiago Fernández"
+      },
+      {
+        "n": "Paco Cortés"
+      },
+      {
+        "n": "Nacho Pérez"
+      },
+      {
+        "n": "Álex Primo",
+        "w": "Alejandro Primo"
+      },
+      {
+        "n": "Marc Santos"
+      }
+    ],
+    "Málaga CF": [
+      {
+        "n": "Alfonso Herrero"
+      },
+      {
+        "n": "Jens Cajuste"
+      },
+      {
+        "n": "Carlos Puga"
+      },
+      {
+        "n": "Einar Galilea"
+      },
+      {
+        "n": "Álex Pastor"
+      },
+      {
+        "n": "Ramón",
+        "w": "Ramón Enríquez"
+      },
+      {
+        "n": "Haitam",
+        "w": "Haitam Abaida"
+      },
+      {
+        "n": "Carlos Dotor"
+      },
+      {
+        "n": "Chupete"
+      },
+      {
+        "n": "David Larrubia"
+      },
+      {
+        "n": "Joaquín Muñoz",
+        "w": "Joaquín Muñoz (footballer, born 1999)"
+      },
+      {
+        "n": "José Salinas",
+        "w": "José Salinas (footballer)"
+      },
+      {
+        "n": "Carlos López",
+        "w": "Carlos López (footballer, born 2004)"
+      },
+      {
+        "n": "Rafa",
+        "w": "Rafa (footballer, born 2003)"
+      },
+      {
+        "n": "Ángel Recio"
+      },
+      {
+        "n": "Diego Murillo"
+      },
+      {
+        "n": "Eneko Jauregi"
+      },
+      {
+        "n": "Pablo Martínez",
+        "w": "Pablo Martínez (Spanish footballer)"
+      },
+      {
+        "n": "Juan Cruz",
+        "w": "Juan Cruz (footballer, born 2000)"
+      },
+      {
+        "n": "Fernando Calero"
+      },
+      {
+        "n": "Adrián Niño"
+      },
+      {
+        "n": "Dani Lorenzo"
+      },
+      {
+        "n": "Izan Merino"
+      },
+      {
+        "n": "Julen Lobete"
+      },
+      {
+        "n": "Juan Berrocal"
+      },
+      {
+        "n": "Rafita",
+        "w": "Rafita (footballer, born 2004)"
+      },
+      {
+        "n": "Aarón Ochoa"
+      },
+      {
+        "n": "Adam Aznou"
+      }
+    ],
+    "CA Osasuna": [
+      {
+        "n": "Sergio Herrera",
+        "w": "Sergio Herrera (footballer, born 1993)"
+      },
+      {
+        "n": "Jorge Herrando"
+      },
+      {
+        "n": "Lucas Torró"
+      },
+      {
+        "n": "Jon Moncayola"
+      },
+      {
+        "n": "Iker Muñoz"
+      },
+      {
+        "n": "Raúl García",
+        "w": "Raúl García (footballer, born 2000)"
+      },
+      {
+        "n": "Aimar Oroz"
+      },
+      {
+        "n": "Kike Barja"
+      },
+      {
+        "n": "Aitor Fernández",
+        "w": "Aitor Fernández (footballer, born 1991)"
+      },
+      {
+        "n": "Rubén García",
+        "w": "Rubén García (footballer, born 1993)"
+      },
+      {
+        "n": "Diego Rico"
+      },
+      {
+        "n": "Moi Gómez"
+      },
+      {
+        "n": "Ante Budimir"
+      },
+      {
+        "n": "Raúl Moro"
+      },
+      {
+        "n": "Valentin Rosier"
+      },
+      {
+        "n": "Romain Del Castillo"
+      },
+      {
+        "n": "Jonathan Dubasin"
+      },
+      {
+        "n": "Enzo Boyomo",
+        "w": "Flavien Enzo Boyomo"
+      },
+      {
+        "n": "Abel Bretones"
+      },
+      {
+        "n": "Alejandro Catena"
+      },
+      {
+        "n": "Mauro Echegoyen",
+        "w": "Mauro Echegoyen Berrozpe"
+      },
+      {
+        "n": "Iñigo Arguibide"
+      },
+      {
+        "n": "Asier Osambela"
+      },
+      {
+        "n": "Rockson Yeboah"
+      }
+    ],
+    "Racing de Santander": [
+      {
+        "n": "Simon Eriksson",
+        "w": "Simon Eriksson (footballer)"
+      },
+      {
+        "n": "Álvaro Mantilla"
+      },
+      {
+        "n": "Aarón Martín",
+        "w": "Aarón Martín (footballer, born 1997)"
+      },
+      {
+        "n": "Manu Hernando"
+      },
+      {
+        "n": "Pablo Ramón"
+      },
+      {
+        "n": "Íñigo Sainz-Maza"
+      },
+      {
+        "n": "Giorgi Guliashvili"
+      },
+      {
+        "n": "André Almeida",
+        "w": "André Almeida (footballer, born 2000)"
+      },
+      {
+        "n": "Juan Carlos Arana"
+      },
+      {
+        "n": "Iñigo Vicente"
+      },
+      {
+        "n": "Andrés Martín",
+        "w": "Andrés Martín (footballer)"
+      },
+      {
+        "n": "Asier Villalibre"
+      },
+      {
+        "n": "Julen Agirrezabala"
+      },
+      {
+        "n": "Maguette Gueye"
+      },
+      {
+        "n": "Pablo García",
+        "w": "Pablo García (footballer, born 2006)"
+      },
+      {
+        "n": "Facundo González"
+      },
+      {
+        "n": "Jorge Salinas",
+        "w": "Jorge Salinas (Spanish footballer)"
+      },
+      {
+        "n": "Matteo Prati"
+      },
+      {
+        "n": "Iker Luque"
+      },
+      {
+        "n": "Sergio Canales"
+      },
+      {
+        "n": "Yassir Zabiri"
+      },
+      {
+        "n": "Pedro Felipe",
+        "w": "Pedro Felipe (footballer, born 2004)"
+      },
+      {
+        "n": "Iván Martín",
+        "w": "Iván Martín (footballer, born 1999)"
+      },
+      {
+        "n": "Jeanuël Belocian"
+      }
+    ],
+    "Rayo Vallecano": [
+      {
+        "n": "Dani Cárdenas",
+        "w": "Daniel Cárdenas"
+      },
+      {
+        "n": "Andrei Rațiu"
+      },
+      {
+        "n": "Marash Kumbulla"
+      },
+      {
+        "n": "Pedro Díaz",
+        "w": "Pedro Díaz (footballer, born 1998)"
+      },
+      {
+        "n": "Luiz Felipe",
+        "w": "Luiz Felipe (footballer, born March 1997)"
+      },
+      {
+        "n": "Pathé Ciss"
+      },
+      {
+        "n": "Isi Palazón"
+      },
+      {
+        "n": "Unai López"
+      },
+      {
+        "n": "Alemão",
+        "w": "Alemão (footballer, born 1998)"
+      },
+      {
+        "n": "Sergio Camello"
+      },
+      {
+        "n": "Randy Nteka"
+      },
+      {
+        "n": "Augusto Batalla"
+      },
+      {
+        "n": "Giorgi Tsitaishvili"
+      },
+      {
+        "n": "Mujaid Sadick"
+      },
+      {
+        "n": "Adrià Pedrosa"
+      },
+      {
+        "n": "Álvaro García",
+        "w": "Álvaro García (footballer, born 1992)"
+      },
+      {
+        "n": "Jorge de Frutos"
+      },
+      {
+        "n": "Iván Balliu"
+      },
+      {
+        "n": "Fran Pérez",
+        "w": "Fran Pérez (footballer, born 2002)"
+      },
+      {
+        "n": "Pelayo Fernández"
+      },
+      {
+        "n": "Óscar Valentín"
+      },
+      {
+        "n": "Florian Lejeune"
+      },
+      {
+        "n": "Emil Audero"
+      },
+      {
+        "n": "Jozhua Vertrouwd"
+      },
+      {
+        "n": "Gnangoro Bouare"
+      },
+      {
+        "n": "Rayane Belaid"
+      }
+    ],
+    "Real Betis": [
+      {
+        "n": "Álvaro Valles"
+      },
+      {
+        "n": "Héctor Bellerín"
+      },
+      {
+        "n": "Diego Llorente"
+      },
+      {
+        "n": "Natan",
+        "w": "Natan (footballer, born 2001)"
+      },
+      {
+        "n": "Marc Bartra"
+      },
+      {
+        "n": "Facundo Bernal"
+      },
+      {
+        "n": "Antony",
+        "w": "Antony (footballer, born 2000)"
+      },
+      {
+        "n": "Pablo Fornals"
+      },
+      {
+        "n": "Cucho Hernández"
+      },
+      {
+        "n": "Abde Ezzalzouli"
+      },
+      {
+        "n": "Fran García",
+        "w": "Fran García (footballer, born 1999)"
+      },
+      {
+        "n": "Ángel Ortiz",
+        "w": "Ángel Ortiz (footballer, born 2004)"
+      },
+      {
+        "n": "Diego Conde"
+      },
+      {
+        "n": "Iker Losada"
+      },
+      {
+        "n": "Álvaro Fidalgo"
+      },
+      {
+        "n": "Valentín Gómez"
+      },
+      {
+        "n": "Rodrigo Riquelme",
+        "w": "Rodrigo Riquelme (footballer, born 2000)"
+      },
+      {
+        "n": "Nelson Deossa"
+      },
+      {
+        "n": "Troy Parrott"
+      },
+      {
+        "n": "Giovanni Lo Celso"
+      },
+      {
+        "n": "Marc Roca"
+      },
+      {
+        "n": "Isco"
+      },
+      {
+        "n": "Junior Firpo"
+      },
+      {
+        "n": "Aitor Ruibal"
+      },
+      {
+        "n": "Dani Ceballos"
+      }
+    ],
+    "Real Madrid CF": [
+      {
+        "n": "Thibaut Courtois"
+      },
+      {
+        "n": "Raúl Asencio",
+        "w": "Raúl Asencio (footballer, born 2003)"
+      },
+      {
+        "n": "Éder Militão"
+      },
+      {
+        "n": "Dean Huijsen"
+      },
+      {
+        "n": "Jude Bellingham"
+      },
+      {
+        "n": "Eduardo Camavinga"
+      },
+      {
+        "n": "Vinícius Júnior"
+      },
+      {
+        "n": "Federico Valverde"
+      },
+      {
+        "n": "Endrick"
+      },
+      {
+        "n": "Kylian Mbappé"
+      },
+      {
+        "n": "Rodrygo"
+      },
+      {
+        "n": "Trent Alexander-Arnold"
+      },
+      {
+        "n": "Andriy Lunin"
+      },
+      {
+        "n": "Aurélien Tchouaméni"
+      },
+      {
+        "n": "Arda Güler"
+      },
+      {
+        "n": "Ibrahima Konaté"
+      },
+      {
+        "n": "Marc Cucurella"
+      },
+      {
+        "n": "Álvaro Carreras"
+      },
+      {
+        "n": "Carlos Espí"
+      },
+      {
+        "n": "Bernardo Silva"
+      },
+      {
+        "n": "Brahim Díaz"
+      },
+      {
+        "n": "Antonio Rüdiger"
+      },
+      {
+        "n": "Ferland Mendy"
+      },
+      {
+        "n": "Denzel Dumfries"
+      },
+      {
+        "n": "Yan Diomande"
+      },
+      {
+        "n": "Thiago Pitarch"
+      }
+    ],
+    "Real Sociedad": [
+      {
+        "n": "Álex Remiro"
+      },
+      {
+        "n": "Jon Aramburu"
+      },
+      {
+        "n": "Aihen Muñoz"
+      },
+      {
+        "n": "Jon Gorrotxategi"
+      },
+      {
+        "n": "Igor Zubeldia"
+      },
+      {
+        "n": "Jon Martín"
+      },
+      {
+        "n": "Ander Barrenetxea",
+        "w": "Ander Barrenetxea (footballer)"
+      },
+      {
+        "n": "Beñat Turrientes"
+      },
+      {
+        "n": "Orri Óskarsson"
+      },
+      {
+        "n": "Mikel Oyarzabal"
+      },
+      {
+        "n": "Gonçalo Guedes"
+      },
+      {
+        "n": "Job Ochieng"
+      },
+      {
+        "n": "Unai Marrero"
+      },
+      {
+        "n": "Takefusa Kubo"
+      },
+      {
+        "n": "Pablo Marín",
+        "w": "Pablo Marín (footballer, born 2003)"
+      },
+      {
+        "n": "Jon Pacheco"
+      },
+      {
+        "n": "Sergio Gómez",
+        "w": "Sergio Gómez (footballer, born 2000)"
+      },
+      {
+        "n": "Carlos Soler"
+      },
+      {
+        "n": "Mamadou Sarr"
+      },
+      {
+        "n": "Álvaro Odriozola"
+      },
+      {
+        "n": "Yangel Herrera"
+      },
+      {
+        "n": "Héctor Fort"
+      },
+      {
+        "n": "Arsen Zakharyan"
+      },
+      {
+        "n": "Luka Sučić"
+      }
+    ],
+    "Sevilla FC": [
+      {
+        "n": "Odysseas Vlachodimos"
+      },
+      {
+        "n": "Juan Iglesias"
+      },
+      {
+        "n": "Julio Díaz",
+        "w": "Julio Díaz (footballer, born 2005)"
+      },
+      {
+        "n": "Kike Salas"
+      },
+      {
+        "n": "Andrés Castrín"
+      },
+      {
+        "n": "Lucien Agoumé"
+      },
+      {
+        "n": "Alfon González"
+      },
+      {
+        "n": "Giorgi Kochorashvili"
+      },
+      {
+        "n": "Robbie Ure"
+      },
+      {
+        "n": "Peque Fernández"
+      },
+      {
+        "n": "Rubén Vargas"
+      },
+      {
+        "n": "Arouna Sangante"
+      },
+      {
+        "n": "Fran González",
+        "w": "Fran González (footballer, born 2005)"
+      },
+      {
+        "n": "Manu Bueno"
+      },
+      {
+        "n": "Fábio Cardoso"
+      },
+      {
+        "n": "Isaac Romero"
+      },
+      {
+        "n": "Gabriel Suazo"
+      },
+      {
+        "n": "Jon Guridi"
+      },
+      {
+        "n": "Lucas Stassin"
+      },
+      {
+        "n": "Félix Correia"
+      },
+      {
+        "n": "Chidera Ejuke"
+      },
+      {
+        "n": "José Ángel Carmona"
+      },
+      {
+        "n": "Marcão",
+        "w": "Marcão (footballer, born 1996)"
+      },
+      {
+        "n": "Youssouf Fofana",
+        "w": "Youssouf Fofana (footballer, born 1999)"
+      },
+      {
+        "n": "Miguel Sierra",
+        "w": "Miguel Sierra (footballer)"
+      },
+      {
+        "n": "Rafa Romero",
+        "w": "Rafael Romero Morilla"
+      }
+    ],
+    "Valencia CF": [
+      {
+        "n": "Stole Dimitrievski"
+      },
+      {
+        "n": "Guido Rodríguez"
+      },
+      {
+        "n": "José Copete",
+        "w": "José Manuel Copete"
+      },
+      {
+        "n": "Mouctar Diakhaby"
+      },
+      {
+        "n": "César Tárrega"
+      },
+      {
+        "n": "Umar Sadiq"
+      },
+      {
+        "n": "Arnaut Danjuma"
+      },
+      {
+        "n": "Javi Guerra",
+        "w": "Javi Guerra (footballer, born 2003)"
+      },
+      {
+        "n": "Hugo Duro"
+      },
+      {
+        "n": "Harvey Elliott"
+      },
+      {
+        "n": "Luis Rioja"
+      },
+      {
+        "n": "Justin de Haas"
+      },
+      {
+        "n": "Cristian Rivero",
+        "w": "Cristian Rivero (footballer)"
+      },
+      {
+        "n": "José Gayà"
+      },
+      {
+        "n": "Aliou Dieng"
+      },
+      {
+        "n": "Diego López",
+        "w": "Diego López (footballer, born May 2002)"
+      },
+      {
+        "n": "Pepelu"
+      },
+      {
+        "n": "Dani Raba"
+      },
+      {
+        "n": "Dimitri Foulquier"
+      },
+      {
+        "n": "Jesús Vázquez",
+        "w": "Jesús Vázquez (footballer, born 2003)"
+      },
+      {
+        "n": "Arnau Martínez"
+      },
+      {
+        "n": "Filip Ugrinić"
+      },
+      {
+        "n": "Pablo Maffeo"
+      },
+      {
+        "n": "Kayne van Oevelen"
+      },
+      {
+        "n": "Ryūnosuke Satō"
+      }
+    ],
+    "Villarreal CF": [
+      {
+        "n": "Luiz Júnior",
+        "w": "Luiz Júnior (footballer, born 2001)"
+      },
+      {
+        "n": "Logan Costa"
+      },
+      {
+        "n": "Alex Freeman"
+      },
+      {
+        "n": "Alassane Diatta"
+      },
+      {
+        "n": "Pau Navarro",
+        "w": "Pau Navarro (footballer)"
+      },
+      {
+        "n": "Gerard Moreno"
+      },
+      {
+        "n": "Juan Foyth"
+      },
+      {
+        "n": "Georges Mikautadze"
+      },
+      {
+        "n": "Alberto Moleiro"
+      },
+      {
+        "n": "Ilias Akhomach"
+      },
+      {
+        "n": "Renato Veiga"
+      },
+      {
+        "n": "Rubén Gómez",
+        "w": "Rubén Gómez (footballer, born 2002)"
+      },
+      {
+        "n": "Santi Comesaña"
+      },
+      {
+        "n": "Santiago Mouriño"
+      },
+      {
+        "n": "Carlos Maciá"
+      },
+      {
+        "n": "Tajon Buchanan"
+      },
+      {
+        "n": "Pape Gueye"
+      },
+      {
+        "n": "Nicolas Pépé"
+      },
+      {
+        "n": "Carlos Romero",
+        "w": "Carlos Romero (footballer, born 2001)"
+      },
+      {
+        "n": "Tani Oluwaseyi"
+      },
+      {
+        "n": "Ayoze Pérez"
+      },
+      {
+        "n": "Sergi Cardona"
+      },
+      {
+        "n": "Nathan Saliba"
+      },
+      {
+        "n": "Péter Gulácsi"
+      }
+    ]
+  },
+  "_failures": []
+}

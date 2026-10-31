@@ -180,13 +180,28 @@ for (const [ed, season] of Object.entries(fifaMap)) {
   }
 }
 
-// 3) Wikipedia pre-2016 squads (tools/wiki-seasons/*.json) — seasons 2006/07..2015/16
+// 3) Wikipedia squads (tools/wiki-seasons/*.json) — every season the EA/FIFA files don't cover
 // that the EA/FIFA editions don't cover. Players carry no overall/position (ovr=0), so
 // they don't inflate the star-weight; they just add older club-seasons + connections.
 // Club names come from Wikipedia and must fold into the EA canonical club (so Juventus
 // keeps both eras and links across them) — match by matchClub key, with manual aliases
 // for the few whose keys don't line up (EN/DE spelling, dropped tokens).
 const WIKI_DIR = path.join(__dirname, 'wiki-seasons');
+// Season files come in two shapes: a bare display string (older scrapes), or {n, w} where n is
+// how that squad list wrote the name and w is the Wikipedia article it links to — the stable
+// identity. Returns [display, alias]: the article title becomes the display when it is the same
+// person written more fully (stats tables write "Götze" for Mario Götze, and the scraper strips
+// apostrophes: "OReilly"); otherwise the list's name stays and the title is an extra match key,
+// so typing "Vinicius Junior" still finds an entry the list wrote as "Vini Jr.".
+function wikiName(p) {
+  if (typeof p === 'string') return [p, ''];
+  const n = p.n || '', w = (p.w || '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+  if (!w || w === n) return [n, ''];
+  const tok = s => stripAccents(s).toLowerCase().replace(/[^a-z ]/g, '').split(/\s+/).filter(Boolean);
+  const nt = tok(n), wt = tok(w);
+  if (nt.length && wt.length >= nt.length && wt[wt.length - 1] === nt[nt.length - 1]) return [w, n];
+  return [n, w];
+}
 const WIKI_ALIAS = {
   'FC Bayern Munich': 'FC Bayern München',
   'Inter Milan': 'Inter',
@@ -195,6 +210,7 @@ const WIKI_ALIAS = {
   'Athletic Bilbao': 'Athletic Club',
   'Celta de Vigo': 'RC Celta',
   'RC Celta de Vigo': 'RC Celta',
+  'Deportivo de A Coruña': 'Deportivo de La Coruña',   // the article was renamed; same club, 2006-18 era
 };
 if (fs.existsSync(WIKI_DIR)) {
   // index canonical clubs by their matchClub key for auto-resolution
@@ -214,7 +230,7 @@ if (fs.existsSync(WIKI_DIR)) {
       if (canon[ck]) name = canon[ck].name;                    // canonical casing
       else { canon[ck] = { name, league }; canonByMatch[matchClub(name)] = name; wNew.add(name); }
       wClubs++;
-      for (const p of players) { add(season, name, league, p, '', 0, '', ''); wPlayers++; }
+      for (const p of players) { const [disp, full] = wikiName(p); add(season, name, league, disp, full, 0, '', ''); wPlayers++; }
     }
   }
   console.log(`wiki: ${wFiles} files, ${wClubs} club-seasons, ${wPlayers} players, ${wNew.size} clubs new to the dataset`);

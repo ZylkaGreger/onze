@@ -1,0 +1,1621 @@
+{
+  "_format": "clubs[club] = [{n: display name, w: wikipedia article title (identity)}]",
+  "_source": "en.wikipedia.org via MediaWiki API (action=parse, full wikitext); clubs from league standings, players from {{fs player}} templates",
+  "league": "Bundesliga",
+  "league_id": 19,
+  "season": "2026/27",
+  "clubs": {
+    "FC Augsburg": [
+      {
+        "n": "Finn Dahmen"
+      },
+      {
+        "n": "Calvin Brackelmann"
+      },
+      {
+        "n": "Han-Noah Massengo"
+      },
+      {
+        "n": "Chrislain Matsima"
+      },
+      {
+        "n": "Jeffrey Gouweleeuw"
+      },
+      {
+        "n": "Seol Young-woo"
+      },
+      {
+        "n": "Sima Suso"
+      },
+      {
+        "n": "Rodrigo Ribeiro",
+        "w": "Rodrigo Ribeiro (footballer, born 2005)"
+      },
+      {
+        "n": "Mert Kömür"
+      },
+      {
+        "n": "Michael Gregoritsch"
+      },
+      {
+        "n": "Yannik Keitel"
+      },
+      {
+        "n": "Steve Mounié"
+      },
+      {
+        "n": "Hennes Behrens"
+      },
+      {
+        "n": "Tim Breithaupt"
+      },
+      {
+        "n": "Robin Fellhauer"
+      },
+      {
+        "n": "Alexis Claude-Maurice"
+      },
+      {
+        "n": "Arijon Ibrahimović"
+      },
+      {
+        "n": "Nediljko Labrović"
+      },
+      {
+        "n": "Faik Sakar"
+      },
+      {
+        "n": "Marius Wolf"
+      },
+      {
+        "n": "Anton Kade"
+      },
+      {
+        "n": "Fabian Rieder"
+      },
+      {
+        "n": "Juma Bah"
+      },
+      {
+        "n": "Tim Schnitzer"
+      },
+      {
+        "n": "Uchenna Ogundu"
+      },
+      {
+        "n": "Noahkai Banks"
+      },
+      {
+        "n": "Mahmut Küçükşahin"
+      },
+      {
+        "n": "Tom Wisbereit"
+      }
+    ],
+    "1. FC Union Berlin": [
+      {
+        "n": "Frederik Rønnow"
+      },
+      {
+        "n": "Felix Uduokhai"
+      },
+      {
+        "n": "Andrik Markgraf"
+      },
+      {
+        "n": "Zeno Van Den Bosch"
+      },
+      {
+        "n": "Marvin Friedrich"
+      },
+      {
+        "n": "Aljoscha Kemlein"
+      },
+      {
+        "n": "Oliver Burke"
+      },
+      {
+        "n": "Rani Khedira"
+      },
+      {
+        "n": "Livan Burcu"
+      },
+      {
+        "n": "Jeong Woo-yeong"
+      },
+      {
+        "n": "András Schäfer"
+      },
+      {
+        "n": "Leopold Querfeld"
+      },
+      {
+        "n": "Tom Rothe"
+      },
+      {
+        "n": "Derrick Köhn"
+      },
+      {
+        "n": "Josip Juranović"
+      },
+      {
+        "n": "Janik Haberer"
+      },
+      {
+        "n": "Michel Aebischer"
+      },
+      {
+        "n": "Tim Skarke"
+      },
+      {
+        "n": "Andrej Ilić"
+      },
+      {
+        "n": "Robert Skov"
+      },
+      {
+        "n": "Carl Klaus"
+      },
+      {
+        "n": "Marin Ljubičić",
+        "w": "Marin Ljubičić (footballer, born 2002)"
+      },
+      {
+        "n": "Christopher Trimmel"
+      },
+      {
+        "n": "Emmanuel Latte Lath"
+      },
+      {
+        "n": "Kastriot Imeri"
+      },
+      {
+        "n": "Matheo Raab"
+      },
+      {
+        "n": "Mekhi Gray"
+      },
+      {
+        "n": "Stanley Nsoki"
+      },
+      {
+        "n": "Julien Friedrich"
+      },
+      {
+        "n": "Linus Güther"
+      }
+    ],
+    "SV Werder Bremen": [
+      {
+        "n": "Karl Hein",
+        "w": "Karl Hein (footballer)"
+      },
+      {
+        "n": "Olivier Deman"
+      },
+      {
+        "n": "Oskar Wójcik"
+      },
+      {
+        "n": "Niklas Stark"
+      },
+      {
+        "n": "Amos Pieper"
+      },
+      {
+        "n": "Jens Stage"
+      },
+      {
+        "n": "Mitchell Weiser"
+      },
+      {
+        "n": "Keke Topp"
+      },
+      {
+        "n": "Niclas Füllkrug"
+      },
+      {
+        "n": "Justin Njinmah"
+      },
+      {
+        "n": "Arthur",
+        "w": "Arthur (footballer, born 2003)"
+      },
+      {
+        "n": "Senne Lynen"
+      },
+      {
+        "n": "Ludovit Reis"
+      },
+      {
+        "n": "Moussa NDiaye",
+        "w": "Moussa N'Diaye (footballer, born 2002)"
+      },
+      {
+        "n": "Marco Grüll"
+      },
+      {
+        "n": "Eren Dinkçi"
+      },
+      {
+        "n": "Kenny Quetant"
+      },
+      {
+        "n": "Chuki",
+        "w": "Chuki (footballer)"
+      },
+      {
+        "n": "Dariusz Stalmach"
+      },
+      {
+        "n": "Markus Kolke"
+      },
+      {
+        "n": "Cedric Itten"
+      },
+      {
+        "n": "Felix Agu"
+      },
+      {
+        "n": "Skelly Alvero"
+      },
+      {
+        "n": "Salim Musah"
+      },
+      {
+        "n": "Alexander Schlager"
+      },
+      {
+        "n": "Marco Friedl"
+      },
+      {
+        "n": "Mick Schmetgens"
+      },
+      {
+        "n": "Darwin Soylu"
+      },
+      {
+        "n": "Luca Höcker"
+      },
+      {
+        "n": "Mats Heitmann"
+      },
+      {
+        "n": "Stefan Smarkalev"
+      },
+      {
+        "n": "Paul Erevbenagie"
+      },
+      {
+        "n": "Youri Regeer"
+      }
+    ],
+    "Borussia Dortmund": [
+      {
+        "n": "Gregor Kobel"
+      },
+      {
+        "n": "Waldemar Anton"
+      },
+      {
+        "n": "Nico Schlotterbeck"
+      },
+      {
+        "n": "Ramy Bensebaini"
+      },
+      {
+        "n": "Jobe Bellingham"
+      },
+      {
+        "n": "Felix Nmecha"
+      },
+      {
+        "n": "Serhou Guirassy"
+      },
+      {
+        "n": "Maximilian Beier"
+      },
+      {
+        "n": "Carney Chukwuemeka"
+      },
+      {
+        "n": "Ethan Nwaneri"
+      },
+      {
+        "n": "Konstantinos Karetsas"
+      },
+      {
+        "n": "Marcel Sabitzer"
+      },
+      {
+        "n": "Fábio Silva",
+        "w": "Fábio Silva (footballer, born 2002)"
+      },
+      {
+        "n": "Joane Gadou"
+      },
+      {
+        "n": "Emre Can"
+      },
+      {
+        "n": "Daniel Svensson",
+        "w": "Daniel Svensson (footballer, born 2002)"
+      },
+      {
+        "n": "Joey Veerman"
+      },
+      {
+        "n": "Julian Ryerson"
+      },
+      {
+        "n": "Justin Lerma"
+      },
+      {
+        "n": "Patrick Drewes"
+      },
+      {
+        "n": "Silas Ostrzinski"
+      },
+      {
+        "n": "Alexander Meyer",
+        "w": "Alexander Meyer (footballer, born 1991)"
+      },
+      {
+        "n": "Kauã Prates"
+      },
+      {
+        "n": "Filippo Mane"
+      },
+      {
+        "n": "Samuele Inácio"
+      },
+      {
+        "n": "Mathis Albert"
+      },
+      {
+        "n": "Enzo dos Santos"
+      },
+      {
+        "n": "Giannis Konstantelias"
+      },
+      {
+        "n": "Mussa Kaba"
+      },
+      {
+        "n": "Luca Reggiani"
+      }
+    ],
+    "SV Elversberg": [
+      {
+        "n": "Frank Lehmann"
+      },
+      {
+        "n": "Nicholas Mickelson"
+      },
+      {
+        "n": "Florian Le Joncour"
+      },
+      {
+        "n": "Luis Seifert"
+      },
+      {
+        "n": "Amara Condé"
+      },
+      {
+        "n": "Maurice Krattenmacher"
+      },
+      {
+        "n": "Łukasz Poręba"
+      },
+      {
+        "n": "Noel Futkeu"
+      },
+      {
+        "n": "Noah Darvich"
+      },
+      {
+        "n": "Elias Etringer"
+      },
+      {
+        "n": "Raif Adam"
+      },
+      {
+        "n": "Luca Pfeiffer"
+      },
+      {
+        "n": "Frederik Schmahl"
+      },
+      {
+        "n": "Lukas Pinckert"
+      },
+      {
+        "n": "Nicolas Kristof"
+      },
+      {
+        "n": "Lasse Günther"
+      },
+      {
+        "n": "Luca Schnellbacher"
+      },
+      {
+        "n": "Lukas Petkov"
+      },
+      {
+        "n": "Luca Sirch"
+      },
+      {
+        "n": "Tim Boss"
+      },
+      {
+        "n": "Tom Zimmerschied"
+      },
+      {
+        "n": "Jan Gyamerah"
+      },
+      {
+        "n": "Maximilian Rohr"
+      },
+      {
+        "n": "Cole Campbell"
+      },
+      {
+        "n": "Francis Onyeka"
+      },
+      {
+        "n": "David Mokwa"
+      },
+      {
+        "n": "Felix Keidel"
+      }
+    ],
+    "Eintracht Frankfurt": [
+      {
+        "n": "Noah Atubolu"
+      },
+      {
+        "n": "Elias Baum"
+      },
+      {
+        "n": "Lilian Brassier"
+      },
+      {
+        "n": "Robin Koch"
+      },
+      {
+        "n": "Otávio",
+        "w": "Otávio (footballer, born November 2005)"
+      },
+      {
+        "n": "Oscar Højlund"
+      },
+      {
+        "n": "Ansgar Knauff"
+      },
+      {
+        "n": "Farès Chaïbi"
+      },
+      {
+        "n": "Jonathan Burkardt"
+      },
+      {
+        "n": "Younes Ebnoutalib"
+      },
+      {
+        "n": "Noël Aséko"
+      },
+      {
+        "n": "Ritsu Dōan"
+      },
+      {
+        "n": "Timothy Chandler"
+      },
+      {
+        "n": "Raphael Onyedika"
+      },
+      {
+        "n": "Keita Kosugi"
+      },
+      {
+        "n": "Mario Götze"
+      },
+      {
+        "n": "Ayoube Amaimouni"
+      },
+      {
+        "n": "Love Arrhov"
+      },
+      {
+        "n": "Jens Grahl"
+      },
+      {
+        "n": "Nnamdi Collins"
+      },
+      {
+        "n": "Malik Pimpong"
+      },
+      {
+        "n": "Jeremiaha Maluze"
+      },
+      {
+        "n": "Amil Šiljević"
+      },
+      {
+        "n": "Kauã Santos"
+      },
+      {
+        "n": "Can Uzun"
+      },
+      {
+        "n": "Jessic Ngankam"
+      }
+    ],
+    "SC Freiburg": [
+      {
+        "n": "Mio Backhaus"
+      },
+      {
+        "n": "Philipp Lienhart"
+      },
+      {
+        "n": "Anthony Jung"
+      },
+      {
+        "n": "Patrick Osterhage"
+      },
+      {
+        "n": "Derry Scherhant"
+      },
+      {
+        "n": "Maximilian Eggestein"
+      },
+      {
+        "n": "Lucas Höler"
+      },
+      {
+        "n": "Yuito Suzuki"
+      },
+      {
+        "n": "Yannik Engelhardt"
+      },
+      {
+        "n": "Lukas Kübler"
+      },
+      {
+        "n": "Niklas Beste",
+        "w": "Jan-Niklas Beste"
+      },
+      {
+        "n": "Rihito Yamamoto"
+      },
+      {
+        "n": "Florian Müller",
+        "w": "Florian Müller (footballer, born 1997)"
+      },
+      {
+        "n": "Cyriaque Irié"
+      },
+      {
+        "n": "Florent Muslija"
+      },
+      {
+        "n": "Jannik Huth"
+      },
+      {
+        "n": "Berkay Yılmaz",
+        "w": "Berkay Yılmaz (footballer, born 2005)"
+      },
+      {
+        "n": "Matthias Ginter"
+      },
+      {
+        "n": "Philipp Treu"
+      },
+      {
+        "n": "Christian Günter"
+      },
+      {
+        "n": "Igor Matanović"
+      },
+      {
+        "n": "Vincenzo Grifo"
+      },
+      {
+        "n": "Jordy Makengo"
+      },
+      {
+        "n": "Max Rosenfelder"
+      },
+      {
+        "n": "Rouven Tarnutzer"
+      },
+      {
+        "n": "Keisuke Gotō"
+      },
+      {
+        "n": "Bruno Ogbus"
+      }
+    ],
+    "Hamburger SV": [
+      {
+        "n": "Daniel Heuer Fernandes"
+      },
+      {
+        "n": "David Møller Wolfe"
+      },
+      {
+        "n": "Bilal Nadir"
+      },
+      {
+        "n": "Martin Adeline"
+      },
+      {
+        "n": "Albert Sambi Lokonga"
+      },
+      {
+        "n": "Zakaria El Ouahdi"
+      },
+      {
+        "n": "Terem Moffi"
+      },
+      {
+        "n": "Immanuel Pherai"
+      },
+      {
+        "n": "Albert Grønbæk"
+      },
+      {
+        "n": "Sander Tangvik"
+      },
+      {
+        "n": "Yussuf Poulsen"
+      },
+      {
+        "n": "Warmed Omari"
+      },
+      {
+        "n": "Bakery Jatta"
+      },
+      {
+        "n": "Otto Stange"
+      },
+      {
+        "n": "Fábio Vieira",
+        "w": "Fábio Vieira (footballer, born 2000)"
+      },
+      {
+        "n": "Nicolai Remberg"
+      },
+      {
+        "n": "Kofi Amoako",
+        "w": "Kofi Amoako (footballer)"
+      },
+      {
+        "n": "Jordan Torunarigha"
+      },
+      {
+        "n": "Nicolás Capaldo"
+      },
+      {
+        "n": "Patson Daka"
+      },
+      {
+        "n": "Miro Muheim"
+      },
+      {
+        "n": "Sebastiaan Bornauw"
+      },
+      {
+        "n": "Louis Lemke"
+      },
+      {
+        "n": "Alexander Røssing-Lelesiit"
+      },
+      {
+        "n": "Joel Agyekum"
+      },
+      {
+        "n": "Elias Lahti"
+      },
+      {
+        "n": "Fernando Dickes"
+      },
+      {
+        "n": "Shafiq Nandja"
+      }
+    ],
+    "TSG 1899 Hoffenheim": [
+      {
+        "n": "Oliver Baumann"
+      },
+      {
+        "n": "Robin Hranáč"
+      },
+      {
+        "n": "Sean Dulic"
+      },
+      {
+        "n": "Ozan Kabak"
+      },
+      {
+        "n": "Leon Avdullahu"
+      },
+      {
+        "n": "Patrick Wimmer"
+      },
+      {
+        "n": "Max Moerstedt"
+      },
+      {
+        "n": "Adam Hložek"
+      },
+      {
+        "n": "Fisnik Asllani"
+      },
+      {
+        "n": "Bernardo",
+        "w": "Bernardo (footballer, born 1995)"
+      },
+      {
+        "n": "Adam Daghim"
+      },
+      {
+        "n": "Valentin Gendrey"
+      },
+      {
+        "n": "Luis Engelns"
+      },
+      {
+        "n": "Nathan De Cat"
+      },
+      {
+        "n": "Wouter Burger"
+      },
+      {
+        "n": "Tim Lemperle"
+      },
+      {
+        "n": "Bambasé Conté"
+      },
+      {
+        "n": "Albian Hajdari"
+      },
+      {
+        "n": "Alexander Prass"
+      },
+      {
+        "n": "Andrej Kramarić"
+      },
+      {
+        "n": "Kōki Machida"
+      },
+      {
+        "n": "Natnael Abraha"
+      },
+      {
+        "n": "Cajetan Lenz"
+      },
+      {
+        "n": "Vladimír Coufal"
+      },
+      {
+        "n": "Lúkas Petersson"
+      },
+      {
+        "n": "Luca Philipp"
+      },
+      {
+        "n": "Mats Rots"
+      }
+    ],
+    "RB Leipzig": [
+      {
+        "n": "Ørjan Nyland"
+      },
+      {
+        "n": "Abdoul Koné"
+      },
+      {
+        "n": "Maxime Estève"
+      },
+      {
+        "n": "Willi Orbán"
+      },
+      {
+        "n": "Ezechiel Banzuzi"
+      },
+      {
+        "n": "Antonio Nusa"
+      },
+      {
+        "n": "Assan Ouédraogo"
+      },
+      {
+        "n": "Marc Guiu"
+      },
+      {
+        "n": "Brajan Gruda"
+      },
+      {
+        "n": "Johan Bakayoko"
+      },
+      {
+        "n": "Nicolas Seiwald"
+      },
+      {
+        "n": "Christoph Baumgartner"
+      },
+      {
+        "n": "Lukas Klostermann"
+      },
+      {
+        "n": "Ridle Baku"
+      },
+      {
+        "n": "Rocco Reitz"
+      },
+      {
+        "n": "Neil El Aynaoui"
+      },
+      {
+        "n": "David Raum"
+      },
+      {
+        "n": "Castello Lukeba"
+      },
+      {
+        "n": "Leopold Zingerle"
+      },
+      {
+        "n": "Maarten Vandevoordt"
+      },
+      {
+        "n": "Tidiam Gomis"
+      },
+      {
+        "n": "Christopher Nkunku"
+      },
+      {
+        "n": "Andrija Maksimović"
+      },
+      {
+        "n": "Max Finkgräfe"
+      },
+      {
+        "n": "Benno Kaltefleiter"
+      },
+      {
+        "n": "Benjamin Henrichs"
+      },
+      {
+        "n": "Rômulo",
+        "w": "Rômulo Cardoso"
+      },
+      {
+        "n": "Samba Konaté"
+      },
+      {
+        "n": "Viggo Gebel"
+      }
+    ],
+    "Bayer 04 Leverkusen": [
+      {
+        "n": "Mark Flekken"
+      },
+      {
+        "n": "Facundo Medina"
+      },
+      {
+        "n": "Miguel Gutiérrez",
+        "w": "Miguel Gutiérrez (footballer, born 2001)"
+      },
+      {
+        "n": "Jarell Quansah"
+      },
+      {
+        "n": "Loïc Badé"
+      },
+      {
+        "n": "Equi Fernández"
+      },
+      {
+        "n": "Jonas Hofmann"
+      },
+      {
+        "n": "Robert Andrich"
+      },
+      {
+        "n": "Afonso Moreira"
+      },
+      {
+        "n": "Malik Tillman"
+      },
+      {
+        "n": "Martin Terrier"
+      },
+      {
+        "n": "Edmond Tapsoba"
+      },
+      {
+        "n": "Patrik Schick"
+      },
+      {
+        "n": "Tim Oermann"
+      },
+      {
+        "n": "Lucas Vázquez"
+      },
+      {
+        "n": "Kennet Eichhorn"
+      },
+      {
+        "n": "Moussa Diaby"
+      },
+      {
+        "n": "Guéla Doué"
+      },
+      {
+        "n": "Victor Boniface"
+      },
+      {
+        "n": "Nathan Tella"
+      },
+      {
+        "n": "Aleix García"
+      },
+      {
+        "n": "Janis Blaswich"
+      },
+      {
+        "n": "Eliesse Ben Seghir"
+      },
+      {
+        "n": "Ibrahim Maza"
+      },
+      {
+        "n": "Christian Kofane"
+      },
+      {
+        "n": "Niklas Lomb"
+      },
+      {
+        "n": "Montrell Culbreath"
+      }
+    ],
+    "1. FSV Mainz 05": [
+      {
+        "n": "Alexander Schwolow"
+      },
+      {
+        "n": "Phillipp Mwene"
+      },
+      {
+        "n": "Fabio Gruber"
+      },
+      {
+        "n": "Stefan Posch"
+      },
+      {
+        "n": "Eric Martel"
+      },
+      {
+        "n": "Kaishū Sano"
+      },
+      {
+        "n": "Lee Jae-sung"
+      },
+      {
+        "n": "Paul Nebel"
+      },
+      {
+        "n": "Phillip Tietz"
+      },
+      {
+        "n": "Nadiem Amiri"
+      },
+      {
+        "n": "Ransford-Yeboah Königsdörffer"
+      },
+      {
+        "n": "Lennard Maloney"
+      },
+      {
+        "n": "Stefan Bell"
+      },
+      {
+        "n": "Benedict Hollerbach"
+      },
+      {
+        "n": "Anthony Caci"
+      },
+      {
+        "n": "Otto Ruoppi"
+      },
+      {
+        "n": "Danny da Costa"
+      },
+      {
+        "n": "Sheraldo Becker"
+      },
+      {
+        "n": "Sōta Kawasaki"
+      },
+      {
+        "n": "Silas",
+        "w": "Silas Katompa Mvumpa"
+      },
+      {
+        "n": "Robin Zentner"
+      },
+      {
+        "n": "Silvan Widmer"
+      },
+      {
+        "n": "Dominik Kohr"
+      },
+      {
+        "n": "Alynho Haïdara"
+      },
+      {
+        "n": "Maximilian Kinzig"
+      },
+      {
+        "n": "Kacper Potulski"
+      }
+    ],
+    "FC Bayern Munich": [
+      {
+        "n": "Manuel Neuer"
+      },
+      {
+        "n": "Dayot Upamecano"
+      },
+      {
+        "n": "Kim Min-jae",
+        "w": "Kim Min-jae (footballer)"
+      },
+      {
+        "n": "Jonathan Tah"
+      },
+      {
+        "n": "Joshua Kimmich"
+      },
+      {
+        "n": "Serge Gnabry"
+      },
+      {
+        "n": "Tom Bischof"
+      },
+      {
+        "n": "Harry Kane"
+      },
+      {
+        "n": "Jamal Musiala"
+      },
+      {
+        "n": "Nathaniel Brown",
+        "w": "Nathaniel Brown (footballer)"
+      },
+      {
+        "n": "Luis Díaz",
+        "w": "Luis Díaz (footballer, born 1997)"
+      },
+      {
+        "n": "Michael Olise"
+      },
+      {
+        "n": "Alphonso Davies"
+      },
+      {
+        "n": "Hiroki Itō",
+        "w": "Hiroki Itō (footballer, born 1999)"
+      },
+      {
+        "n": "Sacha Boey"
+      },
+      {
+        "n": "Sven Ulreich"
+      },
+      {
+        "n": "Konrad Laimer"
+      },
+      {
+        "n": "Ismael Saibari"
+      },
+      {
+        "n": "Bara Sapoko Ndiaye"
+      },
+      {
+        "n": "Jonas Urbig"
+      },
+      {
+        "n": "Lennart Karl"
+      },
+      {
+        "n": "Josip Stanišić"
+      },
+      {
+        "n": "Aleksandar Pavlović",
+        "w": "Aleksandar Pavlović (footballer)"
+      },
+      {
+        "n": "David Santos Daiber"
+      }
+    ],
+    "SC Paderborn 07": [
+      {
+        "n": "Markus Schubert"
+      },
+      {
+        "n": "Ruben Müller"
+      },
+      {
+        "n": "Jonah Sticker"
+      },
+      {
+        "n": "Nyamekye Awortwie-Grant"
+      },
+      {
+        "n": "Santiago Castañeda"
+      },
+      {
+        "n": "Tom Baack"
+      },
+      {
+        "n": "Oliver Batista Meier"
+      },
+      {
+        "n": "Luka Đurić"
+      },
+      {
+        "n": "Rayan Philippe"
+      },
+      {
+        "n": "Sven Michel",
+        "w": "Sven Michel (footballer)"
+      },
+      {
+        "n": "Nahuel Noll"
+      },
+      {
+        "n": "Laurin Curda"
+      },
+      {
+        "n": "Marvin Pieringer"
+      },
+      {
+        "n": "Albert Millgramm"
+      },
+      {
+        "n": "Felix Götze"
+      },
+      {
+        "n": "Jano ter Horst"
+      },
+      {
+        "n": "Mattes Hansen"
+      },
+      {
+        "n": "Raphael Obermair"
+      },
+      {
+        "n": "Niklas Mohr"
+      },
+      {
+        "n": "Tjark Scheller"
+      },
+      {
+        "n": "Sebastian Klaas"
+      },
+      {
+        "n": "Steffen Tigges"
+      },
+      {
+        "n": "Laurin Ulrich"
+      },
+      {
+        "n": "Clemens Lippmann"
+      },
+      {
+        "n": "Stefano Marino"
+      },
+      {
+        "n": "Florian Pruhs"
+      },
+      {
+        "n": "Lasse Eickel"
+      },
+      {
+        "n": "Marcel Hoffmeier"
+      },
+      {
+        "n": "Deniz Zeitler"
+      },
+      {
+        "n": "Gabriel Vidović"
+      },
+      {
+        "n": "Timur Gayret"
+      },
+      {
+        "n": "Tristan Zobel"
+      }
+    ],
+    "FC Schalke 04": [
+      {
+        "n": "Loris Karius"
+      },
+      {
+        "n": "Hasan Kuruçay"
+      },
+      {
+        "n": "Timo Becker"
+      },
+      {
+        "n": "Ron Schallenberg"
+      },
+      {
+        "n": "Hwang Hee-chan"
+      },
+      {
+        "n": "Robin Gosens"
+      },
+      {
+        "n": "Moussa Sylla",
+        "w": "Moussa Sylla (footballer, born 1999)"
+      },
+      {
+        "n": "Edin Džeko"
+      },
+      {
+        "n": "Bryan Lasme"
+      },
+      {
+        "n": "Satoshi Tanaka"
+      },
+      {
+        "n": "Janik Bachmann"
+      },
+      {
+        "n": "Emil Højlund"
+      },
+      {
+        "n": "Adrian Gantenbein"
+      },
+      {
+        "n": "Kenan Karaman"
+      },
+      {
+        "n": "Junior Adamu"
+      },
+      {
+        "n": "Dejan Ljubičić"
+      },
+      {
+        "n": "Kevin Müller",
+        "w": "Kevin Müller (footballer)"
+      },
+      {
+        "n": "Soufiane El-Faouzi"
+      },
+      {
+        "n": "Adil Aouchiche"
+      },
+      {
+        "n": "Nikola Katić"
+      },
+      {
+        "n": "Finn Porath"
+      },
+      {
+        "n": "Junior Dina Ebimbe"
+      },
+      {
+        "n": "Vitalie Becker"
+      },
+      {
+        "n": "Johannes Siebeking"
+      },
+      {
+        "n": "Luca Vozar"
+      },
+      {
+        "n": "Maximilian Wöber"
+      },
+      {
+        "n": "Mertcan Ayhan"
+      }
+    ],
+    "VfB Stuttgart": [
+      {
+        "n": "Fabian Bredlow"
+      },
+      {
+        "n": "Ameen Al-Dakhil"
+      },
+      {
+        "n": "Ramon Hendriks"
+      },
+      {
+        "n": "Josha Vagnoman"
+      },
+      {
+        "n": "Angelo Stiller"
+      },
+      {
+        "n": "Maximilian Mittelstädt"
+      },
+      {
+        "n": "Tiago Tomás"
+      },
+      {
+        "n": "Ermedin Demirović"
+      },
+      {
+        "n": "Chris Führich"
+      },
+      {
+        "n": "Bilal El Khannouss"
+      },
+      {
+        "n": "Luca Jaquez"
+      },
+      {
+        "n": "Atakan Karazor"
+      },
+      {
+        "n": "Dženan Pejčinović"
+      },
+      {
+        "n": "Jamie Leweling"
+      },
+      {
+        "n": "Leonidas Stergiou"
+      },
+      {
+        "n": "Grischa Prömel"
+      },
+      {
+        "n": "Lorenz Assignon"
+      },
+      {
+        "n": "Dan-Axel Zagadou"
+      },
+      {
+        "n": "Jeff Chabot"
+      },
+      {
+        "n": "Deniz Undav"
+      },
+      {
+        "n": "Nikolas Nartey"
+      },
+      {
+        "n": "Finn Jeltsch"
+      },
+      {
+        "n": "Justin Diehl"
+      },
+      {
+        "n": "Marius Funk"
+      },
+      {
+        "n": "Ertuğrul Yiğit"
+      },
+      {
+        "n": "Dennis Seimen"
+      },
+      {
+        "n": "Jarzinho Malanga"
+      },
+      {
+        "n": "Leo Sauer"
+      },
+      {
+        "n": "Stefan Drljača"
+      },
+      {
+        "n": "Yanik Spalt"
+      }
+    ],
+    "1. FC Köln": [
+      {
+        "n": "Marvin Schwäbe"
+      },
+      {
+        "n": "Joël Schmied"
+      },
+      {
+        "n": "Borna Sosa"
+      },
+      {
+        "n": "Timo Hübers"
+      },
+      {
+        "n": "Tom Krauß"
+      },
+      {
+        "n": "Ellyes Skhiri"
+      },
+      {
+        "n": "Luca Waldschmidt"
+      },
+      {
+        "n": "Ísak Jóhannesson"
+      },
+      {
+        "n": "Ragnar Ache"
+      },
+      {
+        "n": "Said El Mala"
+      },
+      {
+        "n": "Reigan Heskey"
+      },
+      {
+        "n": "Gideon Mensah",
+        "w": "Gideon Mensah (footballer, born 1998)"
+      },
+      {
+        "n": "Imad Rondić"
+      },
+      {
+        "n": "Alessio Castro-Montes"
+      },
+      {
+        "n": "Malek El Mala"
+      },
+      {
+        "n": "Ron-Robert Zieler"
+      },
+      {
+        "n": "Martin James",
+        "w": "Martin James (French footballer)"
+      },
+      {
+        "n": "Jahmai Simpson-Pusey"
+      },
+      {
+        "n": "Paul Okon-Engstler"
+      },
+      {
+        "n": "Luka Lochoshvili"
+      },
+      {
+        "n": "Thijs Dallinga"
+      },
+      {
+        "n": "Sebastian Sebulonsen"
+      },
+      {
+        "n": "Jan Thielmann"
+      },
+      {
+        "n": "Marius Bülter"
+      },
+      {
+        "n": "Gil Neves"
+      },
+      {
+        "n": "Rav van den Berg"
+      },
+      {
+        "n": "Fayssal Harchaoui"
+      },
+      {
+        "n": "Linton Maina"
+      },
+      {
+        "n": "Matthias Köbbing"
+      },
+      {
+        "n": "Mikey Moore"
+      },
+      {
+        "n": "David Fürst"
+      }
+    ],
+    "Borussia Mönchengladbach": [
+      {
+        "n": "Moritz Nicolas"
+      },
+      {
+        "n": "Fabio Chiarodia"
+      },
+      {
+        "n": "Isac Lidberg"
+      },
+      {
+        "n": "Kevin Diks"
+      },
+      {
+        "n": "Jan Leszczyński",
+        "w": "Jan Leszczyński (footballer, born 2007)"
+      },
+      {
+        "n": "Kō Itakura"
+      },
+      {
+        "n": "Kevin Stöger"
+      },
+      {
+        "n": "Enzo Leopold"
+      },
+      {
+        "n": "Franck Honorat"
+      },
+      {
+        "n": "Florian Neuhaus"
+      },
+      {
+        "n": "Tim Kleindienst"
+      },
+      {
+        "n": "Daiki Hashioka"
+      },
+      {
+        "n": "Philipp Sander"
+      },
+      {
+        "n": "Jens Castrop"
+      },
+      {
+        "n": "Shūto Machino"
+      },
+      {
+        "n": "Nicolas Kühn"
+      },
+      {
+        "n": "David Herold",
+        "w": "David Herold (footballer)"
+      },
+      {
+        "n": "Tobias Sippel"
+      },
+      {
+        "n": "Yukhym Konoplya"
+      },
+      {
+        "n": "Jan Olschowsky"
+      },
+      {
+        "n": "Robin Hack"
+      },
+      {
+        "n": "Lukas Ullrich"
+      },
+      {
+        "n": "Fritz Fleck",
+        "w": "Fritz Henri Fleck"
+      },
+      {
+        "n": "Joe Scally"
+      },
+      {
+        "n": "Daniel Batz"
+      },
+      {
+        "n": "Mathieu Nguefack"
+      },
+      {
+        "n": "Josiah Uwakhonye",
+        "w": "Josiah Kaled Uwakhonye"
+      },
+      {
+        "n": "Wael Mohya"
+      },
+      {
+        "n": "Hugo Bolin"
+      },
+      {
+        "n": "Iaia Manco Danfa"
+      },
+      {
+        "n": "Zento Uno"
+      },
+      {
+        "n": "Lion Schweers"
+      }
+    ]
+  },
+  "_failures": []
+}

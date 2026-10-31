@@ -1,0 +1,1857 @@
+{
+  "_format": "clubs[club] = [{n: display name, w: wikipedia article title (identity)}]",
+  "_source": "en.wikipedia.org via MediaWiki API (action=parse, full wikitext); clubs from league standings, players from {{fs player}} templates",
+  "league": "Premier League",
+  "league_id": 13,
+  "season": "2026/27",
+  "clubs": {
+    "Arsenal F.C.": [
+      {
+        "n": "David Raya"
+      },
+      {
+        "n": "William Saliba"
+      },
+      {
+        "n": "Cristhian Mosquera"
+      },
+      {
+        "n": "Ben White",
+        "w": "Ben White (footballer)"
+      },
+      {
+        "n": "Piero Hincapié"
+      },
+      {
+        "n": "Gabriel Magalhães"
+      },
+      {
+        "n": "Bukayo Saka"
+      },
+      {
+        "n": "Martin Ødegaard"
+      },
+      {
+        "n": "Eberechi Eze"
+      },
+      {
+        "n": "Jurriën Timber"
+      },
+      {
+        "n": "Kepa Arrizabalaga"
+      },
+      {
+        "n": "Viktor Gyökeres"
+      },
+      {
+        "n": "Ezri Konsa"
+      },
+      {
+        "n": "Christos Tzolis"
+      },
+      {
+        "n": "Noni Madueke"
+      },
+      {
+        "n": "Mikel Merino"
+      },
+      {
+        "n": "Kai Havertz"
+      },
+      {
+        "n": "Illan Meslier"
+      },
+      {
+        "n": "Riccardo Calafiori"
+      },
+      {
+        "n": "Martín Zubimendi"
+      },
+      {
+        "n": "Bruno Guimarães"
+      },
+      {
+        "n": "Declan Rice"
+      },
+      {
+        "n": "Myles Lewis-Skelly"
+      },
+      {
+        "n": "Ethan Nwaneri"
+      },
+      {
+        "n": "Tommy Setford"
+      }
+    ],
+    "Aston Villa F.C.": [
+      {
+        "n": "Zion Suzuki"
+      },
+      {
+        "n": "Matty Cash"
+      },
+      {
+        "n": "Victor Lindelöf"
+      },
+      {
+        "n": "Taylor Harwood-Bellis"
+      },
+      {
+        "n": "Tyrone Mings"
+      },
+      {
+        "n": "Ross Barkley"
+      },
+      {
+        "n": "John McGinn"
+      },
+      {
+        "n": "Boubacar Kamara"
+      },
+      {
+        "n": "Emiliano Buendía"
+      },
+      {
+        "n": "Nicolas Jackson"
+      },
+      {
+        "n": "Matteo Ruggeri"
+      },
+      {
+        "n": "Pau Torres"
+      },
+      {
+        "n": "Alejandro Garnacho"
+      },
+      {
+        "n": "Tammy Abraham"
+      },
+      {
+        "n": "Ibrahim Mbaye"
+      },
+      {
+        "n": "Ian Maatsen"
+      },
+      {
+        "n": "Amadou Onana"
+      },
+      {
+        "n": "Lamare Bogarde"
+      },
+      {
+        "n": "Leon Goretzka"
+      },
+      {
+        "n": "Aaron Wan-Bissaka"
+      },
+      {
+        "n": "João Gomes",
+        "w": "João Gomes (footballer, born 2001)"
+      },
+      {
+        "n": "Brian Madjo"
+      },
+      {
+        "n": "Marco Bizot"
+      },
+      {
+        "n": "James Wright",
+        "w": "James Wright (footballer)"
+      },
+      {
+        "n": "Johan Manzambi"
+      },
+      {
+        "n": "Alysson",
+        "w": "Alysson (footballer, born 2006)"
+      },
+      {
+        "n": "Modou Kéba Cissé"
+      },
+      {
+        "n": "George Hemmings"
+      }
+    ],
+    "AFC Bournemouth": [
+      {
+        "n": "Đorđe Petrović",
+        "w": "Đorđe Petrović (footballer)"
+      },
+      {
+        "n": "Julián Araujo"
+      },
+      {
+        "n": "Adrien Truffert"
+      },
+      {
+        "n": "Lewis Cook",
+        "w": "Lewis Cook (footballer, born 1997)"
+      },
+      {
+        "n": "James Hill",
+        "w": "James Hill (footballer, born 2002)"
+      },
+      {
+        "n": "Julio Soler"
+      },
+      {
+        "n": "David Brooks",
+        "w": "David Brooks (footballer)"
+      },
+      {
+        "n": "Alex Scott",
+        "w": "Alex Scott (footballer, born 2003)"
+      },
+      {
+        "n": "Evanilson",
+        "w": "Evanilson (footballer, born 1999)"
+      },
+      {
+        "n": "Ryan Christie"
+      },
+      {
+        "n": "Ben Gannon-Doak"
+      },
+      {
+        "n": "Tyler Adams"
+      },
+      {
+        "n": "António Silva",
+        "w": "António Silva (footballer)"
+      },
+      {
+        "n": "Adam Smith",
+        "w": "Adam Smith (footballer, born 1991)"
+      },
+      {
+        "n": "Marcus Tavernier"
+      },
+      {
+        "n": "Fraser Forster"
+      },
+      {
+        "n": "Bafodé Diakité"
+      },
+      {
+        "n": "Justin Kluivert"
+      },
+      {
+        "n": "Michele Di Gregorio"
+      },
+      {
+        "n": "Amine Adli"
+      },
+      {
+        "n": "Eli Junior Kroupi"
+      },
+      {
+        "n": "Juanlu Sánchez"
+      },
+      {
+        "n": "Alex Tóth"
+      },
+      {
+        "n": "Max Aarons"
+      },
+      {
+        "n": "Daniel Jebbison"
+      },
+      {
+        "n": "Álvaro Rodríguez",
+        "w": "Álvaro Rodríguez (footballer, born 2004)"
+      },
+      {
+        "n": "Rayan",
+        "w": "Rayan (footballer, born 2006)"
+      },
+      {
+        "n": "Veljko Milosavljević"
+      }
+    ],
+    "Brentford F.C.": [
+      {
+        "n": "Caoimhín Kelleher"
+      },
+      {
+        "n": "Aaron Hickey"
+      },
+      {
+        "n": "Rico Henry"
+      },
+      {
+        "n": "Sepp van den Berg"
+      },
+      {
+        "n": "Yehor Yarmolyuk"
+      },
+      {
+        "n": "Kevin Schade"
+      },
+      {
+        "n": "Mathias Jensen"
+      },
+      {
+        "n": "Igor Thiago"
+      },
+      {
+        "n": "Josh Dasilva"
+      },
+      {
+        "n": "Dango Ouattara"
+      },
+      {
+        "n": "Hákon Valdimarsson"
+      },
+      {
+        "n": "Callum Wilson"
+      },
+      {
+        "n": "Fábio Carvalho",
+        "w": "Fábio Carvalho (footballer, born 2002)"
+      },
+      {
+        "n": "Antoni Milambo"
+      },
+      {
+        "n": "Mamadou Sangaré"
+      },
+      {
+        "n": "Jaidon Anthony"
+      },
+      {
+        "n": "Kristoffer Ajer"
+      },
+      {
+        "n": "Nathan Collins"
+      },
+      {
+        "n": "Keane Lewis-Potter"
+      },
+      {
+        "n": "Mikkel Damsgaard"
+      },
+      {
+        "n": "El Hadji Malick Diouf"
+      },
+      {
+        "n": "Vitaly Janelt"
+      },
+      {
+        "n": "Ellery Balcombe"
+      },
+      {
+        "n": "Michael Kayode"
+      },
+      {
+        "n": "Kim Ji-soo",
+        "w": "Kim Ji-soo (footballer)"
+      },
+      {
+        "n": "Gustavo Nunes"
+      },
+      {
+        "n": "Jannik Schuster"
+      },
+      {
+        "n": "Kaye Furo"
+      },
+      {
+        "n": "Benjamin Fredrick"
+      }
+    ],
+    "Brighton & Hove Albion F.C.": [
+      {
+        "n": "Bart Verbruggen"
+      },
+      {
+        "n": "Jaouen Hadjam"
+      },
+      {
+        "n": "Pascal Struijk"
+      },
+      {
+        "n": "Lewis Dunk"
+      },
+      {
+        "n": "Kaoru Mitoma"
+      },
+      {
+        "n": "Jack Hinshelwood"
+      },
+      {
+        "n": "Stefanos Tzimas"
+      },
+      {
+        "n": "Georginio Rutter"
+      },
+      {
+        "n": "Yankuba Minteh"
+      },
+      {
+        "n": "Promise David"
+      },
+      {
+        "n": "Pascal Groß"
+      },
+      {
+        "n": "Chema Andrés"
+      },
+      {
+        "n": "Ibrahim Osman",
+        "w": "Ibrahim Osman (footballer, born 2004)"
+      },
+      {
+        "n": "Charalampos Kostoulas"
+      },
+      {
+        "n": "Costinha",
+        "w": "Costinha (footballer, born 2000)"
+      },
+      {
+        "n": "Olivier Boscagli"
+      },
+      {
+        "n": "Jason Steele",
+        "w": "Jason Steele (footballer)"
+      },
+      {
+        "n": "Ferdi Kadıoğlu"
+      },
+      {
+        "n": "Diego Gómez",
+        "w": "Diego Gómez (Paraguayan footballer)"
+      },
+      {
+        "n": "Yasin Ayari"
+      },
+      {
+        "n": "Mats Wieffer"
+      },
+      {
+        "n": "Evan Ferguson"
+      },
+      {
+        "n": "Maxim De Cuyper"
+      },
+      {
+        "n": "Michael Svoboda"
+      },
+      {
+        "n": "Matt ORiley",
+        "w": "Matt O'Riley"
+      },
+      {
+        "n": "Malick Yalcouyé"
+      },
+      {
+        "n": "Zadok Yohanna"
+      },
+      {
+        "n": "Tom McGill"
+      },
+      {
+        "n": "Femi Azeez"
+      },
+      {
+        "n": "Luka Vušković"
+      }
+    ],
+    "Chelsea F.C.": [
+      {
+        "n": "Emiliano Martínez"
+      },
+      {
+        "n": "Marco Palestra"
+      },
+      {
+        "n": "Wesley Fofana",
+        "w": "Wesley Fofana (footballer)"
+      },
+      {
+        "n": "Valentín Barco"
+      },
+      {
+        "n": "Maxence Lacroix"
+      },
+      {
+        "n": "Levi Colwill"
+      },
+      {
+        "n": "Pedro Neto"
+      },
+      {
+        "n": "João Pedro",
+        "w": "João Pedro (footballer, born 2001)"
+      },
+      {
+        "n": "Cole Palmer"
+      },
+      {
+        "n": "Jamie Gittens"
+      },
+      {
+        "n": "Jordan Henderson"
+      },
+      {
+        "n": "Morgan Rogers"
+      },
+      {
+        "n": "Danny Welbeck"
+      },
+      {
+        "n": "Jorrel Hato"
+      },
+      {
+        "n": "Emmanuel Emegha"
+      },
+      {
+        "n": "Geovany Quenda"
+      },
+      {
+        "n": "Reece James"
+      },
+      {
+        "n": "Moisés Caicedo"
+      },
+      {
+        "n": "Malo Gusto"
+      },
+      {
+        "n": "Teddy Sharman-Lowe"
+      },
+      {
+        "n": "Pep Chavarría"
+      },
+      {
+        "n": "Aarón Anselmino"
+      },
+      {
+        "n": "Reggie Watson"
+      },
+      {
+        "n": "Mahdi Nicoll-Jazuli"
+      },
+      {
+        "n": "Josh Acheampong"
+      },
+      {
+        "n": "Olutayo Subuloye"
+      },
+      {
+        "n": "Mike Penders"
+      },
+      {
+        "n": "Estêvão",
+        "w": "Estêvão Willian"
+      },
+      {
+        "n": "Gabriel Slonina"
+      },
+      {
+        "n": "Roméo Lavia"
+      }
+    ],
+    "Coventry City F.C.": [
+      {
+        "n": "Oliver Dovin"
+      },
+      {
+        "n": "Ethan Pinnock"
+      },
+      {
+        "n": "Jay Dasilva"
+      },
+      {
+        "n": "Bobby Thomas",
+        "w": "Bobby Thomas (footballer)"
+      },
+      {
+        "n": "Jack Rudoni"
+      },
+      {
+        "n": "Matt Grimes"
+      },
+      {
+        "n": "Tatsuhiro Sakamoto"
+      },
+      {
+        "n": "Caleb Yirenkyi"
+      },
+      {
+        "n": "Ellis Simms"
+      },
+      {
+        "n": "Ephron Mason-Clark"
+      },
+      {
+        "n": "Haji Wright"
+      },
+      {
+        "n": "Stephen Mfuni"
+      },
+      {
+        "n": "Ben Wilson",
+        "w": "Ben Wilson (footballer, born 1992)"
+      },
+      {
+        "n": "Taiwo Awoniyi"
+      },
+      {
+        "n": "Frank Onyeka"
+      },
+      {
+        "n": "Loum Tchaouna"
+      },
+      {
+        "n": "Carl Rushworth"
+      },
+      {
+        "n": "Kaine Kesler-Hayden"
+      },
+      {
+        "n": "Jake Bidwell"
+      },
+      {
+        "n": "Joel Latibeaudiere"
+      },
+      {
+        "n": "Brandon Thomas-Asante"
+      },
+      {
+        "n": "Aurèle Amenda"
+      },
+      {
+        "n": "Dan Bentley",
+        "w": "Dan Bentley (footballer)"
+      },
+      {
+        "n": "Luke Woolfenden"
+      },
+      {
+        "n": "Milan van Ewijk"
+      },
+      {
+        "n": "Josh Eccles"
+      },
+      {
+        "n": "Victor Torp"
+      },
+      {
+        "n": "Yann Gboho"
+      },
+      {
+        "n": "Gustavo Hamer"
+      },
+      {
+        "n": "Sidiki Cherif"
+      }
+    ],
+    "Crystal Palace F.C.": [
+      {
+        "n": "Dean Henderson"
+      },
+      {
+        "n": "Tyrick Mitchell"
+      },
+      {
+        "n": "Chadi Riad"
+      },
+      {
+        "n": "Axel Disasi"
+      },
+      {
+        "n": "Jaydee Canvot"
+      },
+      {
+        "n": "Ismaïla Sarr"
+      },
+      {
+        "n": "Jefferson Lerma"
+      },
+      {
+        "n": "Eddie Nketiah"
+      },
+      {
+        "n": "Yeremy Pino"
+      },
+      {
+        "n": "Dwight McNeil"
+      },
+      {
+        "n": "Zavier Gozo"
+      },
+      {
+        "n": "Jean-Philippe Mateta"
+      },
+      {
+        "n": "Takehiro Tomiyasu"
+      },
+      {
+        "n": "Daichi Kamada"
+      },
+      {
+        "n": "Will Hughes"
+      },
+      {
+        "n": "Adam Wharton"
+      },
+      {
+        "n": "Honest Ahanor"
+      },
+      {
+        "n": "Jørgen Strand Larsen"
+      },
+      {
+        "n": "Quinten Timber"
+      },
+      {
+        "n": "Darío Osorio"
+      },
+      {
+        "n": "Anan Khalaili"
+      },
+      {
+        "n": "Chris Richards",
+        "w": "Chris Richards (soccer)"
+      },
+      {
+        "n": "Cheick Doucouré"
+      },
+      {
+        "n": "Evann Guessand"
+      },
+      {
+        "n": "Óscar Mingueza"
+      },
+      {
+        "n": "Remi Matthews"
+      },
+      {
+        "n": "Ben Chilwell"
+      },
+      {
+        "n": "Walter Benítez",
+        "w": "Walter Benítez (footballer)"
+      }
+    ],
+    "Everton F.C.": [
+      {
+        "n": "Jordan Pickford"
+      },
+      {
+        "n": "Ainsley Maitland-Niles"
+      },
+      {
+        "n": "Jarrad Branthwaite"
+      },
+      {
+        "n": "Michael Keane",
+        "w": "Michael Keane (footballer, born 1993)"
+      },
+      {
+        "n": "James Tarkowski"
+      },
+      {
+        "n": "Kiernan Dewsbury-Hall"
+      },
+      {
+        "n": "Jack Grealish"
+      },
+      {
+        "n": "Thierno Barry",
+        "w": "Thierno Barry (footballer, born 2002)"
+      },
+      {
+        "n": "Mark Travers"
+      },
+      {
+        "n": "Jake OBrien",
+        "w": "Jake O'Brien (footballer)"
+      },
+      {
+        "n": "Vitalii Mykolenko",
+        "w": "Vitaliy Mykolenko"
+      },
+      {
+        "n": "Tyrique George"
+      },
+      {
+        "n": "Tyler Dibling"
+      },
+      {
+        "n": "Brennan Johnson"
+      },
+      {
+        "n": "Christian Nørgaard"
+      },
+      {
+        "n": "Charly Alcaraz"
+      },
+      {
+        "n": "Hayden Hackney"
+      },
+      {
+        "n": "Tom King",
+        "w": "Tom King (footballer, born 1995)"
+      },
+      {
+        "n": "Merlin Röhl"
+      },
+      {
+        "n": "James Garner",
+        "w": "James Garner (footballer, born 2001)"
+      },
+      {
+        "n": "Harrison Armstrong",
+        "w": "Harrison Armstrong (footballer)"
+      }
+    ],
+    "Fulham F.C.": [
+      {
+        "n": "Bernd Leno"
+      },
+      {
+        "n": "Kenny Tete"
+      },
+      {
+        "n": "Calvin Bassey"
+      },
+      {
+        "n": "Jorge Cuenca"
+      },
+      {
+        "n": "Joachim Andersen",
+        "w": "Joachim Andersen (footballer)"
+      },
+      {
+        "n": "Harrison Reed",
+        "w": "Harrison Reed (footballer)"
+      },
+      {
+        "n": "Gonzalo García",
+        "w": "Gonzalo García (footballer, born 2004)"
+      },
+      {
+        "n": "César Palacios",
+        "w": "César Palacios (footballer, born 2004)"
+      },
+      {
+        "n": "Rodrigo Muniz",
+        "w": "Rodrigo Muniz (Brazilian footballer)"
+      },
+      {
+        "n": "Tom Cairney"
+      },
+      {
+        "n": "Kevin",
+        "w": "Kevin (footballer, born 2003)"
+      },
+      {
+        "n": "Oscar Bobb"
+      },
+      {
+        "n": "Hugo Larsson",
+        "w": "Hugo Larsson (footballer)"
+      },
+      {
+        "n": "Sander Berge"
+      },
+      {
+        "n": "Alex Iwobi"
+      },
+      {
+        "n": "Jonah Kusi-Asare"
+      },
+      {
+        "n": "Shea Charles"
+      },
+      {
+        "n": "Manuel Ángel"
+      },
+      {
+        "n": "Timothy Castagne"
+      },
+      {
+        "n": "David Affengruber",
+        "w": "David Affengruber (footballer, born 2001)"
+      },
+      {
+        "n": "Benjamin Lecomte"
+      },
+      {
+        "n": "Josh King",
+        "w": "Josh King (footballer, born 2007)"
+      },
+      {
+        "n": "Ryan Sessegnon"
+      },
+      {
+        "n": "Emile Smith Rowe"
+      },
+      {
+        "n": "Antonee Robinson"
+      },
+      {
+        "n": "Alex Borto"
+      }
+    ],
+    "Hull City A.F.C.": [
+      {
+        "n": "Jack Butland"
+      },
+      {
+        "n": "Lewie Coyle"
+      },
+      {
+        "n": "Ryan Giles"
+      },
+      {
+        "n": "Charlie Hughes",
+        "w": "Charlie Hughes (footballer, born 2003)"
+      },
+      {
+        "n": "Hidemasa Morita"
+      },
+      {
+        "n": "Semi Ajayi"
+      },
+      {
+        "n": "Sorba Thomas"
+      },
+      {
+        "n": "Eliot Matazo"
+      },
+      {
+        "n": "Oli McBurnie"
+      },
+      {
+        "n": "Mohamed Belloumi"
+      },
+      {
+        "n": "Joe Gelhardt"
+      },
+      {
+        "n": "Dillon Phillips"
+      },
+      {
+        "n": "Jens Hjertø-Dahl"
+      },
+      {
+        "n": "John Egan",
+        "w": "John Egan (footballer, born 1992)"
+      },
+      {
+        "n": "Paddy McNair"
+      },
+      {
+        "n": "Brooke Norton-Cuffy"
+      },
+      {
+        "n": "Konstantinos Tzolakis"
+      },
+      {
+        "n": "Óscar Zambrano"
+      },
+      {
+        "n": "Elliot Stroud"
+      },
+      {
+        "n": "Lucas Herrington"
+      },
+      {
+        "n": "Matt Targett"
+      },
+      {
+        "n": "Darko Gyabi"
+      },
+      {
+        "n": "Matt Crooks"
+      },
+      {
+        "n": "Kieran Dowell"
+      },
+      {
+        "n": "Regan Slater"
+      },
+      {
+        "n": "Ilyas Ansah"
+      },
+      {
+        "n": "Lucas Gourna-Douath"
+      },
+      {
+        "n": "Nobel Mendy"
+      },
+      {
+        "n": "Abdülkadir Ömür"
+      },
+      {
+        "n": "Christos Mouzakitis"
+      },
+      {
+        "n": "Tim Iroegbunam"
+      },
+      {
+        "n": "Robinio Vaz"
+      },
+      {
+        "n": "Mohamed-Ali Cho"
+      }
+    ],
+    "Ipswich Town F.C.": [
+      {
+        "n": "Alex Palmer"
+      },
+      {
+        "n": "Darnell Furlong"
+      },
+      {
+        "n": "Leif Davis"
+      },
+      {
+        "n": "Cédric Kipré"
+      },
+      {
+        "n": "Azor Matusiwa"
+      },
+      {
+        "n": "Issa Diop",
+        "w": "Issa Diop (footballer)"
+      },
+      {
+        "n": "Abdul Fatawu"
+      },
+      {
+        "n": "Sindre Walle Egeli"
+      },
+      {
+        "n": "Zian Flemming"
+      },
+      {
+        "n": "Julio Enciso",
+        "w": "Julio Enciso (footballer, born 2004)"
+      },
+      {
+        "n": "Jaden Philogene"
+      },
+      {
+        "n": "Florentino Luís"
+      },
+      {
+        "n": "Jack Taylor",
+        "w": "Jack Taylor (footballer, born 1998)"
+      },
+      {
+        "n": "Emersonn"
+      },
+      {
+        "n": "Kasey McAteer"
+      },
+      {
+        "n": "Saša Lukić"
+      },
+      {
+        "n": "Jacob Greaves"
+      },
+      {
+        "n": "Exequiel Palacios"
+      },
+      {
+        "n": "Dara OShea",
+        "w": "Dara O'Shea"
+      },
+      {
+        "n": "David Button"
+      },
+      {
+        "n": "Christian Walton"
+      },
+      {
+        "n": "Chuba Akpom"
+      },
+      {
+        "n": "Marcelino Núñez"
+      },
+      {
+        "n": "Anis Mehmeti"
+      },
+      {
+        "n": "Kjell Scherpen"
+      },
+      {
+        "n": "Daizen Maeda"
+      },
+      {
+        "n": "Abdoul Ouattara"
+      },
+      {
+        "n": "Jack Clarke",
+        "w": "Jack Clarke (footballer, born 2000)"
+      }
+    ],
+    "Leeds United F.C.": [
+      {
+        "n": "James Trafford"
+      },
+      {
+        "n": "Jayden Bogle"
+      },
+      {
+        "n": "Gabriel Gudmundsson"
+      },
+      {
+        "n": "Ethan Ampadu"
+      },
+      {
+        "n": "Tarik Muharemović"
+      },
+      {
+        "n": "Joe Rodon"
+      },
+      {
+        "n": "Daniel James",
+        "w": "Daniel James (footballer)"
+      },
+      {
+        "n": "Sean Longstaff"
+      },
+      {
+        "n": "Dominic Calvert-Lewin"
+      },
+      {
+        "n": "Harry Wilson",
+        "w": "Harry Wilson (footballer, born 1997)"
+      },
+      {
+        "n": "Brenden Aaronson"
+      },
+      {
+        "n": "Lukas Nmecha"
+      },
+      {
+        "n": "Jaka Bijol"
+      },
+      {
+        "n": "Michael Zetterer"
+      },
+      {
+        "n": "Anton Stach"
+      },
+      {
+        "n": "Noah Okafor"
+      },
+      {
+        "n": "Alex Cairns"
+      },
+      {
+        "n": "Ao Tanaka"
+      },
+      {
+        "n": "Jean-Mattéo Bahoya"
+      },
+      {
+        "n": "James Justin"
+      },
+      {
+        "n": "Melvin Bard"
+      },
+      {
+        "n": "Nico Elvedi"
+      },
+      {
+        "n": "Ilia Gruev",
+        "w": "Ilia Gruev (footballer, born 2000)"
+      },
+      {
+        "n": "Jayden Lienou"
+      }
+    ],
+    "Liverpool F.C.": [
+      {
+        "n": "Alisson Becker"
+      },
+      {
+        "n": "Joe Gomez"
+      },
+      {
+        "n": "Wataru Endo"
+      },
+      {
+        "n": "Virgil van Dijk"
+      },
+      {
+        "n": "Jérémy Jacquet"
+      },
+      {
+        "n": "Milos Kerkez"
+      },
+      {
+        "n": "Florian Wirtz"
+      },
+      {
+        "n": "Dominik Szoboszlai"
+      },
+      {
+        "n": "Alexander Isak"
+      },
+      {
+        "n": "Alexis Mac Allister"
+      },
+      {
+        "n": "Conor Bradley"
+      },
+      {
+        "n": "Federico Chiesa"
+      },
+      {
+        "n": "Giovanni Leoni"
+      },
+      {
+        "n": "Cody Gakpo"
+      },
+      {
+        "n": "Kostas Tsimikas"
+      },
+      {
+        "n": "Hugo Ekitike"
+      },
+      {
+        "n": "Víctor Muñoz",
+        "w": "Víctor Muñoz (footballer, born 2003)"
+      },
+      {
+        "n": "Giorgi Mamardashvili"
+      },
+      {
+        "n": "Freddie Woodman"
+      },
+      {
+        "n": "Bradley Barcola"
+      },
+      {
+        "n": "Jeremie Frimpong"
+      },
+      {
+        "n": "Ronald Araújo"
+      },
+      {
+        "n": "Ryan Gravenberch"
+      },
+      {
+        "n": "Trey Nyoni"
+      },
+      {
+        "n": "Luke Chambers",
+        "w": "Luke Chambers (footballer, born 2004)"
+      },
+      {
+        "n": "James McConnell",
+        "w": "James McConnell (footballer, born 2004)"
+      },
+      {
+        "n": "Vítězslav Jaroš"
+      },
+      {
+        "n": "Lewis Koumas"
+      },
+      {
+        "n": "Rio Ngumoha"
+      },
+      {
+        "n": "Jayden Danns"
+      },
+      {
+        "n": "Harvey Davies"
+      },
+      {
+        "n": "Harvey Elliott"
+      },
+      {
+        "n": "Ármin Pécsi"
+      },
+      {
+        "n": "Calvin Ramsay"
+      },
+      {
+        "n": "Ifeanyi Ndukwe"
+      }
+    ],
+    "Manchester City F.C.": [
+      {
+        "n": "Gianluigi Donnarumma"
+      },
+      {
+        "n": "Rúben Dias"
+      },
+      {
+        "n": "Elliot Anderson"
+      },
+      {
+        "n": "Marc Guéhi"
+      },
+      {
+        "n": "Iliman Ndiaye"
+      },
+      {
+        "n": "Mateo Kovačić"
+      },
+      {
+        "n": "Erling Haaland"
+      },
+      {
+        "n": "Rayan Cherki"
+      },
+      {
+        "n": "Jérémy Doku"
+      },
+      {
+        "n": "Marcus Bettinelli"
+      },
+      {
+        "n": "Enzo Fernández"
+      },
+      {
+        "n": "Rayan Aït-Nouri"
+      },
+      {
+        "n": "Vitor Reis"
+      },
+      {
+        "n": "Joško Gvardiol"
+      },
+      {
+        "n": "Matheus Nunes"
+      },
+      {
+        "n": "Gerónimo Rulli"
+      },
+      {
+        "n": "Ayyoub Bouaddi"
+      },
+      {
+        "n": "Nico OReilly",
+        "w": "Nico O'Reilly"
+      },
+      {
+        "n": "Allan",
+        "w": "Allan (footballer, born 2004)"
+      },
+      {
+        "n": "Antoine Semenyo"
+      },
+      {
+        "n": "Abdukodir Khusanov"
+      },
+      {
+        "n": "Phil Foden"
+      },
+      {
+        "n": "Ryan McAidoo"
+      },
+      {
+        "n": "Kaden Braithwaite"
+      },
+      {
+        "n": "Floyd Samba"
+      },
+      {
+        "n": "Rico Lewis"
+      },
+      {
+        "n": "Jack Grealish"
+      },
+      {
+        "n": "Claudio Echeverri"
+      },
+      {
+        "n": "Jeremy Monga"
+      },
+      {
+        "n": "Sverre Nypan"
+      },
+      {
+        "n": "Kalvin Phillips"
+      },
+      {
+        "n": "Max Alleyne"
+      },
+      {
+        "n": "Pierce Charles"
+      },
+      {
+        "n": "Omar Marmoush"
+      }
+    ],
+    "Manchester United F.C.": [
+      {
+        "n": "Senne Lammens"
+      },
+      {
+        "n": "Diogo Dalot"
+      },
+      {
+        "n": "Noussair Mazraoui"
+      },
+      {
+        "n": "Matthijs de Ligt"
+      },
+      {
+        "n": "Harry Maguire"
+      },
+      {
+        "n": "Lisandro Martínez"
+      },
+      {
+        "n": "Mason Mount"
+      },
+      {
+        "n": "Bruno Fernandes"
+      },
+      {
+        "n": "Marcus Rashford"
+      },
+      {
+        "n": "Matheus Cunha"
+      },
+      {
+        "n": "Joshua Zirkzee"
+      },
+      {
+        "n": "Karl Darlow"
+      },
+      {
+        "n": "Patrick Dorgu"
+      },
+      {
+        "n": "Leny Yoro"
+      },
+      {
+        "n": "Amad Diallo"
+      },
+      {
+        "n": "Andrey Santos"
+      },
+      {
+        "n": "Youri Tielemans"
+      },
+      {
+        "n": "Bryan Mbeumo"
+      },
+      {
+        "n": "Carlos Baleba"
+      },
+      {
+        "n": "Tom Heaton"
+      },
+      {
+        "n": "Luke Shaw"
+      },
+      {
+        "n": "Manuel Ugarte",
+        "w": "Manuel Ugarte (footballer)"
+      },
+      {
+        "n": "Ayden Heaven"
+      },
+      {
+        "n": "Benjamin Šeško"
+      },
+      {
+        "n": "Shea Lacey"
+      },
+      {
+        "n": "Kobbie Mainoo"
+      },
+      {
+        "n": "Jack Fletcher",
+        "w": "Jack Fletcher (footballer, born 2007)"
+      },
+      {
+        "n": "Tyler Fletcher"
+      },
+      {
+        "n": "Harry Amass"
+      },
+      {
+        "n": "Dermot Mee"
+      }
+    ],
+    "Newcastle United F.C.": [
+      {
+        "n": "Nick Pope",
+        "w": "Nick Pope (footballer)"
+      },
+      {
+        "n": "Tino Livramento"
+      },
+      {
+        "n": "Lewis Hall",
+        "w": "Lewis Hall (footballer)"
+      },
+      {
+        "n": "Sven Botman"
+      },
+      {
+        "n": "Fabian Schär"
+      },
+      {
+        "n": "Nico González",
+        "w": "Nico González (footballer, born 2002)"
+      },
+      {
+        "n": "Joelinton"
+      },
+      {
+        "n": "Aladji Bamba"
+      },
+      {
+        "n": "Yoane Wissa"
+      },
+      {
+        "n": "William Osula"
+      },
+      {
+        "n": "Harvey Barnes"
+      },
+      {
+        "n": "Malick Thiaw"
+      },
+      {
+        "n": "Sean Steur"
+      },
+      {
+        "n": "Bazoumana Touré"
+      },
+      {
+        "n": "Anthony Elanga"
+      },
+      {
+        "n": "Matias Fernandez-Pardo"
+      },
+      {
+        "n": "Lukáš Horníček"
+      },
+      {
+        "n": "Jacob Murphy"
+      },
+      {
+        "n": "Ewen Jaouen"
+      },
+      {
+        "n": "Joe Willock"
+      },
+      {
+        "n": "Mark Gillespie",
+        "w": "Mark Gillespie (footballer)"
+      },
+      {
+        "n": "Aidan Harris"
+      },
+      {
+        "n": "Dan Burn"
+      },
+      {
+        "n": "Amar Dedić"
+      },
+      {
+        "n": "Jacob Ramsey"
+      },
+      {
+        "n": "Lewis Miley"
+      }
+    ],
+    "Nottingham Forest F.C.": [
+      {
+        "n": "Ousmane Diomande"
+      },
+      {
+        "n": "Neco Williams"
+      },
+      {
+        "n": "Murillo",
+        "w": "Murillo (footballer)"
+      },
+      {
+        "n": "Ibrahim Sangaré",
+        "w": "Ibrahim Sangaré (Ivorian footballer)"
+      },
+      {
+        "n": "Callum Hudson-Odoi"
+      },
+      {
+        "n": "Nicolás Domínguez"
+      },
+      {
+        "n": "Chris Wood",
+        "w": "Chris Wood (footballer, born 1991)"
+      },
+      {
+        "n": "Morgan Gibbs-White"
+      },
+      {
+        "n": "Igor Jesus",
+        "w": "Igor Jesus (footballer, born 2001)"
+      },
+      {
+        "n": "John Victor",
+        "w": "John Victor (Brazilian footballer)"
+      },
+      {
+        "n": "Dan Ndoye"
+      },
+      {
+        "n": "Arnaud Kalimuendo"
+      },
+      {
+        "n": "Liam Delap"
+      },
+      {
+        "n": "Xaver Schlager"
+      },
+      {
+        "n": "Ryan Yates"
+      },
+      {
+        "n": "Jair Cunha"
+      },
+      {
+        "n": "James McAtee"
+      },
+      {
+        "n": "Luca Netz"
+      },
+      {
+        "n": "Matz Sels"
+      },
+      {
+        "n": "Daniel Muñoz",
+        "w": "Daniel Muñoz (footballer)"
+      },
+      {
+        "n": "Nikola Milenković"
+      },
+      {
+        "n": "Steven Benda"
+      },
+      {
+        "n": "Ola Aina"
+      },
+      {
+        "n": "Nicolò Savona"
+      }
+    ],
+    "Sunderland A.F.C.": [
+      {
+        "n": "Kevin Danso"
+      },
+      {
+        "n": "Daniel Ballard",
+        "w": "Dan Ballard (footballer)"
+      },
+      {
+        "n": "Dayann Methalie"
+      },
+      {
+        "n": "Chemsdine Talbi"
+      },
+      {
+        "n": "Alan Browne",
+        "w": "Alan Browne (footballer)"
+      },
+      {
+        "n": "Brian Brobbey"
+      },
+      {
+        "n": "Nilson Angulo"
+      },
+      {
+        "n": "Chris Rigg"
+      },
+      {
+        "n": "Thomas Meunier"
+      },
+      {
+        "n": "Luke ONien",
+        "w": "Luke O'Nien"
+      },
+      {
+        "n": "Romaine Mundle"
+      },
+      {
+        "n": "Omar Alderete"
+      },
+      {
+        "n": "Reinildo",
+        "w": "Reinildo Mandava"
+      },
+      {
+        "n": "Wilson Isidor"
+      },
+      {
+        "n": "Habib Diarra"
+      },
+      {
+        "n": "Nordi Mukiele"
+      },
+      {
+        "n": "Simon Moore",
+        "w": "Simon Moore (footballer)"
+      },
+      {
+        "n": "Robin Roefs"
+      },
+      {
+        "n": "Noah Sadiki"
+      },
+      {
+        "n": "Enzo Le Fée"
+      },
+      {
+        "n": "Jules Ahoka"
+      },
+      {
+        "n": "Melker Ellborg"
+      },
+      {
+        "n": "Trai Hume"
+      },
+      {
+        "n": "Granit Xhaka"
+      },
+      {
+        "n": "Jocelin Ta Bi"
+      },
+      {
+        "n": "Malick Fofana"
+      },
+      {
+        "n": "Abdoullah Ba"
+      },
+      {
+        "n": "Juan Riquelme Angulo"
+      },
+      {
+        "n": "Timur Tutyerov"
+      }
+    ],
+    "Tottenham Hotspur F.C.": [
+      {
+        "n": "Andy Robertson"
+      },
+      {
+        "n": "Tosin Adarabioyo"
+      },
+      {
+        "n": "Marcos Senesi"
+      },
+      {
+        "n": "Jan Paul van Hecke"
+      },
+      {
+        "n": "Xavi Simons"
+      },
+      {
+        "n": "Conor Gallagher"
+      },
+      {
+        "n": "Richarlison"
+      },
+      {
+        "n": "James Maddison"
+      },
+      {
+        "n": "Mathys Tel"
+      },
+      {
+        "n": "Destiny Udogie"
+      },
+      {
+        "n": "Archie Gray"
+      },
+      {
+        "n": "Lucas Bergvall"
+      },
+      {
+        "n": "Sandro Tonali"
+      },
+      {
+        "n": "Sávio",
+        "w": "Sávio (footballer, born 2004)"
+      },
+      {
+        "n": "Mateus Fernandes",
+        "w": "Mateus Fernandes (footballer)"
+      },
+      {
+        "n": "Dominic Solanke"
+      },
+      {
+        "n": "Mohammed Kudus"
+      },
+      {
+        "n": "Dejan Kulusevski"
+      },
+      {
+        "n": "Omar Marmoush"
+      },
+      {
+        "n": "Pedro Porro"
+      },
+      {
+        "n": "Mykhailo Mudryk"
+      },
+      {
+        "n": "Wilson Odobert"
+      },
+      {
+        "n": "Rodrigo Bentancur"
+      },
+      {
+        "n": "Antonín Kinský",
+        "w": "Antonín Kinský (footballer, born 2003)"
+      },
+      {
+        "n": "Ben Davies",
+        "w": "Ben Davies (footballer, born 1993)"
+      },
+      {
+        "n": "Micky van de Ven"
+      },
+      {
+        "n": "Martin Dúbravka"
+      },
+      {
+        "n": "Brandon Austin"
+      },
+      {
+        "n": "Lucá Williams-Barnett"
+      },
+      {
+        "n": "Guglielmo Vicario"
+      },
+      {
+        "n": "Kōta Takai"
+      },
+      {
+        "n": "Pape Matar Sarr"
+      },
+      {
+        "n": "Souza",
+        "w": "Souza (footballer, born 2006)"
+      },
+      {
+        "n": "Mikey Moore"
+      },
+      {
+        "n": "Kevin Danso"
+      },
+      {
+        "n": "Radu Drăgușin"
+      },
+      {
+        "n": "Yang Min-hyeok"
+      }
+    ]
+  },
+  "_failures": []
+}

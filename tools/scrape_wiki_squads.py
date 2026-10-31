@@ -176,7 +176,15 @@ def extract_clubs(league_wikitext):
 HEADER_RE = re.compile(r"^(={2,})\s*(.*?)\s*\1\s*$", re.M)
 
 # headers whose players are NOT the first-team squad
-EXCLUDE_HDR = re.compile(r"loan|reserve|youth|amateur|\bii\b|\bb team\b|transfer|\bout\b",
+EXCLUDE_HDR = re.compile(r"loan|reserve|youth|amateur|\bii\b|\bb team\b|transfer|\bout\b"
+                         # A club ARTICLE (used for the season in progress) puts its whole history
+                         # under ==Players==: notable former players, retired numbers, captains, hall
+                         # of fame. Without these the richest-section rule picked that history and
+                         # put Gianfranco Zola in Cagliari's 2026-27 squad.
+                         r"|former|notable|famous|\brecords?\b|hall of fame|retired|\bcaptains?\b"
+                         r"|legends?|\bhistory\b|\bstaff\b|management|personnel|\bhonours?\b"
+                         r"|\bawards?\b|internationals\b|club officials|player of the (?:year|season)"
+                         r"|top scorers|academy|under-?\d\d|\bu-?\d\d\b|women",
                          re.I)
 # template / table markers that indicate a player list lives in a section
 PLAYER_TMPL = re.compile(r"\{\{\s*(?:nat\s+)?(?:e?fs|football squad) player|\{\{\s*fb si player", re.I)
@@ -251,7 +259,7 @@ def extract_from(sec, tables=True):
     names, seen = [], set()
 
     def add(name, target=None):
-        if name and is_player_name(name) and name.lower() not in seen:
+        if name and is_player_name(name) and re.search(r"[A-ZÀ-ÞĀ-Ž]", name) and name.lower() not in seen:
             seen.add(name.lower())
             # {"n": display, "w": article title}. "w" is the identity; "n" is one of its spellings.
             names.append({"n": name, "w": target} if target and target != name else {"n": name})
@@ -357,6 +365,52 @@ def extract_squad(club_wikitext):
     return extract_from(sec, tables=True) if sec is not None else extract_from(club_wikitext, tables=False)
 
 
+LEAGUE_SIZE = {"premier-league": 20, "la-liga": 20, "serie-a": 20, "bundesliga": 18, "ligue-1": 18}
+CLUB_TITLE = re.compile(r"\b(F\.?C\.?|A\.?F\.?C\.?|CF|SC|SV|AS|AC|AJ|OGC|RC|RCD|CA|UD|SD|SS|SSC|US|ACF|TSG|VfB|VfL|RB|"
+                        r"Calcio|Borussia|Bayer|Eintracht|Werder|Hamburger|Hertha|Union|United|City|Town|"
+                        r"Athletic|Atlético|Real|Racing|Deportivo|Olympique|Stade|Sporting|Paris|Club)\b|^1\. ")
+
+
+CURRENT_SQUAD_HDR = [r"first[- ]team squad", r"current (?:first[- ]team )?squad", r"^first[- ]team$",
+                     r"^squad$", r"^players$"]
+POSITION_GROUP = re.compile(r"goalkeep|defend|midfield|forward|attack|striker", re.I)
+
+
+def extract_current_squad(club_wikitext):
+    """The current first team from a club ARTICLE, or [].
+
+    Unlike a season page, a club article keeps its whole history next to the squad
+    (international players, notable players, statistics), so "the section with the most names"
+    picks history: Elche's 65 internationals since the 1920s, Coventry's 1960s scorers. Here we
+    take the section explicitly titled as the current squad, in a fixed order of preference, and
+    end it at the next header — only goalkeeper/defender/... position groups may continue it.
+    """
+    headers = [(m.start(), m.end(), len(m.group(1)), m.group(2).strip())
+               for m in HEADER_RE.finditer(club_wikitext)]
+    for pat in CURRENT_SQUAD_HDR:
+        for i, (start, end, level, title) in enumerate(headers):
+            if not re.search(pat, title, re.I) or EXCLUDE_HDR.search(title):
+                continue
+            stop = len(club_wikitext)
+            for j in range(i + 1, len(headers)):
+                if headers[j][2] <= level or not POSITION_GROUP.search(headers[j][3]):
+                    stop = headers[j][0]
+                    break
+            squad = extract_from(club_wikitext[end:stop], tables=True)
+            if len(squad) >= 15:
+                return squad
+    return []
+
+
+def is_current_season(season):
+    """'2026–27' is the season in progress if it started this summer (or last, before July)."""
+    import datetime
+    today = datetime.date.today()
+    start = today.year if today.month >= 7 else today.year - 1
+    m = re.match(r"(\d{4})", season)
+    return bool(m) and int(m.group(1)) == start
+
+
 def scrape(league_key, season, sleep=0.4, min_squad=12):
     suffix, league_id = LEAGUES[league_key]
     league_page = f"{season} {suffix}"
@@ -366,15 +420,50 @@ def scrape(league_key, season, sleep=0.4, min_squad=12):
         print(f"  !! league page not found: {league_page}", file=sys.stderr)
         return None
     clubs = extract_clubs(lw)
+    if len(clubs) < 10:
+        # Current-season pages often transclude the standings from a separate template
+        # ({{2026–27 La Liga table}}) instead of writing the name_XXX lines inline, so the
+        # page itself yields no clubs. Follow the transclusion.
+        for t in dict.fromkeys(re.findall(r"\{\{\s*(" + re.escape(league_page) + r"\s+table)\s*[|}]", lw)):
+            tw = get_wikitext("Template:" + t)
+            if tw:
+                clubs = extract_clubs(tw)
+                if len(clubs) >= 10:
+                    break
+    expected = LEAGUE_SIZE.get(league_key)
+    if expected and len(clubs) < expected:
+        # The standings template can lag the season (the 2026-27 Bundesliga table listed 16 of
+        # 18 clubs). The page's ==Teams== table has one club per row; take each row's first link,
+        # keeping only titles that read like a club, never the manager or a season page.
+        sec = re.search(r"\n==\s*(?:Teams|Clubs)\s*==(.*?)(?=\n==[^=])", lw, re.S)
+        if sec:
+            for row in re.split(r"\n\|-", sec.group(1))[1:]:
+                m = re.search(r"\[\[([^\]|#]+)", row)
+                t = m.group(1).strip() if m else ""
+                if t and t not in clubs and CLUB_TITLE.search(t) and not re.match(r"\d{4}", t):
+                    clubs.append(t)
+                    print(f"  + from Teams table: {t}", file=sys.stderr)
     print(f"  {len(clubs)} clubs found", file=sys.stderr)
+    current = is_current_season(season)
 
     out = {}
     failures = []
     for club in clubs:
         time.sleep(sleep)
-        page = f"{season} {club} season"
-        cw = get_wikitext(page)
-        squad = extract_squad(cw) if cw else []
+        squad, page = [], club
+        if current:
+            # For the season IN PROGRESS the club's own article is the source of truth: its
+            # first-team squad is maintained, and it IS this season's squad. The season page of a
+            # running season is a half-written match log — Bournemouth's "squad" parsed as 72
+            # names that were opponents' goalscorers (Foden, Gvardiol, Isak). Never for past
+            # seasons: the club article would then be today's squad, not that season's.
+            aw = get_wikitext(club)
+            squad = extract_current_squad(aw) if aw else []
+        if len(squad) < min_squad:
+            time.sleep(sleep)
+            page = f"{season} {club} season"
+            cw = get_wikitext(page)
+            squad = extract_squad(cw) if cw else []
         if len(squad) < min_squad:
             # missing page, or a partial parse too thin to be a real squad —
             # better dropped than polluting a puzzle with 1-3 "players".
