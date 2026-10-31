@@ -4,3 +4,4 @@ node_modules/
 tools/.fifa_cache/
 tools/.wikipedia_cache/
 __pycache__/
+tools/.mystery-ranking.json

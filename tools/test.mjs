@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
 import { mulberry32, hashStr, norm, matchKey, todayStr, yesterdayStr, bumpStreak, liveStreak, buildPuzzle, buildLinkPuzzle, buildGridPuzzle, buildPlayerPuzzle, answerKeys, FEATURED_PLAYER,
          careerStart, simulateCareer, scoreCareer, reachBand, demand, CAREER, CAREER_TIERS, buildOffers,
          validateCatalogue, pickEvent, resolveEvent, applyMods, eligible, titleOdds, SCORE_VERSION, EFFECT_KEYS,
-         nationStrength, blockCaps, parScore, POS_MOD, roadNotTaken, sharePath, careerBadges } from '../game.js';
+         nationStrength, blockCaps, parScore, POS_MOD, roadNotTaken, sharePath, careerBadges, rotationPick } from '../game.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const D = JSON.parse(fs.readFileSync(path.join(ROOT, 'data/squads.json'), 'utf8'));
@@ -563,6 +563,27 @@ test('offers follow FORM, not just rating — a bench-warmer is not called by gi
   assert.ok(benched.lo <= starter.lo + 1, 'the floor is not raised by poor form');
   // and with no history at all (the very first decision) nothing is penalised
   assert.equal(reachBand(50, 0, undefined, undefined).hi, reachBand(50, 0).hi);
+});
+
+test('growing the Mystery pool never reshuffles the past or repeats a player', () => {
+  // A size-dependent shuffle meant appending one player swapped today's answer mid-day and broke
+  // the no-repeat promise. A batch joins on its `added` date without touching earlier days, and
+  // afterwards every player recurs exactly one pool-length apart — across two growth steps.
+  const day = (d, n) => new Date(Date.parse(d + 'T00:00:00Z') + n * 864e5).toISOString().slice(0, 10);
+  const base = Array.from({ length: 40 }, (_, i) => ({ answer: 'P' + i }));
+  const one = base.concat(Array.from({ length: 7 }, (_, i) => ({ answer: 'N' + i, added: '2026-07-10' })));
+  const two = one.concat(Array.from({ length: 5 }, (_, i) => ({ answer: 'M' + i, added: '2026-09-02' })));
+  for(let d = '2026-06-18'; d < '2026-07-10'; d = day(d, 1))
+    assert.equal(rotationPick(two, d).answer, rotationPick(base, d).answer, `${d} changed by a later batch`);
+  for(let d = '2026-07-10'; d < '2026-09-02'; d = day(d, 1))
+    assert.equal(rotationPick(two, d).answer, rotationPick(one, d).answer, `${d} changed by the second batch`);
+  const last = new Map();
+  for(let i = 0; i < 400; i++){
+    const d = day('2026-09-02', i), a = rotationPick(two, d).answer;
+    if(last.has(a)) assert.equal(i - last.get(a), two.length, `${a} came back after ${i - last.get(a)} days, not ${two.length}`);
+    last.set(a, i);
+  }
+  assert.equal(last.size, two.length, 'every player, original and added, appears');
 });
 
 test('a chained event cannot fire before the one that sets it up', () => {

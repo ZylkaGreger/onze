@@ -75,12 +75,11 @@ export function buildPuzzle(DATA, league, diff, forceDate){
   }
   // weighted sample of 5 distinct clubs
   const chosen=[]; const usedClub=new Set(); let guard=0;
-  // a pinned cell first, if today has one and it is in this league's pool
+  // pinned cells first: one club-season, or a whole day (`cells`), if they are in this league's pool
   const pin = FEATURED_SQUAD[date];
-  if(pin){
-    const hit = pool.find(p => p.club && p.club.name === pin.club
-                            && (!pin.season || p.season === pin.season));
-    if(hit){ usedClub.add(hit.cid); chosen.push(hit); }
+  for(const [club, season] of (pin ? (pin.cells || [[pin.club, pin.season]]) : [])){
+    const hit = pool.find(p => p.club && p.club.name === club && (!season || p.season === season));
+    if(hit && !usedClub.has(hit.cid)){ usedClub.add(hit.cid); chosen.push(hit); }
   }
   while(chosen.length<5 && pool.length && guard++<5000){
     let tot=0; for(const p of pool) tot+= usedClub.has(p.cid)?0:p.w;
@@ -144,6 +143,11 @@ export function buildGridPuzzle(DATA, diff){
 // arranged. Ignored when the pinned club is not in the league being played.
 export const FEATURED_SQUAD = {
   '2026-08-28': { club: 'VfL Bochum', season: '2006/07' },   // Bochum day — pairs with Wosz in Mystery
+  // A data rebuild changes the draw for EVERY day (club ids are alphabetical, so one new club
+  // shifts the rest). The 2026/27 rebuild could go live on either of these days, so both are held
+  // to the puzzle they already showed — nobody mid-game sees their board swapped.
+  '2026-10-31': { cells: [["Inter", "2025/26"], ["SV Werder Bremen", "2016/17"], ["Atlético Madrid", "2019/20"], ["Real Madrid", "2025/26"], ["Manchester City", "2022/23"]] },
+  '2026-11-01': { cells: [["Manchester City", "2020/21"], ["Liverpool", "2020/21"], ["Real Madrid", "2016/17"], ["FC Barcelona", "2013/14"], ["Napoli", "2017/18"]] },
 };
 
 export const FEATURED_PLAYER = {
@@ -160,25 +164,51 @@ export const FEATURED_PLAYER = {
 // forceDate: optional override so a preview (?wc) can show a future day's featured player early.
 // Fixed epoch for the no-repeat rotation (any past UTC date works; never change it once live).
 const PLAYER_EPOCH = Date.parse('2026-06-18T00:00:00Z');
+
+// No-repeat rotation instead of an independent daily draw (which repeated players within weeks —
+// birthday paradox): shuffle the pool once with a fixed seed and step through it, one player a day.
+//
+// The pool is allowed to GROW without disturbing that. A plain shuffle depends on pool size, so
+// appending one player reshuffled every future day, swapped today's answer mid-day and broke the
+// no-repeat promise. Instead each appended entry carries `added: 'YYYY-MM-DD'`, the day its batch
+// joins the rotation:
+//   - every day before a batch's date replays the rotation that was in force (history untouched);
+//   - on that date, the players not yet shown in the cycle in progress and the whole new batch are
+//     shuffled together, so newcomers appear at once and nobody repeats within the cycle;
+//   - that merged order then IS the rotation, cycle after cycle, so every player's gap stays
+//     exactly the pool size — as it was before the pool ever grew.
+// Append new entries to the END of player-clues.json and never reorder the file. Give a batch a
+// date AFTER its deploy: a date already in the past changes today's answer.
+const shuffledIdx = (n, seed) => {
+  const idx = Array.from({ length: n }, (_, i) => i), prng = mulberry32(hashStr(seed));
+  for(let i = n - 1; i > 0; i--){ const j = Math.floor(prng() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
+  return idx;
+};
+const dayIndex = date => Math.round((Date.parse(date + 'T00:00:00Z') - PLAYER_EPOCH) / 864e5);
+const mod = (a, n) => ((a % n) + n) % n;
+export function rotationPick(CLUES, date){
+  const base = CLUES.filter(c => !c.added);
+  let seq = shuffledIdx(base.length, 'onze|player|cycle|v1').map(i => base[i]);
+  let start = 0;                                     // day the current cycle began
+  const day = dayIndex(date);
+  for(const batch of [...new Set(CLUES.filter(c => c.added).map(c => c.added))].sort()){
+    const cut = dayIndex(batch);
+    if(day < cut) break;
+    start += Math.floor((cut - start) / seq.length) * seq.length;
+    const shown = cut - start;
+    const rest = seq.slice(shown).concat(CLUES.filter(c => c.added === batch));
+    seq = seq.slice(0, shown).concat(shuffledIdx(rest.length, 'onze|player|cycle|' + batch).map(i => rest[i]));
+  }
+  return seq[mod(day - start, seq.length)];
+}
+
 export function buildPlayerPuzzle(CLUES, forceDate){
   const date = forceDate || todayStr();
   if(!CLUES || !CLUES.length) return {date, answer:'', clues:[], sig:''};
   const rnd = mulberry32(hashStr(date + '|player'));
   const want = FEATURED_PLAYER[date];
   const pick = want && CLUES.find(c => (c.answer || c.a || '') === want.name);
-  // No-repeat rotation instead of an independent daily draw (which repeated players within weeks —
-  // birthday paradox): shuffle the pool ONCE with a fixed seed, then step through it one player per
-  // day. No repeats until the whole pool has run (~10 months at 300), then the cycle restarts.
-  // NOTE: the order depends on pool size — changing the pool reshuffles the schedule, so bump
-  // DATA_V *and* pin that day via FEATURED_PLAYER when deploying pool changes mid-day.
-  let p = pick;
-  if(!p){
-    const idx = CLUES.map((_, i) => i);
-    const prng = mulberry32(hashStr('onze|player|cycle|v1'));
-    for(let i = idx.length - 1; i > 0; i--){ const j = Math.floor(prng() * (i + 1)); [idx[i], idx[j]] = [idx[j], idx[i]]; }
-    const day = Math.round((Date.parse(date + 'T00:00:00Z') - PLAYER_EPOCH) / 864e5);
-    p = CLUES[idx[((day % idx.length) + idx.length) % idx.length]];
-  }
+  const p = pick || rotationPick(CLUES, date);
   const answer = (p.answer || p.a || '').replace(/\s*\(.*\)$/, '');   // strip wiki disambiguation suffix
   const raw = p.clues || p.c || [];
   const path = raw.filter(c => /^Club path:/i.test(c));

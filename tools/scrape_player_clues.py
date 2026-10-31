@@ -223,7 +223,8 @@ def make_clues(nat, role, by, career, bullets, nat2=None):
     clues.append(c1 + ".")
     # first senior club (specific, often non-obvious)
     if seniors:
-        clues.append(f"Began his senior career at {seniors[0]}.")
+        if len(seniors) > 1:   # for a one-club man this line alone would name the answer's club early
+            clues.append(f"Began his senior career at {seniors[0]}.")
     # Nationality. nationalteam1 is often a state that no longer exists — East Germany,
     # Yugoslavia, the USSR, Czechoslovakia — which had no demonym here, so those players simply
     # got no nationality clue at all. Fall back to the later team, and when a player represented
@@ -249,6 +250,10 @@ def make_clues(nat, role, by, career, bullets, nat2=None):
     # the giveaway: full senior club path (game.js keeps this last)
     if len(seniors) >= 2:
         clues.append("Club path: " + " → ".join(seniors) + ".")
+    elif len(seniors) == 1:
+        # One-club men (Totti, Saka, Maldini) had no giveaway at all and were filtered out of the
+        # pool. Their club IS the giveaway, so it is held back to the end like any club path.
+        clues.append(f"Club path: {seniors[0]} — his whole career.")
     return clues
 
 
