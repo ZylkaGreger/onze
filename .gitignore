@@ -5,3 +5,6 @@ tools/.fifa_cache/
 tools/.wikipedia_cache/
 __pycache__/
 tools/.mystery-ranking.json
+# nWave config (keep .nwave/config.json trackable)
+.nwave/*
+!.nwave/config.json
