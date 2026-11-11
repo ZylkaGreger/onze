@@ -238,23 +238,81 @@ def pick_honour(bullets):
             return f"Has won the {t}."
     return None
 
+def permanent_clubs(career):
+    """Senior, non-loan, non-reserve clubs in order, consecutive repeats collapsed."""
+    out = []
+    for _, c, loan in career:
+        if loan or is_reserve(c) or (out and c == out[-1]): continue
+        out.append(c)
+    return out
+
+
+def club_path(career):
+    """Every senior spell in order as [(club, on_loan)], loans INCLUDED.
+
+    The path used to skip loans, so it could contradict the other clues: Nicolas Jackson "has won
+    the Bundesliga" with no German club in his path (the title came on loan at Bayern), Courtois
+    won La Liga at an Atlético that never appeared. A loan that became a permanent move
+    (Inter (loan) -> Inter) is one spell, not two."""
+    out = []
+    for _, c, loan in career:
+        name = re.sub(r"\s*\((?:on )?loan\)\s*", " ", c, flags=re.I).strip()
+        if not name or is_reserve(name):
+            continue
+        if out and out[-1][0] == name:
+            if out[-1][1] and not loan:
+                out[-1] = (name, False)
+            continue
+        out.append((name, loan))
+    return out
+
+
+def shape_clue(career):
+    """'A one-club man.' / 'Well-travelled — N senior clubs.' / None. A one-club man never went
+    out on loan, and N counts every club the path will show, so the two clues agree."""
+    seniors, path = permanent_clubs(career), club_path(career)
+    if len(seniors) == 1 and not any(loan for _, loan in path):
+        return "A one-club man."
+    if len(seniors) >= 6:
+        return f"Well-travelled — {len({c for c, _ in path})} senior clubs."
+    return None
+
+
+def began_clue(career):
+    """Where senior football started — the FIRST spell of the path, loan or not (Arteta began on
+    loan at Paris Saint-Germain, not at Rangers). None for a one-club man: it would name his club."""
+    path = club_path(career)
+    if len(path) < 2:
+        return None
+    club, loan = path[0]
+    return f"Began his senior career {'on loan ' if loan else ''}at {club}."
+
+
+def path_clue(career):
+    """The giveaway, always last: 'Club path: A → B (loan) → C.'"""
+    seniors, path = permanent_clubs(career), club_path(career)
+    if len(path) >= 2:
+        return "Club path: " + " → ".join(c + (" (loan)" if loan else "") for c, loan in path) + "."
+    if len(seniors) == 1:
+        # One-club men (Totti, Saka, Maldini) had no giveaway at all and were filtered out of the
+        # pool. Their club IS the giveaway, so it is held back to the end like any club path.
+        return f"Club path: {seniors[0]} — his whole career."
+    return None
+
+
 def make_clues(nat, role, by, career, bullets, nat2=None):
     """A pool of attribute clues (game.js shuffles them per day and always pins the club-path LAST,
     so generation order only matters for keeping 'Club path:' as the final giveaway). Each clue is a
     single fact that narrows the field without being a one-player giveaway on its own."""
     clues = []
-    seniors, prev = [], None
-    for _, c, loan in career:                       # senior, non-loan, non-reserve, de-duped
-        if loan or is_reserve(c) or c == prev: continue
-        seniors.append(c); prev = c
+    seniors = permanent_clubs(career)
     # position + era (broad; NO nationality here — 'Belgian midfielder' would give it away)
     c1 = f"A {role}"
     if by: c1 += f", born in the {by // 10 * 10}s"
     clues.append(c1 + ".")
     # first senior club (specific, often non-obvious)
-    if seniors:
-        if len(seniors) > 1:   # for a one-club man this line alone would name the answer's club early
-            clues.append(f"Began his senior career at {seniors[0]}.")
+    began = began_clue(career)
+    if began: clues.append(began)
     # Nationality. nationalteam1 is often a state that no longer exists — East Germany,
     # Yugoslavia, the USSR, Czechoslovakia — which had no demonym here, so those players simply
     # got no nationality clue at all. Fall back to the later team, and when a player represented
@@ -265,10 +323,8 @@ def make_clues(nat, role, by, career, bullets, nat2=None):
     if nat and nat2 and nat != nat2:
         clues.append(f"Played for two national teams: {nat}, then {nat2}.")
     # career shape: one-club loyalty or a well-travelled journeyman
-    if len(seniors) == 1:
-        clues.append("A one-club man.")
-    elif len(seniors) >= 6:
-        clues.append(f"Well-travelled — {len(seniors)} senior clubs.")
+    shape = shape_clue(career)
+    if shape: clues.append(shape)
     # a mid-career club (a partial path hint, before the full reveal)
     if len(seniors) >= 3:
         mid = seniors[len(seniors) // 2]
@@ -277,13 +333,9 @@ def make_clues(nat, role, by, career, bullets, nat2=None):
     # a major honour
     hon = pick_honour(bullets)
     if hon: clues.append(hon)
-    # the giveaway: full senior club path (game.js keeps this last)
-    if len(seniors) >= 2:
-        clues.append("Club path: " + " → ".join(seniors) + ".")
-    elif len(seniors) == 1:
-        # One-club men (Totti, Saka, Maldini) had no giveaway at all and were filtered out of the
-        # pool. Their club IS the giveaway, so it is held back to the end like any club path.
-        clues.append(f"Club path: {seniors[0]} — his whole career.")
+    # the giveaway: full senior club path, loans included (game.js keeps this last)
+    path = path_clue(career)
+    if path: clues.append(path)
     return clues
 
 

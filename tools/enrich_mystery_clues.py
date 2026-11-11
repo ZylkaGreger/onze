@@ -22,6 +22,7 @@ Never adds, removes or reorders entries: the daily rotation depends on both.
 
     python3 tools/enrich_mystery_clues.py --dry-run     # samples + counts, writes nothing
     python3 tools/enrich_mystery_clues.py               # writes clues2/legend/born in place
+    python3 tools/enrich_mystery_clues.py --paths-only  # re-read careers; patch only path + shape clues
 """
 import importlib.util, json, os, re, sys, time
 
@@ -96,7 +97,7 @@ def years_open(career):
 
 
 def kind(c):
-    for k, pat in (("path", r"^Club path:"), ("began", r"^Began his senior career at "), ("nat", r"^He's "),
+    for k, pat in (("path", r"^Club path:"), ("began", r"^Began his senior career (on loan )?at "), ("nat", r"^He's "),
                    ("two", r"^Played for two national teams"), ("shape", r"^(A one-club man|Well-travelled)"),
                    ("mid", r"^Also had a spell at "), ("honour", r"^(Has won|Won) "), ("role", r"^An? .*\.$")):
         if re.search(pat, c):
@@ -155,9 +156,60 @@ def build(entry, f, career):
     return [c for c in [role, *middle, path] if c], new
 
 
+def refresh_paths(pool, dry, only=None):
+    """Re-read every player's career and patch ONLY the club-path and career-shape clues, in both
+    `clues` and `clues2`. Everything else — the other clues, their order, the pool's membership and
+    order — stays as it is, so the rotation and any puzzle in play are untouched apart from the
+    corrected last clue."""
+    changed, dropped, failed, samples = 0, 0, [], []
+    for i, e in enumerate(pool):
+        if only and e["answer"] not in only:
+            continue
+        try:
+            d = C.api({"action": "query", "prop": "revisions", "rvprop": "content", "rvslots": "main",
+                       "redirects": 1, "titles": e["answer"]})
+            career = C.senior_career(C.infobox(d["query"]["pages"][0]["revisions"][0]["slots"]["main"]["content"]))
+        except Exception:
+            failed.append(e["answer"]); continue
+        path, shape, began = C.path_clue(career), C.shape_clue(career), C.began_clue(career)
+        if not path:
+            failed.append(e["answer"]); continue
+        before = json.dumps([e.get("clues"), e.get("clues2")], ensure_ascii=False)
+        for key in ("clues", "clues2"):
+            out = []
+            for c in e.get(key) or []:
+                k = kind(c)
+                if k == "path":
+                    out.append(path)
+                elif k == "shape":
+                    if shape: out.append(shape)        # e.g. "one-club man" who in fact went on loan
+                    else: dropped += 1
+                elif k == "began" and began:
+                    out.append(began)                  # the first spell may have been a loan
+                else:
+                    out.append(c)
+            e[key] = out
+        if json.dumps([e.get("clues"), e.get("clues2")], ensure_ascii=False) != before:
+            changed += 1
+            if "(loan)" in path and len(samples) < 12:
+                samples.append(f"{e['answer']}: {path}")
+        if i % 50 == 0:
+            print(f"  {i}/{len(pool)}", file=sys.stderr)
+        time.sleep(0.15)
+    print(json.dumps({"entries changed": changed, "paths with a loan": sum(1 for e in pool if "(loan)" in e["clues2"][-1]),
+                      "shape clues removed": dropped, "failures": failed}, ensure_ascii=False, indent=1))
+    print("\n".join(samples))
+    if not dry:
+        json.dump(pool, open(POOL, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+        print(f"\nrewrote paths for {len(pool)} entries", file=sys.stderr)
+
+
 def main():
     dry = "--dry-run" in sys.argv
     pool = json.load(open(POOL, encoding="utf-8"))
+    if "--paths-only" in sys.argv:          # optionally: --paths-only "Name One" "Name Two"
+        names = [a for a in sys.argv[sys.argv.index("--paths-only") + 1:] if not a.startswith("--")]
+        return refresh_paths(pool, dry, set(names) or None)
     stats, samples, failed = {}, {}, []
     for i, e in enumerate(pool):
         try:

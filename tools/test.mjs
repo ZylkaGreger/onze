@@ -618,8 +618,21 @@ test('second-generation clues take over on their date and keep the puzzle fair',
     assert.ok(c.clues2.length >= 3 && c.clues2.length <= 7, `${c.answer}: ${c.clues2.length} clues`);
     assert.ok(/^Club path:/.test(c.clues2[c.clues2.length - 1]), `${c.answer}: club path must stay the giveaway`);
     assert.equal(new Set(c.clues2).size, c.clues2.length, `${c.answer}: duplicate clue`);
+    // the path shows loans, marked once, and never lists the same club twice in a row
+    const stops = c.clues2[c.clues2.length - 1].replace(/^Club path:\s*/, '').replace(/\.$/, '').split(' → ');
+    stops.forEach((st, i) => {
+      assert.ok(!/\(loan\).*\(loan\)/.test(st), `${c.answer}: "${st}" marked as a loan twice`);
+      if(i) assert.notEqual(st.replace(' (loan)', ''), stops[i - 1].replace(' (loan)', ''), `${c.answer}: ${st} twice in a row`);
+    });
+    if(c.clues2.includes('A one-club man.'))
+      assert.ok(/— his whole career\.$/.test(c.clues2[c.clues2.length - 1]), `${c.answer}: a one-club man with a multi-club path`);
     assert.ok(!c.clues2.some(x => /\bundefined\b|\bnull\b|\[\[|\{\{/.test(x)), `${c.answer}: unclean clue ${c.clues2}`);
   }
+  // Loans belong in the path. It used to skip them, so Nicolas Jackson "won the Bundesliga" with
+  // no German club in his path (the title came on loan at Bayern Munich).
+  assert.ok(pool.filter(c => /\(loan\)/.test(c.clues2[c.clues2.length - 1])).length > 100, 'club paths must include loan spells');
+  const jackson = pool.find(c => c.answer.startsWith('Nicolas Jackson'));
+  if(jackson) assert.match(jackson.clues2[jackson.clues2.length - 1], /Bayern Munich \(loan\)/);
   const before = new Date(Date.parse(CLUES2_FROM) - 864e5).toISOString().slice(0, 10);
   const p0 = buildPlayerPuzzle(REAL_CLUES, before), src0 = REAL_CLUES.find(c => c.answer.replace(/\s*\(.*\)$/, '') === p0.answer);
   assert.deepEqual([...p0.clues].sort(), [...src0.clues].sort(), 'before the switch the old clues are used');
